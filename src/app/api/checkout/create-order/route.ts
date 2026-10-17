@@ -117,7 +117,10 @@ export async function POST(req: NextRequest) {
     const randomHex = Math.random().toString(36).substring(2, 7).toUpperCase();
     const orderNumber = `FL-${year}-${randomHex}`;
 
-    const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+    const proto = req.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https');
+    const detectedUrl = host ? `${proto}://${host}` : '';
+    const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || detectedUrl || 'http://localhost:3000';
 
     // 7. Branch by Payment Gateway
     if (paymentGateway === 'PAYU') {
@@ -125,11 +128,10 @@ export async function POST(req: NextRequest) {
         {
           txnid: orderNumber,
           amountMinor: totalMinor,
-          productinfo: `flirta.network Order ${orderNumber}`,
-          firstname: name.split(' ')[0] || 'Customer',
+          productinfo: 'Order',
+          firstname: (name || 'Customer').trim().split(' ')[0],
           email,
           phone,
-          udf1: orderNumber,
         },
         appBaseUrl
       );

@@ -41,11 +41,10 @@ async function runCheckoutVerification() {
       {
         txnid: orderNumberPayU,
         amountMinor,
-        productinfo: `flirta.network Order ${orderNumberPayU}`,
+        productinfo: 'Order',
         firstname: 'Aarav',
         email: 'aarav@flirta.network',
         phone: '9820012345',
-        udf1: orderNumberPayU,
       },
       'http://localhost:3000'
     );
@@ -53,6 +52,7 @@ async function runCheckoutVerification() {
     assert(payuCheckout.actionUrl === 'https://secure.payu.in/_payment', 'PayU endpoint is Live secure.payu.in');
     assert(payuCheckout.params.key === payuKey, `PayU Merchant Key correctly set to ${payuKey}`);
     assert(payuCheckout.params.amount === '849.00', 'Amount formatted as exact 2-decimal rupee string (849.00)');
+    assert(payuCheckout.params.productinfo === 'Order', 'Product info normalized to alphanumeric "Order"');
     assert(payuCheckout.params.hash.length === 128, 'SHA-512 request hash is exactly 128 hex characters');
 
     // Create DB Order for PayU
@@ -106,17 +106,17 @@ async function runCheckoutVerification() {
     // 3. Test PayU Callback Response Verification & Order Confirmation
     console.log('\n3. Testing PayU Callback Verification & Inventory Decrement:');
     const mockMihpayid = `payu_${Date.now()}`;
-    const reverseHashSeq = `${payuSalt}|success||||||||||${orderNumberPayU}|aarav@flirta.network|Aarav|flirta.network Order ${orderNumberPayU}|849.00|${orderNumberPayU}|${payuKey}`;
+    const reverseHashSeq = `${payuSalt}|success|||||||||||aarav@flirta.network|Aarav|Order|849.00|${orderNumberPayU}|${payuKey}`;
     const validCallbackHash = crypto.createHash('sha512').update(reverseHashSeq).digest('hex').toLowerCase();
 
     const mockCallbackPayload = {
       status: 'success',
       txnid: orderNumberPayU,
       amount: '849.00',
-      productinfo: `flirta.network Order ${orderNumberPayU}`,
+      productinfo: 'Order',
       firstname: 'Aarav',
       email: 'aarav@flirta.network',
-      udf1: orderNumberPayU,
+      udf1: '',
       udf2: '',
       udf3: '',
       udf4: '',

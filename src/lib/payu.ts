@@ -6,9 +6,9 @@ import crypto from 'crypto';
  * Live / Test environment switching, and payment callback verification.
  */
 
-const KEY = process.env.PAYU_MERCHANT_KEY || 'R1a2pd';
-const SALT = process.env.PAYU_MERCHANT_SALT || 'yu2jdeAMzR2hlbx8lnMlJcgECB2enbj3';
-const ENV = process.env.PAYU_ENV || 'prod';
+const KEY = (process.env.PAYU_MERCHANT_KEY || 'R1a2pd').trim().replace(/^["']|["']$/g, '');
+const SALT = (process.env.PAYU_MERCHANT_SALT || 'yu2jdeAMzR2hlbx8lnMlJcgECB2enbj3').trim().replace(/^["']|["']$/g, '');
+const ENV = (process.env.PAYU_ENV || 'prod').trim().replace(/^["']|["']$/g, '');
 
 export const PAYU_PAYMENT_URL =
   ENV === 'prod' ? 'https://secure.payu.in/_payment' : 'https://test.payu.in/_payment';
@@ -42,7 +42,6 @@ export interface PreparedPayUPayload {
     surl: string;
     furl: string;
     hash: string;
-    service_provider: string;
     udf1: string;
     udf2: string;
     udf3: string;
@@ -54,6 +53,9 @@ export interface PreparedPayUPayload {
 /**
  * Calculates PayU SHA-512 Request Hash:
  * sha512(key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5||||||salt)
+ *
+ * PayU requires exactly 11 pipes between email and salt when udf1..udf5 are empty:
+ * email|||||||||||salt
  */
 export function generatePayURequestHash(
   txnid: string,
@@ -125,10 +127,20 @@ export function preparePayUCheckout(
   appBaseUrl: string
 ): PreparedPayUPayload {
   const amountInRupees = (params.amountMinor / 100).toFixed(2);
-  const cleanFirstname = params.firstname.trim().replace(/[^a-zA-Z0-9 ]/g, '').substring(0, 50) || 'Customer';
-  const cleanEmail = params.email.trim();
-  const cleanPhone = params.phone.replace(/[^0-9]/g, '').slice(-10);
-  const cleanProductInfo = params.productinfo.replace(/[^a-zA-Z0-9 -]/g, '').substring(0, 100);
+  // Strictly alphanumeric, max 50 chars, no spaces or special symbols
+  const cleanFirstname =
+    (params.firstname || 'Customer')
+      .trim()
+      .split(' ')[0]
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .substring(0, 50) || 'Customer';
+  const cleanEmail = (params.email || '').trim().toLowerCase();
+  const cleanPhone = (params.phone || '').replace(/[^0-9]/g, '').slice(-10) || '9999999999';
+  // Standardize productinfo to alphanumeric string without spaces or symbols to avoid URL encoding discrepancies
+  const cleanProductInfo =
+    (params.productinfo || 'Order')
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .substring(0, 50) || 'Order';
 
   const defaultCallback = `${appBaseUrl}/api/checkout/payu/callback`;
   const surl = params.surl || defaultCallback;
@@ -168,7 +180,6 @@ export function preparePayUCheckout(
       surl,
       furl,
       hash,
-      service_provider: 'payu_paisa',
       udf1,
       udf2,
       udf3,

@@ -6,7 +6,10 @@ import { cookies } from 'next/headers';
 const CART_COOKIE = 'flirta_cart_session';
 
 export async function POST(req: NextRequest) {
-  const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+  const proto = req.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https');
+  const detectedUrl = host ? `${proto}://${host}` : '';
+  const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || detectedUrl || 'http://localhost:3000';
 
   try {
     const formData = await req.formData();
@@ -135,7 +138,10 @@ export async function POST(req: NextRequest) {
 
 // In case user is redirected via GET
 export async function GET(req: NextRequest) {
-  const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+  const proto = req.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https');
+  const detectedUrl = host ? `${proto}://${host}` : '';
+  const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || detectedUrl || 'http://localhost:3000';
   const url = new URL(req.url);
   const orderNumber = url.searchParams.get('orderNumber') || url.searchParams.get('txnid') || '';
   return NextResponse.redirect(`${appBaseUrl}/checkout?orderNumber=${encodeURIComponent(orderNumber)}`, 303);
