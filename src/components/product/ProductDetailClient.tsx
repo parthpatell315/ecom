@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -50,6 +50,53 @@ export function ProductDetailClient({
   const effectivePriceMinor =
     product.priceMinor + (selectedVariant?.priceAdjustmentMinor || 0);
 
+  // 12-Hour Flash Sale live countdown timer
+  const [flashTimeLeft, setFlashTimeLeft] = useState<{ hours: number; minutes: number; seconds: number }>({
+    hours: 11,
+    minutes: 48,
+    seconds: 32,
+  });
+
+  useEffect(() => {
+    const STORAGE_KEY = 'flirta_12h_flash_end_v1';
+    let endTime = 0;
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        endTime = parseInt(stored, 10);
+      }
+      if (!endTime || isNaN(endTime) || endTime <= Date.now()) {
+        endTime = Date.now() + 12 * 60 * 60 * 1000;
+        localStorage.setItem(STORAGE_KEY, endTime.toString());
+      }
+    } catch {
+      endTime = Date.now() + 11 * 3600 * 1000 + 48 * 60 * 1000;
+    }
+
+    const interval = setInterval(() => {
+      const remaining = Math.max(0, endTime - Date.now());
+      const hours = Math.floor(remaining / (1000 * 60 * 60));
+      const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+      setFlashTimeLeft({ hours, minutes, seconds });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Swatch color resolver for accurate visual color representation
+  const getSwatchColor = (name: string, hex?: string | null): string => {
+    const n = (name || '').toLowerCase();
+    if (n.includes('pink')) return '#EC4899';
+    if (n.includes('blue') || n.includes('cyan')) return '#3B82F6';
+    if (n.includes('purple')) return '#A855F7';
+    if (n.includes('red')) return '#EF4444';
+    if (n.includes('gold') || n.includes('champagne')) return '#D4AF37';
+    if (n.includes('white') || n.includes('ivory')) return '#F5F2EB';
+    if (n.includes('black') || n.includes('obsidian')) return '#18181B';
+    return hex || '#222225';
+  };
+
   const handleAddToCart = async () => {
     setIsAdding(true);
     try {
@@ -92,9 +139,9 @@ export function ProductDetailClient({
 
   return (
     <div className="bg-white min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-14 md:py-16">
         {/* Breadcrumb Navigation */}
-        <nav className="text-xs text-gray-500 mb-8 flex items-center gap-1.5">
+        <nav className="text-xs text-gray-500 mb-6 flex items-center gap-1.5 flex-wrap">
           <Link href="/" className="hover:text-[#D9232D] transition-colors">
             Home
           </Link>
@@ -200,19 +247,32 @@ export function ProductDetailClient({
                 )}
               </div>
 
-              {/* 12-Hour Flash Sale Urgency Callout */}
+              {/* 12-Hour Flash Sale Urgency Callout with Live Countdown */}
               {(effectivePriceMinor === 99900 || product.badge?.includes('12H')) && (
-                <div className="mt-4 p-3.5 rounded-xl bg-[#FFF1F2] border border-[#FECDD3] flex items-center justify-between gap-3 text-xs">
+                <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-[#FFF1F2] to-[#FFF5F6] border border-[#FECDD3] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
                   <div className="flex items-center gap-2.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#E61E2A] animate-pulse shrink-0" />
                     <div>
-                      <strong className="text-[#9F1239] block font-semibold text-xs">⚡ 12-Hour Studio Flash Deal: Flat ₹999</strong>
-                      <span className="text-[#BE123C] text-[11px]">Exclusive promotional pricing. Free Pan-India Delivery included.</span>
+                      <strong className="text-[#9F1239] block font-semibold text-xs flex items-center gap-1.5">
+                        <Zap className="w-3.5 h-3.5 text-[#E61E2A] fill-current" />
+                        12-Hour Studio Flash Deal: Flat ₹999
+                      </strong>
+                      <span className="text-[#BE123C] text-[11px] mt-0.5 block">
+                        Special promotional drop • Free Express Pan-India Delivery
+                      </span>
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono font-bold bg-[#E61E2A] text-white px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 shadow-xs">
-                    ACTIVE NOW
-                  </span>
+                  <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                    <div className="flex items-center gap-1 font-mono text-[11.5px] font-bold bg-[#BE123C] text-white px-2.5 py-1 rounded-lg tracking-wider">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>
+                        {String(flashTimeLeft.hours).padStart(2, '0')}:{String(flashTimeLeft.minutes).padStart(2, '0')}:{String(flashTimeLeft.seconds).padStart(2, '0')}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono font-bold bg-[#E61E2A] text-white px-2 py-1 rounded-md uppercase tracking-wider">
+                      ACTIVE NOW
+                    </span>
+                  </div>
                 </div>
               )}
 
@@ -223,7 +283,7 @@ export function ProductDetailClient({
                     <span className="font-medium text-[#222225]">
                       Finish & Biopolymer Material
                     </span>
-                    <span className="text-gray-500">{selectedVariant?.colorName || selectedVariant?.name}</span>
+                    <span className="text-gray-500 font-medium">{selectedVariant?.colorName || selectedVariant?.name}</span>
                   </div>
 
                   <div className="flex flex-wrap gap-2.5">
@@ -235,15 +295,15 @@ export function ProductDetailClient({
                           setSelectedVariant(v);
                           if (v.image) setSelectedImage(v.image);
                         }}
-                        className={`py-2 px-3.5 rounded-xl border text-xs font-medium flex items-center gap-2 transition-all ${
+                        className={`py-2 px-3.5 rounded-xl border text-xs font-medium flex items-center gap-2 transition-all cursor-pointer touch-manipulation ${
                           selectedVariant?.id === v.id
-                            ? 'border-[#D9232D] bg-[#FFF5F6] text-[#D9232D] ring-2 ring-[#D9232D]/20'
+                            ? 'border-[#D9232D] bg-[#FFF5F6] text-[#D9232D] ring-2 ring-[#D9232D]/20 shadow-xs'
                             : 'border-gray-200 text-gray-700 hover:bg-gray-50'
                         }`}
                       >
                         <span
-                          className="w-3.5 h-3.5 rounded-full border border-gray-300 inline-block shadow-2xs"
-                          style={{ backgroundColor: v.colorHex }}
+                          className="w-3.5 h-3.5 rounded-full border border-black/10 inline-block shadow-2xs shrink-0"
+                          style={{ backgroundColor: getSwatchColor(v.name, v.colorHex) }}
                         />
                         <span>{v.name}</span>
                       </button>
