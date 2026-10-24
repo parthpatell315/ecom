@@ -12,7 +12,7 @@ const FAQS = [
   {
     question: 'What payment methods do you accept and what are delivery timelines?',
     answer:
-      'We accept all major payment modes through our official PayU gateway, including instant zero-fee UPI (Google Pay, PhonePe, Paytm, BHIM), all debit/credit cards (Visa, Mastercard, RuPay), and 50+ NetBanking options. Most orders are processed in 1–2 business days with express delivery within 2–5 business days. Free delivery applies on orders of ₹999 and above.',
+      'We accept all major payment modes through direct instant zero-fee UPI (Google Pay, PhonePe, Paytm, BHIM, CRED), NetBanking, and cards. Most orders are processed in 1–2 business days with express delivery within 2–5 business days. Free delivery applies on orders of ₹999 and above.',
   },
   {
     question: 'Are the LED lamps and stands heat resistant and safe to leave on?',

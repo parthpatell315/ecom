@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { generatePayURequestHash, verifyPayUResponseHash, preparePayUCheckout } from '../src/lib/payu';
+import { generateUpiPayload, generateUpiUrl, isValidUtrNumber } from '../src/lib/upi';
 import crypto from 'crypto';
 
 const prisma = new PrismaClient();
@@ -30,35 +30,25 @@ async function runCheckoutVerification() {
 
     const initialStock = product!.stockCount;
 
-    // 2. Test PayU Order Creation & SHA-512 Request Hash
-    console.log('\n2. Testing PayU Order Flow:');
-    const orderNumberPayU = `FL-${new Date().getFullYear()}-PAYU${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    // 2. Test Direct Sovereign UPI Order Creation & Dynamic QR Generation
+    console.log('\n2. Testing Sovereign UPI Order Flow:');
+    const orderNumberUpi = `FL-${new Date().getFullYear()}-UPI${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
     const amountMinor = 84900; // Rs. 849.00
-    const payuKey = process.env.PAYU_MERCHANT_KEY || 'R1a2pd';
-    const payuSalt = process.env.PAYU_MERCHANT_SALT || 'yu2jdeAMzR2hlbx8lnMlJcgECB2enbj3';
 
-    const payuCheckout = preparePayUCheckout(
-      {
-        txnid: orderNumberPayU,
-        amountMinor,
-        productinfo: 'Order',
-        firstname: 'Aarav',
-        email: 'aarav@flirta.network',
-        phone: '9820012345',
-      },
-      'http://localhost:3000'
-    );
+    const upiPayload = await generateUpiPayload({
+      orderNumber: orderNumberUpi,
+      amountMinor,
+    });
 
-    assert(payuCheckout.actionUrl === 'https://secure.payu.in/_payment', 'PayU endpoint is Live secure.payu.in');
-    assert(payuCheckout.params.key === payuKey, `PayU Merchant Key correctly set to ${payuKey}`);
-    assert(payuCheckout.params.amount === '849.00', 'Amount formatted as exact 2-decimal rupee string (849.00)');
-    assert(payuCheckout.params.productinfo === 'Order', 'Product info normalized to alphanumeric "Order"');
-    assert(payuCheckout.params.hash.length === 128, 'SHA-512 request hash is exactly 128 hex characters');
+    assert(upiPayload.upiUrl.startsWith('upi://pay?'), 'UPI URL correctly uses upi://pay scheme');
+    assert(upiPayload.amountRupees === '849.00', 'Amount formatted as exact 2-decimal rupee string (849.00)');
+    assert(upiPayload.qrCodeDataUrl.startsWith('data:image/png;base64,'), 'Dynamic vector QR code generated as crisp data URL');
+    assert(isValidUtrNumber('423812984712'), '12-digit UPI UTR passes validation');
 
-    // Create DB Order for PayU
+    // Create DB Order for UPI
     const orderPayU = await prisma.order.create({
       data: {
-        orderNumber: orderNumberPayU,
+        orderNumber: orderNumberUpi,
         guestEmail: 'aarav@flirta.network',
         guestPhone: '9820012345',
         guestName: 'Aarav Sharma',
@@ -90,8 +80,8 @@ async function runCheckoutVerification() {
         },
         payments: {
           create: {
-            gateway: 'PAYU',
-            gatewayOrderId: orderNumberPayU,
+            gateway: 'UPI',
+            gatewayOrderId: orderNumberUpi,
             amountMinor: 94800,
             currency: 'INR',
             status: 'PENDING',
@@ -100,47 +90,26 @@ async function runCheckoutVerification() {
       },
       include: { payments: true, items: true },
     });
-    assert(orderPayU.status === 'PENDING', 'PayU order initially recorded in PostgreSQL as PENDING');
-    assert(orderPayU.payments[0].gateway === 'PAYU', 'Payment record associated with PAYU gateway');
+    assert(orderPayU.status === 'PENDING', 'UPI order initially recorded in PostgreSQL as PENDING');
+    assert(orderPayU.payments[0].gateway === 'UPI', 'Payment record associated with UPI gateway');
 
-    // 3. Test PayU Callback Response Verification & Order Confirmation
-    console.log('\n3. Testing PayU Callback Verification & Inventory Decrement:');
-    const mockMihpayid = `payu_${Date.now()}`;
-    const reverseHashSeq = `${payuSalt}|success|||||||||||aarav@flirta.network|Aarav|Order|849.00|${orderNumberPayU}|${payuKey}`;
-    const validCallbackHash = crypto.createHash('sha512').update(reverseHashSeq).digest('hex').toLowerCase();
-
-    const mockCallbackPayload = {
-      status: 'success',
-      txnid: orderNumberPayU,
-      amount: '849.00',
-      productinfo: 'Order',
-      firstname: 'Aarav',
-      email: 'aarav@flirta.network',
-      udf1: '',
-      udf2: '',
-      udf3: '',
-      udf4: '',
-      udf5: '',
-      mihpayid: mockMihpayid,
-      key: payuKey,
-      hash: validCallbackHash,
-    };
-
-    const isResponseValid = verifyPayUResponseHash(mockCallbackPayload, payuSalt, payuKey);
-    assert(isResponseValid === true, 'PayU response SHA-512 cryptographic reverse hash verified');
+    // 3. Test UPI UTR Reference Submission & Inventory Decrement
+    console.log('\n3. Testing UPI UTR Submission & Inventory Decrement:');
+    const mockUtr = Math.floor(100000000000 + Math.random() * 900000000000).toString();
 
     // Execute atomic confirmation
     await prisma.$transaction(async (tx) => {
       await tx.order.update({
         where: { id: orderPayU.id },
-        data: { status: 'CONFIRMED' },
+        data: { status: 'CONFIRMED', notes: `UPI UTR: ${mockUtr}` },
       });
       await tx.payment.updateMany({
         where: { orderId: orderPayU.id },
         data: {
           status: 'SUCCESS',
-          gatewayPaymentId: mockMihpayid,
+          gatewayPaymentId: mockUtr,
           verifiedAt: new Date(),
+          rawPayload: { utrNumber: mockUtr, channel: 'DIRECT_UPI_QR' },
         },
       });
       await tx.product.update({
@@ -149,12 +118,13 @@ async function runCheckoutVerification() {
       });
     });
 
-    const confirmedOrderPayU = await prisma.order.findUnique({
+    const confirmedOrderUpi = await prisma.order.findUnique({
       where: { id: orderPayU.id },
       include: { payments: true },
     });
-    assert(confirmedOrderPayU?.status === 'CONFIRMED', 'Order status atomically updated to CONFIRMED');
-    assert(confirmedOrderPayU?.payments[0].status === 'SUCCESS', 'Payment status updated to SUCCESS');
+    assert(confirmedOrderUpi?.status === 'CONFIRMED', 'Order status atomically updated to CONFIRMED');
+    assert(confirmedOrderUpi?.payments[0].status === 'SUCCESS', 'Payment status updated to SUCCESS');
+    assert(confirmedOrderUpi?.payments[0].gatewayPaymentId === mockUtr, `Payment record contains verified UTR: ${mockUtr}`);
 
     const updatedProduct = await prisma.product.findUnique({ where: { id: product!.id } });
     assert(updatedProduct!.stockCount === initialStock - 1, `Stock atomically decremented from ${initialStock} to ${initialStock - 1}`);
@@ -212,8 +182,77 @@ async function runCheckoutVerification() {
     assert(orderCOD.payments[0].gateway === 'COD', 'Payment record has gateway COD');
     assert(orderCOD.payments[0].status === 'PENDING', 'COD payment status is PENDING (doorstep collection)');
 
-    // 5. Test Coupon Engine at Checkout
-    console.log('\n5. Testing Checkout Coupon Validation:');
+    // 5. Test Partial COD Flow (Rs. 249 Advance via UPI + Balance on Delivery)
+    console.log('\n5. Testing Partial COD Flow (₹249 Advance + Balance COD):');
+    const orderNumberPartial = `FL-${new Date().getFullYear()}-PARTIAL${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    const totalMinor = 634700; // Rs 6,347.00
+    const advanceMinor = 24900; // Rs 249.00
+    const balanceCodMinor = totalMinor - advanceMinor; // Rs 6,098.00
+
+    const upiPartialPayload = await generateUpiPayload({
+      orderNumber: orderNumberPartial,
+      amountMinor: advanceMinor,
+      note: `Advance ₹249 for ${orderNumberPartial}`,
+    });
+
+    assert(upiPartialPayload.amountRupees === '249.00', 'Partial COD UPI payload encoded with exact advance amount of Rs 249.00');
+    assert(upiPartialPayload.upiUrl.includes('am=249.00'), 'UPI URI query string contains am=249.00');
+
+    const orderPartial = await prisma.order.create({
+      data: {
+        orderNumber: orderNumberPartial,
+        guestEmail: 'rohit@flirta.network',
+        guestPhone: '9811122233',
+        guestName: 'Rohit Verma',
+        status: 'PENDING',
+        subtotalMinor: 634700,
+        shippingMinor: 0,
+        totalMinor: 634700,
+        isPartialCod: true,
+        codBalanceMinor: balanceCodMinor,
+        notes: `Partial COD: ₹249 advance via UPI, ₹${(balanceCodMinor / 100).toFixed(2)} due on Cash on Delivery`,
+        shippingAddress: {
+          fullName: 'Rohit Verma',
+          addressLine1: 'Villa 12, Palm Meadows',
+          city: 'Hyderabad',
+          state: 'Telangana',
+          postalCode: '500081',
+          country: 'India',
+          phone: '9811122233',
+        },
+        items: {
+          create: [
+            {
+              productId: product!.id,
+              sku: product!.sku,
+              titleSnapshot: product!.title,
+              unitPriceMinor: 634700,
+              quantity: 1,
+              totalMinor: 634700,
+              imageSnapshot: '',
+            },
+          ],
+        },
+        payments: {
+          create: {
+            gateway: 'PARTIAL_COD',
+            gatewayOrderId: orderNumberPartial,
+            amountMinor: advanceMinor,
+            currency: 'INR',
+            status: 'PENDING',
+          },
+        },
+      },
+      include: { payments: true },
+    });
+
+    assert(orderPartial.isPartialCod === true, 'Order flagged as isPartialCod = true');
+    assert(orderPartial.codBalanceMinor === balanceCodMinor, `COD balance recorded as ₹${balanceCodMinor / 100} (${balanceCodMinor} paise)`);
+    assert(orderPartial.payments[0].gateway === 'PARTIAL_COD', 'Payment gateway recorded as PARTIAL_COD');
+    assert(orderPartial.payments[0].amountMinor === 24900, 'Payment amount set to ₹249 advance (24900 paise)');
+
+    // 6. Test Coupon Engine at Checkout
+    console.log('\n6. Testing Checkout Coupon Validation:');
     const coupon = await prisma.coupon.findUnique({ where: { code: 'LAUNCH10' } });
     assert(!!coupon && coupon.isActive, 'Coupon LAUNCH10 is active for checkout');
     const couponDiscount = Math.round((144800 * coupon!.discountValue) / 100);

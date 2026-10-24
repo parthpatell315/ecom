@@ -33,10 +33,12 @@ enum PaymentStatus {
 }
 
 enum PaymentGateway {
+  UPI
   RAZORPAY
   PAYU
   CASHFREE
   COD
+  PARTIAL_COD
 }
 
 enum DiscountType {
@@ -223,6 +225,8 @@ model Order {
   shippingMinor       Int            @default(0)
   taxMinor            Int            @default(0)
   totalMinor          Int
+  isPartialCod        Boolean        @default(false)
+  codBalanceMinor     Int            @default(0)
   couponCode          String?
   shippingAddress     Json           // Immutable snapshot of delivery address
   billingAddress      Json?          // Immutable snapshot of billing address

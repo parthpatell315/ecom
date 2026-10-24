@@ -11,6 +11,8 @@ import Image from 'next/image';
 function OrderSuccessContent() {
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get('orderNumber');
+  const utrParam = searchParams.get('utr');
+  const gatewayParam = searchParams.get('gateway');
 
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +52,9 @@ function OrderSuccessContent() {
         <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
           <CheckCircle2 className="w-8 h-8" />
         </div>
-        <span className="text-xs uppercase tracking-widest text-[#c5a059] font-medium">Order Confirmed & Paid</span>
+        <span className="text-xs uppercase tracking-widest text-[#c5a059] font-medium">
+          {order?.status === 'CONFIRMED' ? 'Order Confirmed & Verified' : 'Order Placed • Payment Submitted'}
+        </span>
         <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white mt-1">
           Thank you for your order.
         </h1>
@@ -58,12 +62,20 @@ function OrderSuccessContent() {
           Your commission is queued for studio print calibration and transit packaging.
         </p>
 
-        {orderNumber && (
-          <div className="mt-4 inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-neutral-100 dark:bg-neutral-900 text-xs font-mono font-medium text-neutral-800 dark:text-neutral-200 border border-black/5 dark:border-white/5">
-            <span>Order Reference:</span>
-            <span className="text-[#c5a059] font-bold">{orderNumber}</span>
-          </div>
-        )}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+          {orderNumber && (
+            <div className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-neutral-100 dark:bg-neutral-900 text-xs font-mono font-medium text-neutral-800 dark:text-neutral-200 border border-black/5 dark:border-white/5">
+              <span>Order Reference:</span>
+              <span className="text-[#c5a059] font-bold">{orderNumber}</span>
+            </div>
+          )}
+          {utrParam && (
+            <div className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-emerald-500/10 text-xs font-mono font-medium text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+              <span>UPI UTR:</span>
+              <span className="font-bold">{utrParam}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {order && (
@@ -128,10 +140,27 @@ function OrderSuccessContent() {
                 <span>Studio Delivery</span>
                 <span>{order.shippingMinor === 0 ? 'FREE' : formatCurrency(order.shippingMinor)}</span>
               </div>
-              <div className="flex justify-between text-sm font-bold text-neutral-900 dark:text-neutral-100 pt-2 border-t border-black/[0.06] dark:border-white/[0.08]">
-                <span>Total Paid</span>
-                <span>{formatCurrency(order.totalMinor)}</span>
-              </div>
+              {order.isPartialCod ? (
+                <>
+                  <div className="flex justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span>Advance Paid via UPI</span>
+                    <span>₹249.00</span>
+                  </div>
+                  <div className="flex justify-between text-xs font-semibold text-amber-600 dark:text-amber-400">
+                    <span>Balance Due on Cash on Delivery</span>
+                    <span>{formatCurrency(order.codBalanceMinor)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm font-bold text-neutral-900 dark:text-neutral-100 pt-2 border-t border-black/[0.06] dark:border-white/[0.08]">
+                    <span>Total Order Value</span>
+                    <span>{formatCurrency(order.totalMinor)}</span>
+                  </div>
+                </>
+              ) : (
+                <div className="flex justify-between text-sm font-bold text-neutral-900 dark:text-neutral-100 pt-2 border-t border-black/[0.06] dark:border-white/[0.08]">
+                  <span>Total Paid</span>
+                  <span>{formatCurrency(order.totalMinor)}</span>
+                </div>
+              )}
             </div>
           </div>
 

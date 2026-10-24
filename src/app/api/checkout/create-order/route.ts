@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { createRazorpayOrder } from '@/lib/razorpay';
-import { preparePayUCheckout } from '@/lib/payu';
+import { generateUpiPayload } from '@/lib/upi';
 import { cookies } from 'next/headers';
 import { DiscountType, PaymentGateway } from '@prisma/client';
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       shippingAddress,
       couponCode,
       notes,
-      paymentGateway = 'PAYU', // Defaults to PayU
+      paymentGateway = 'UPI', // Defaults to Direct Merchant UPI
     } = body;
 
     // 1. Basic validation
@@ -120,26 +120,29 @@ export async function POST(req: NextRequest) {
     const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
     const proto = req.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https');
     const detectedUrl = host ? `${proto}://${host}` : '';
-    const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || detectedUrl || 'http://localhost:3000';
+    const envUrl = process.env.NEXT_PUBLIC_APP_URL;
+    const appBaseUrl = (detectedUrl && !detectedUrl.includes('localhost:3000'))
+      ? detectedUrl
+      : (envUrl || detectedUrl || 'http://localhost:3000');
 
     // 7. Branch by Payment Gateway
-    if (paymentGateway === 'PAYU') {
-      const payuPayload = preparePayUCheckout(
-        {
-          txnid: orderNumber,
-          amountMinor: totalMinor,
-          productinfo: 'Order',
-          firstname: (name || 'Customer').trim().split(' ')[0],
-          email,
-          phone,
-        },
-        appBaseUrl
-      );
+    if (paymentGateway === 'PARTIAL_COD') {
+      const advanceMinor = 24900; // Rs. 249.00 advance via UPI
+      const codBalanceMinor = Math.max(0, totalMinor - advanceMinor);
+
+      const upiPayload = await generateUpiPayload({
+        orderNumber,
+        amountMinor: advanceMinor,
+        note: `Advance ₹249 for ${orderNumber}`,
+      });
+
+      const partialCodNotes = `Partial COD: ₹249 advance via UPI, ₹${(codBalanceMinor / 100).toFixed(2)} due on Cash on Delivery`;
+      const combinedNotes = notes ? `${notes} | ${partialCodNotes}` : partialCodNotes;
 
       const createdOrder = await prisma.order.create({
         data: {
           orderNumber,
-          userId: session?.userId || null,
+          ...(session?.userId ? { user: { connect: { id: session.userId } } } : {}),
           guestEmail: email,
           guestPhone: phone,
           guestName: name,
@@ -149,6 +152,82 @@ export async function POST(req: NextRequest) {
           shippingMinor,
           taxMinor: 0,
           totalMinor,
+          isPartialCod: true,
+          codBalanceMinor,
+          couponCode: validatedCoupon,
+          shippingAddress,
+          notes: combinedNotes,
+          items: {
+            create: cart.items.map((item) => {
+              const unitPrice = item.product.priceMinor + (item.variant?.priceAdjustmentMinor || 0);
+              return {
+                productId: item.productId,
+                variantId: item.variantId,
+                sku: item.variant?.sku || item.product.sku,
+                titleSnapshot: item.product.title,
+                variantNameSnapshot: item.variant?.name || null,
+                unitPriceMinor: unitPrice,
+                quantity: item.quantity,
+                totalMinor: unitPrice * item.quantity,
+                imageSnapshot: item.variant?.image || '',
+              };
+            }),
+          },
+          payments: {
+            create: {
+              gateway: 'PARTIAL_COD',
+              gatewayOrderId: orderNumber,
+              amountMinor: advanceMinor,
+              currency: 'INR',
+              status: 'PENDING',
+              rawPayload: {
+                isPartialCod: true,
+                advanceAmountMinor: advanceMinor,
+                codBalanceMinor,
+                totalOrderMinor: totalMinor,
+              },
+            },
+          },
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        gateway: 'PARTIAL_COD',
+        orderId: createdOrder.id,
+        orderNumber: createdOrder.orderNumber,
+        isPartialCod: true,
+        amountMinor: advanceMinor,
+        advanceAmountMinor: advanceMinor,
+        codBalanceMinor,
+        totalOrderMinor: totalMinor,
+        upi: upiPayload,
+        customerDetails: { name, email, phone },
+      });
+    }
+
+    if (paymentGateway === 'UPI') {
+      const upiPayload = await generateUpiPayload({
+        orderNumber,
+        amountMinor: totalMinor,
+        note: `Order ${orderNumber}`,
+      });
+
+      const createdOrder = await prisma.order.create({
+        data: {
+          orderNumber,
+          ...(session?.userId ? { user: { connect: { id: session.userId } } } : {}),
+          guestEmail: email,
+          guestPhone: phone,
+          guestName: name,
+          status: 'PENDING',
+          subtotalMinor,
+          discountMinor,
+          shippingMinor,
+          taxMinor: 0,
+          totalMinor,
+          isPartialCod: false,
+          codBalanceMinor: 0,
           couponCode: validatedCoupon,
           shippingAddress,
           notes: notes || null,
@@ -170,7 +249,7 @@ export async function POST(req: NextRequest) {
           },
           payments: {
             create: {
-              gateway: 'PAYU',
+              gateway: 'UPI',
               gatewayOrderId: orderNumber,
               amountMinor: totalMinor,
               currency: 'INR',
@@ -182,11 +261,14 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        gateway: 'PAYU',
+        gateway: 'UPI',
         orderId: createdOrder.id,
         orderNumber: createdOrder.orderNumber,
+        isPartialCod: false,
         amountMinor: totalMinor,
-        payu: payuPayload,
+        codBalanceMinor: 0,
+        totalOrderMinor: totalMinor,
+        upi: upiPayload,
         customerDetails: { name, email, phone },
       });
     }
@@ -197,7 +279,7 @@ export async function POST(req: NextRequest) {
         const ord = await tx.order.create({
           data: {
             orderNumber,
-            userId: session?.userId || null,
+            ...(session?.userId ? { user: { connect: { id: session.userId } } } : {}),
             guestEmail: email,
             guestPhone: phone,
             guestName: name,
@@ -279,7 +361,7 @@ export async function POST(req: NextRequest) {
     const createdOrder = await prisma.order.create({
       data: {
         orderNumber,
-        userId: session?.userId || null,
+        ...(session?.userId ? { user: { connect: { id: session.userId } } } : {}),
         guestEmail: email,
         guestPhone: phone,
         guestName: name,

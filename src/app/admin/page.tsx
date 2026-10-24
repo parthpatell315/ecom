@@ -431,7 +431,12 @@ export default function AdminPage() {
                           )}
                         </td>
                         <td className="py-3 font-bold text-neutral-900 dark:text-neutral-100">
-                          {formatCurrency(ord.totalMinor)}
+                          <div>{formatCurrency(ord.totalMinor)}</div>
+                          {ord.isPartialCod && (
+                            <span className="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-400">
+                              Partial COD (₹249 Adv + {formatCurrency(ord.codBalanceMinor)} Due)
+                            </span>
+                          )}
                         </td>
                         <td className="py-3 text-right">
                           <button
@@ -540,6 +545,68 @@ export default function AdminPage() {
             </div>
 
             <form onSubmit={handleSaveOrderUpdate} className="space-y-4">
+              {/* Payment Details & Quick Approve */}
+              {editingOrder.payments?.length > 0 && (
+                <div className="p-3.5 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-neutral-800 dark:text-neutral-200">
+                      Gateway: {editingOrder.payments[0].gateway}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                        editingOrder.payments[0].status === 'SUCCESS'
+                          ? 'bg-emerald-500/10 text-emerald-600'
+                          : 'bg-amber-500/10 text-amber-600'
+                      }`}
+                    >
+                      {editingOrder.payments[0].status}
+                    </span>
+                  </div>
+                  {editingOrder.payments[0].gatewayPaymentId && (
+                    <div className="text-[11px] font-mono text-neutral-600 dark:text-neutral-400">
+                      <span>UTR / Reference: </span>
+                      <strong className="text-neutral-900 dark:text-white select-all">
+                        {editingOrder.payments[0].gatewayPaymentId}
+                      </strong>
+                    </div>
+                  )}
+                  {editingOrder.isPartialCod && (
+                    <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-900 dark:text-amber-200">
+                      <span className="font-bold">Partial COD Order:</span> ₹249.00 advance via UPI • Collect <strong className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">{formatCurrency(editingOrder.codBalanceMinor)}</strong> in Cash on Delivery from customer.
+                    </div>
+                  )}
+                  {editingOrder.payments[0].status === 'PENDING' && (
+                    <button
+                      type="button"
+                      disabled={isUpdatingOrder}
+                      onClick={async () => {
+                        setIsUpdatingOrder(true);
+                        try {
+                          await fetch(`/api/admin/orders/${editingOrder.id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              status: 'CONFIRMED',
+                              paymentStatus: 'SUCCESS',
+                            }),
+                          });
+                          setEditingOrder(null);
+                          await fetchAdminData();
+                        } catch (err) {
+                          console.error(err);
+                        } finally {
+                          setIsUpdatingOrder(false);
+                        }
+                      }}
+                      className="w-full mt-1 py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Verify & Approve UPI Payment</span>
+                    </button>
+                  )}
+                </div>
+              )}
+
               <div>
                 <label className="block text-[11px] font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Lifecycle Status

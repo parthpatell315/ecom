@@ -32,7 +32,7 @@ export function Navbar() {
             <span className="text-[#9CA3AF]">•</span>
             <span>7-day replacement if damaged</span>
             <span className="text-[#9CA3AF]">•</span>
-            <span>100% Secure PayU Checkout</span>
+            <span>100% Secure Instant UPI Checkout</span>
             <span className="text-[#9CA3AF]">•</span>
             <span>Made in India with 0.12mm precision</span>
             <span className="text-[#9CA3AF]">•</span>
@@ -44,7 +44,7 @@ export function Navbar() {
             <span className="text-[#9CA3AF]">•</span>
             <span>7-day replacement if damaged</span>
             <span className="text-[#9CA3AF]">•</span>
-            <span>100% Secure PayU Checkout</span>
+            <span>100% Secure Instant UPI Checkout</span>
             <span className="text-[#9CA3AF]">•</span>
             <span>Made in India with 0.12mm precision</span>
             <span className="text-[#9CA3AF]">•</span>

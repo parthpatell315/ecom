@@ -13,7 +13,7 @@ export function Footer() {
               flirta<span className="text-[#E61E2A]">.network</span>
             </h4>
             <p className="text-xs text-[#A89F91] leading-relaxed max-w-xs">
-              Precision 3D printed lifestyle products engineered for modern desks and sanctuary spaces. Handcrafted in India with 0.12mm layer precision. 100% Secure PayU checkout available India-wide.
+              Precision 3D printed lifestyle products engineered for modern desks and sanctuary spaces. Handcrafted in India with 0.12mm layer precision. 100% Secure Instant UPI checkout available India-wide.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <a
@@ -123,7 +123,7 @@ export function Footer() {
               </li>
               <li>
                 <span className="cursor-default hover:text-white transition-colors">
-                  100% Encrypted PayU Checkout
+                  100% Encrypted Instant UPI Checkout
                 </span>
               </li>
             </ul>

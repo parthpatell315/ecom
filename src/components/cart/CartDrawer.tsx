@@ -276,7 +276,7 @@ export function CartDrawer() {
             {/* Trust badge */}
             <div className="flex items-center justify-center gap-1.5 text-[11px] text-[#8C827A] pt-1">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>100% Encrypted PayU India Checkout</span>
+              <span>100% Secure Instant UPI Checkout</span>
             </div>
           </div>
         )}

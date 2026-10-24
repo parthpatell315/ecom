@@ -12,14 +12,25 @@ export async function PATCH(
     const { id } = await params;
     const body = await req.json();
 
-    const { status, trackingNumber, trackingCarrier, trackingUrl, notes } = body;
+    const { status, trackingNumber, trackingCarrier, trackingUrl, notes, paymentStatus } = body;
 
     const existingOrder = await prisma.order.findUnique({
       where: { id },
+      include: { payments: true },
     });
 
     if (!existingOrder) {
       return NextResponse.json({ success: false, error: 'Order not found' }, { status: 404 });
+    }
+
+    if (paymentStatus) {
+      await prisma.payment.updateMany({
+        where: { orderId: id },
+        data: {
+          status: paymentStatus,
+          verifiedAt: paymentStatus === 'SUCCESS' ? new Date() : null,
+        },
+      });
     }
 
     const updated = await prisma.order.update({
@@ -30,6 +41,10 @@ export async function PATCH(
         ...(trackingCarrier !== undefined ? { trackingCarrier } : {}),
         ...(trackingUrl !== undefined ? { trackingUrl } : {}),
         ...(notes !== undefined ? { notes } : {}),
+      },
+      include: {
+        items: true,
+        payments: true,
       },
     });
 

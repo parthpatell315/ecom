@@ -7,7 +7,7 @@
 import { PrismaClient } from '@prisma/client';
 import { formatCurrency } from '../src/lib/currency';
 import { verifyPaymentSignature, verifyWebhookSignature } from '../src/lib/razorpay';
-import { generatePayURequestHash, verifyPayUResponseHash, preparePayUCheckout } from '../src/lib/payu';
+import { generateUpiPayload, generateUpiUrl, isValidUtrNumber } from '../src/lib/upi';
 import { hashPassword, verifyPassword, signToken, verifyToken } from '../src/lib/auth';
 import crypto from 'crypto';
 
@@ -107,71 +107,31 @@ async function runTests() {
       'Invalid Webhook signature rejected'
     );
 
-    // 5. PayU India SHA-512 Cryptographic Engine
-    console.log('\n5. Testing PayU India SHA-512 Cryptographic Engine:');
-    const payuKey = 'R1a2pd';
-    const payuSalt = 'yu2jdeAMzR2hlbx8lnMlJcgECB2enbj3';
-    const testTxnId = 'FL-2026-TEST1';
+    // 5. Direct Sovereign UPI Gateway Engine
+    console.log('\n5. Testing Direct Sovereign UPI Gateway Engine:');
+    const testUpiId = 'iloothub@upi';
+    const testPayeeName = 'iloot Hub';
+    const testOrderNumber = 'FL-2026-TEST1';
     const testAmountStr = '849.00';
-    const testProductInfo = 'flirta.network Order FL-2026-TEST1';
-    const testFirstName = 'Arjun';
-    const testEmail = 'arjun@flirta.network';
 
-    const reqHash = generatePayURequestHash(
-      testTxnId,
-      testAmountStr,
-      testProductInfo,
-      testFirstName,
-      testEmail,
-      testTxnId,
-      '',
-      '',
-      '',
-      '',
-      payuKey,
-      payuSalt
-    );
-    assert(typeof reqHash === 'string' && reqHash.length === 128, 'PayU SHA-512 request hash generated (128 hex chars)');
+    const upiUrl = generateUpiUrl(testUpiId, testPayeeName, testAmountStr, testOrderNumber);
+    assert(upiUrl.startsWith('upi://pay?'), 'UPI URL uses standard upi://pay scheme');
+    assert(upiUrl.includes(`pa=${testUpiId}`), 'UPI URL contains correct payee VPA (pa)');
+    assert(upiUrl.includes(`am=${testAmountStr}`), 'UPI URL contains exact amount in rupees (am)');
+    assert(upiUrl.includes('cu=INR'), 'UPI URL currency specified as INR');
 
-    // Simulate PayU success callback payload
-    const mockPayUResponse = {
-      status: 'success',
-      txnid: testTxnId,
-      amount: testAmountStr,
-      productinfo: testProductInfo,
-      firstname: testFirstName,
-      email: testEmail,
-      udf1: testTxnId,
-      udf2: '',
-      udf3: '',
-      udf4: '',
-      udf5: '',
-      key: payuKey,
-      hash: '',
-    };
-    const reverseHashSeq = `${payuSalt}|success||||||||||${testTxnId}|${testEmail}|${testFirstName}|${testProductInfo}|${testAmountStr}|${testTxnId}|${payuKey}`;
-    mockPayUResponse.hash = crypto.createHash('sha512').update(reverseHashSeq).digest('hex').toLowerCase();
+    // Test UTR Validation
+    assert(isValidUtrNumber('423819284712') === true, 'Standard 12-digit UPI UTR accepted');
+    assert(isValidUtrNumber('BARB24098172635') === true, 'Bank reference ID accepted');
+    assert(isValidUtrNumber('123') === false, 'Too-short UTR strictly rejected');
+    assert(isValidUtrNumber('') === false, 'Empty UTR rejected');
 
-    assert(verifyPayUResponseHash(mockPayUResponse, payuSalt, payuKey) === true, 'PayU genuine reverse callback hash successfully verified');
-
-    const tamperedResponse = { ...mockPayUResponse, amount: '1.00' };
-    assert(verifyPayUResponseHash(tamperedResponse, payuSalt, payuKey) === false, 'PayU tampered response hash strictly rejected');
-
-    const prepared = preparePayUCheckout(
-      {
-        txnid: testTxnId,
-        amountMinor: 84900,
-        productinfo: testProductInfo,
-        firstname: testFirstName,
-        email: testEmail,
-        phone: '9820012345',
-        udf1: testTxnId,
-      },
-      'http://localhost:3000'
-    );
-    assert(prepared.actionUrl.includes('payu.in'), 'PayU action endpoint correctly resolved');
-    assert(prepared.params.key === payuKey, 'PayU merchant key matches');
-    assert(prepared.params.amount === '849.00', 'PayU amount in rupees correctly formatted to 2 decimals');
+    const upiPayload = await generateUpiPayload({
+      orderNumber: testOrderNumber,
+      amountMinor: 84900,
+    });
+    assert(!!upiPayload.qrCodeDataUrl && upiPayload.qrCodeDataUrl.startsWith('data:image/png;base64,'), 'Dynamic vector QR code generated successfully');
+    assert(upiPayload.amountRupees === '849.00', 'Minor units correctly converted to ₹849.00');
 
     // 6. Authentication & Security
     console.log('\n6. Testing Authentication & Session Security:');

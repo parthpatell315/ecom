@@ -17,7 +17,10 @@ import {
   Loader2,
   CheckCircle2,
   Sparkles,
+  Smartphone,
+  IndianRupee,
 } from 'lucide-react';
+import { UpiPaymentModal } from '@/components/checkout/UpiPaymentModal';
 
 function CheckoutContent() {
   const router = useRouter();
@@ -59,8 +62,17 @@ function CheckoutContent() {
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
 
   // Order & Payment state
+  const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'PARTIAL_COD'>('UPI');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [activeUpiOrder, setActiveUpiOrder] = useState<{
+    orderNumber: string;
+    amountMinor: number;
+    totalOrderMinor?: number;
+    isPartialCod?: boolean;
+    codBalanceMinor?: number;
+    upiPayload: any;
+  } | null>(null);
 
   useEffect(() => {
     if (initialCoupon && subtotalMinor > 0) {
@@ -138,7 +150,7 @@ function CheckoutContent() {
           },
           couponCode: appliedCoupon?.code || null,
           notes: formData.notes,
-          paymentGateway: 'PAYU',
+          paymentGateway: paymentMethod,
         }),
       });
 
@@ -149,23 +161,16 @@ function CheckoutContent() {
         return;
       }
 
-      // Auto-submit form directly to PayU secure checkout
-      if (data.payu) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = data.payu.actionUrl;
-        form.style.display = 'none';
-
-        Object.entries(data.payu.params).forEach(([key, val]) => {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          input.value = String(val);
-          form.appendChild(input);
+      // Open Direct UPI QR & Payment Modal
+      if (data.upi) {
+        setActiveUpiOrder({
+          orderNumber: data.orderNumber,
+          amountMinor: data.amountMinor,
+          totalOrderMinor: data.totalOrderMinor,
+          isPartialCod: data.isPartialCod,
+          codBalanceMinor: data.codBalanceMinor,
+          upiPayload: data.upi,
         });
-
-        document.body.appendChild(form);
-        form.submit();
         return;
       }
 
@@ -380,44 +385,115 @@ function CheckoutContent() {
                 </div>
               </div>
 
-              {/* 3. Payment Method: PayU Gateway Exclusive */}
+              {/* 3. Payment Method: Choose between Full UPI or Partial COD */}
               <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-xs">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-bold text-gray-900">
-                    3. Payment Method
+                    3. Select Payment Option
                   </h3>
                   <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>256-Bit SSL Encrypted</span>
+                    <span>Exact Amount Dynamic QR</span>
                   </span>
                 </div>
 
-                {/* Exclusive PayU Gateway Card */}
-                <div className="p-4.5 rounded-xl border-2 border-[#222225] bg-[#FAF8F5]">
-                  <div className="flex flex-wrap items-center justify-between gap-1 mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-gray-900">
-                        PayU Gateway
-                      </span>
-                      <span className="text-[10px] uppercase font-bold tracking-wider bg-[#00AA4F] text-white px-2 py-0.5 rounded">
-                        Official Live Gateway
-                      </span>
+                <div className="space-y-3">
+                  {/* Option 1: Full Payment via UPI */}
+                  <label
+                    onClick={() => setPaymentMethod('UPI')}
+                    className={`block p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                      paymentMethod === 'UPI'
+                        ? 'border-[#D9232D] bg-[#FFF8F8]/60 shadow-xs'
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="UPI"
+                        checked={paymentMethod === 'UPI'}
+                        onChange={() => setPaymentMethod('UPI')}
+                        className="mt-1 text-[#D9232D] focus:ring-[#D9232D]"
+                      />
+                      <div className="flex-1">
+                        <div className="flex flex-wrap items-center justify-between gap-1 mb-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-gray-900">
+                              Full Instant UPI
+                            </span>
+                            <span className="text-[10px] uppercase font-bold tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">
+                              Instant Dispatch
+                            </span>
+                          </div>
+                          <span className="text-sm font-extrabold text-[#D9232D]">
+                            {formatCurrency(finalTotalMinor)}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-600 leading-relaxed">
+                          Pay 100% via dynamic exact amount QR code. Fast verification, 0% platform fee, priority studio dispatch within 24 hours.
+                        </p>
+                        <div className="mt-2 text-[11px] text-gray-500 flex items-center gap-2">
+                          <Smartphone className="w-3.5 h-3.5 text-gray-400" />
+                          <span>Supports GPay, PhonePe, Paytm, CRED, BHIM & all banking apps</span>
+                        </div>
+                      </div>
                     </div>
-                    <span className="text-xs text-gray-500 font-medium">
-                      UPI • Cards • NetBanking
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-600 leading-relaxed">
-                    Instant zero-fee payment via Google Pay, PhonePe, Paytm, BHIM UPI, all Visa / Mastercard / RuPay cards, and 50+ NetBanking options.
-                  </p>
-                  <div className="mt-3 pt-3 border-t border-gray-200/80 flex items-center gap-2 text-[11px] text-gray-500">
-                    <Lock className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                    <span>Secured with PayU India PCI-DSS Level 1 bank-grade encryption</span>
-                  </div>
+                  </label>
+
+                  {/* Option 2: Partial COD (₹249 Advance via UPI) */}
+                  <label
+                    onClick={() => setPaymentMethod('PARTIAL_COD')}
+                    className={`block p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                      paymentMethod === 'PARTIAL_COD'
+                        ? 'border-[#D9232D] bg-[#FFF8F8]/60 shadow-xs'
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="PARTIAL_COD"
+                        checked={paymentMethod === 'PARTIAL_COD'}
+                        onChange={() => setPaymentMethod('PARTIAL_COD')}
+                        className="mt-1 text-[#D9232D] focus:ring-[#D9232D]"
+                      />
+                      <div className="flex-1">
+                        <div className="flex flex-wrap items-center justify-between gap-1 mb-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-gray-900">
+                              Partial COD (Cash on Delivery)
+                            </span>
+                            <span className="text-[10px] uppercase font-bold tracking-wider bg-amber-600 text-white px-2 py-0.5 rounded">
+                              Pay ₹249 Advance
+                            </span>
+                          </div>
+                          <span className="text-sm font-extrabold text-[#D9232D]">
+                            ₹249 Now
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-600 leading-relaxed">
+                          Pay ₹249 advance now via exact amount UPI QR to confirm your order. Pay the remaining balance of <strong className="text-gray-900">{formatCurrency(Math.max(0, finalTotalMinor - 24900))}</strong> in cash or UPI when delivered at your doorstep.
+                        </p>
+                        <div className="mt-2.5 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 flex flex-wrap items-center justify-between text-[11px] text-amber-900 font-medium">
+                          <span>Advance Payable Now: <strong className="font-bold text-[#D9232D]">₹249.00</strong></span>
+                          <span>Balance on Delivery: <strong className="font-bold text-gray-900">{formatCurrency(Math.max(0, finalTotalMinor - 24900))}</strong></span>
+                        </div>
+                      </div>
+                    </div>
+                  </label>
                 </div>
               </div>
 
               {/* Submit Action in Brand Red */}
+              {checkoutError && (
+                <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs flex items-center gap-2 animate-shake">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <span>{checkoutError}</span>
+                </div>
+              )}
+
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -426,12 +502,17 @@ function CheckoutContent() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Redirecting to PayU India...</span>
+                    <span>Generating Exact Amount UPI QR...</span>
+                  </>
+                ) : paymentMethod === 'PARTIAL_COD' ? (
+                  <>
+                    <Lock className="w-4 h-4" />
+                    <span>Pay ₹249 Advance via UPI (Balance {formatCurrency(Math.max(0, finalTotalMinor - 24900))} on COD)</span>
                   </>
                 ) : (
                   <>
                     <Lock className="w-4 h-4" />
-                    <span>Pay with PayU ({formatCurrency(finalTotalMinor)})</span>
+                    <span>Proceed to UPI Payment ({formatCurrency(finalTotalMinor)})</span>
                   </>
                 )}
               </button>
@@ -535,7 +616,7 @@ function CheckoutContent() {
               <div className="p-4 rounded-2xl bg-[#FFF5F6] border border-[#D9232D]/15 space-y-2 text-xs text-gray-600">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-[#D9232D] flex-shrink-0" />
-                  <span>Verified PayU Gateway • 256-bit Bank Grade Security</span>
+                  <span>0% Fee Direct UPI • 256-bit Bank Grade Security</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Truck className="w-4 h-4 text-[#D9232D] flex-shrink-0" />
@@ -546,6 +627,19 @@ function CheckoutContent() {
           </div>
         </div>
       </div>
+
+      {/* Direct UPI Modal Overlay */}
+      {activeUpiOrder && (
+        <UpiPaymentModal
+          orderNumber={activeUpiOrder.orderNumber}
+          amountMinor={activeUpiOrder.amountMinor}
+          totalOrderMinor={activeUpiOrder.totalOrderMinor}
+          isPartialCod={activeUpiOrder.isPartialCod}
+          codBalanceMinor={activeUpiOrder.codBalanceMinor}
+          upiPayload={activeUpiOrder.upiPayload}
+          onClose={() => setActiveUpiOrder(null)}
+        />
+      )}
     </div>
   );
 }
