@@ -94,6 +94,10 @@ export async function getCachedProducts(forceRefresh = false): Promise<CachedPro
           variants: {
             orderBy: { name: 'asc' },
           },
+          reviews: {
+            where: { isApproved: true },
+            orderBy: { createdAt: 'desc' },
+          },
         },
         orderBy: { reviewCount: 'desc' },
       });
@@ -188,10 +192,11 @@ export async function getFlashSaleProducts(): Promise<CachedProduct[]> {
   const products = await getCachedProducts();
   const flashSlugs = [
     'marvel-iron-man-arc-reactor-wireless-charger',
-    'gta-6-vi-lightbox',
+    'levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light',
   ];
   return flashSlugs
     .map((slug) => products.find((p) => p.slug === slug))
     .filter((p): p is CachedProduct => Boolean(p));
 }
+
 

@@ -69,14 +69,7 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
   }, []);
 
   const arcReactor = products.find((p) => p.slug === 'marvel-iron-man-arc-reactor-wireless-charger') || products[0];
-  const gtaLamp = products.find((p) => p.slug === 'gta-6-vi-lightbox') || products[1];
-
-  // Initialize default variant for GTA
-  useEffect(() => {
-    if (gtaLamp && gtaLamp.variants && gtaLamp.variants.length > 0 && !selectedGtaVariantId) {
-      setSelectedGtaVariantId(gtaLamp.variants[0].id);
-    }
-  }, [gtaLamp, selectedGtaVariantId]);
+  const levitatingLamp = products.find((p) => p.slug === 'levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light') || products[1];
 
   const handleClaimDeal = (product: FlashSaleProduct, variantId?: string) => {
     const selectedVariant = product.variants?.find((v) => v.id === variantId) || product.variants?.[0];
@@ -100,7 +93,7 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
     <section className="relative py-12 md:py-16 bg-[#18181B] text-white overflow-hidden border-y border-[#27272A]" aria-label="12-Hour Flash Sale">
       {/* Background Ambience Glow */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#E61E2A]/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-[1240px] mx-auto px-4 sm:px-6 relative z-10">
         {/* Header Strip with Live Countdown Timer */}
@@ -116,13 +109,13 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
             </div>
 
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-white flex items-center gap-3">
-              Arc Reactor & GTA Lamp Drop
+              Arc Reactor & Levitating Lamp Drop
               <span className="hidden sm:inline-block text-xs font-medium bg-[#E61E2A] text-white px-2.5 py-1 rounded-md uppercase tracking-wider">
                 Only 12 Hours
               </span>
             </h2>
             <p className="text-xs sm:text-sm text-[#A1A1AA] mt-1.5 max-w-xl font-normal leading-relaxed">
-              Studio direct flash pricing. Claim our benchmark illuminated ambient lamps at <strong className="text-white">flat ₹999</strong> with free Pan-India delivery. Ends when the timer hits zero.
+              Studio direct flash pricing. Claim our benchmark illuminated ambient desk pieces at <strong className="text-white">flat ₹999</strong> with free Pan-India delivery & 7-day replacement guarantee.
             </p>
           </div>
 
@@ -202,8 +195,8 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
                     className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute bottom-3 left-3 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-medium text-white flex items-center gap-1.5 border border-white/10">
-                    <Sparkles className="w-3 h-3 text-amber-400" />
-                    <span>0.12mm Precision 3D Printed</span>
+                    <Sparkles className="w-3 h-3 text-cyan-400" />
+                    <span>0.12mm Precision 3D Printed • Breathing Core</span>
                   </div>
                 </Link>
 
@@ -252,106 +245,80 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
             </div>
           )}
 
-          {/* Card 2: GTA 6 (VI) Neon Lightbox Ambient Lamp */}
-          {gtaLamp && (
-            <div className="bg-[#202024] rounded-2xl border border-[#3F3F46] hover:border-[#E61E2A]/50 transition-all duration-300 p-5 sm:p-6 flex flex-col justify-between group shadow-xl">
+          {/* Card 2: Levitating Money Stack Lamp */}
+          {levitatingLamp && (
+            <div className="bg-[#202024] rounded-2xl border border-[#3F3F46] hover:border-emerald-500/50 transition-all duration-300 p-5 sm:p-6 flex flex-col justify-between group shadow-xl">
               <div>
                 <div className="flex items-start justify-between gap-3 mb-4">
                   <div>
-                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase bg-purple-500/15 border border-purple-500/30 text-purple-300 px-2.5 py-1 rounded-md">
-                      <Flame className="w-3 h-3 fill-current text-purple-400" />
-                      55% OFF FLASH DEAL
+                    <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-md">
+                      <Flame className="w-3 h-3 fill-current text-emerald-400" />
+                      60% OFF FLASH DEAL
                     </span>
-                    <h3 className="text-lg sm:text-xl font-semibold text-white mt-2 group-hover:text-purple-300 transition-colors">
-                      {gtaLamp.title}
+                    <h3 className="text-lg sm:text-xl font-semibold text-white mt-2 group-hover:text-emerald-400 transition-colors">
+                      {levitatingLamp.title}
                     </h3>
                     <p className="text-xs text-[#A1A1AA] mt-0.5 line-clamp-1">
-                      Vice City Neon Glow • Dual-Tone Diffusion • 4 Glow Colors Available
+                      Magnetic Zero-Gravity Suspension • 360° Free Float • RGB Mood Lighting Base
                     </p>
                   </div>
 
                   <div className="text-right shrink-0">
-                    <div className="text-2xl sm:text-[26px] font-bold text-purple-400 tracking-tight">
-                      {formatPriceRs(gtaLamp.priceMinor)}
+                    <div className="text-2xl sm:text-[26px] font-bold text-emerald-400 tracking-tight">
+                      {formatPriceRs(levitatingLamp.priceMinor)}
                     </div>
-                    {gtaLamp.originalPriceMinor && (
+                    {levitatingLamp.originalPriceMinor && (
                       <div className="text-xs text-[#71717A] line-through">
-                        {formatPriceRs(gtaLamp.originalPriceMinor)}
+                        {formatPriceRs(levitatingLamp.originalPriceMinor)}
                       </div>
                     )}
                   </div>
                 </div>
 
                 {/* Product Media */}
-                <Link href={`/product/${gtaLamp.slug}`} className="block relative aspect-[16/10] sm:aspect-[16/9] w-full rounded-xl overflow-hidden bg-[#121214] border border-[#27272A] mb-4">
+                <Link href={`/product/${levitatingLamp.slug}`} className="block relative aspect-[16/10] sm:aspect-[16/9] w-full rounded-xl overflow-hidden bg-[#121214] border border-[#27272A] mb-4">
                   <Image
                     src={
-                      gtaLamp.variants?.find((v) => v.id === selectedGtaVariantId)?.image ||
-                      gtaLamp.images[0]?.url ||
-                      'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/2023-12-06_55e9bad1b1ffb.webp?v=1788513602'
+                      levitatingLamp.images[0]?.url ||
+                      'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_1588xN.8339847604_sfk4.webp?v=1789717192'
                     }
-                    alt={gtaLamp.title}
+                    alt={levitatingLamp.title}
                     fill
                     sizes="(max-width: 1024px) 100vw, 600px"
                     className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute bottom-3 left-3 bg-black/80 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-medium text-white flex items-center gap-1.5 border border-white/10">
-                    <Sparkles className="w-3 h-3 text-purple-400" />
-                    <span>Vice City Ambient Aura</span>
+                    <Sparkles className="w-3 h-3 text-emerald-400" />
+                    <span>Active Magnetic Zero-Gravity Levitation</span>
                   </div>
                 </Link>
 
-                {/* Color Glow Selector Pills */}
-                {gtaLamp.variants && gtaLamp.variants.length > 0 && (
-                  <div className="mb-4">
-                    <span className="block text-[11px] font-medium text-[#A1A1AA] mb-2 uppercase tracking-wider">
-                      Select Ambient Color:
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {gtaLamp.variants.map((v) => {
-                        const isSelected = v.id === selectedGtaVariantId;
-                        return (
-                          <button
-                            key={v.id}
-                            type="button"
-                            onClick={() => setSelectedGtaVariantId(v.id)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer touch-manipulation flex items-center gap-1.5 ${
-                              isSelected
-                                ? 'bg-purple-600 text-white border-purple-400 shadow-sm'
-                                : 'bg-[#18181B] text-[#D4D4D8] border-[#3F3F46] hover:border-purple-400/50'
-                            }`}
-                          >
-                            <span
-                              className="w-2.5 h-2.5 rounded-full border border-white/20"
-                              style={{
-                                backgroundColor:
-                                  v.name.toLowerCase() === 'pink'
-                                    ? '#EC4899'
-                                    : v.name.toLowerCase() === 'blue'
-                                    ? '#3B82F6'
-                                    : v.name.toLowerCase() === 'red'
-                                    ? '#EF4444'
-                                    : '#A855F7',
-                              }}
-                            />
-                            <span>{v.name}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
+                {/* Key Highlights Pill Box */}
+                <div className="mb-4 grid grid-cols-2 gap-2 text-[11px] font-medium text-[#D4D4D8]">
+                  <div className="bg-[#18181B] p-2 rounded-lg border border-[#27272A] flex items-center gap-1.5">
+                    <span className="text-emerald-400 font-bold">✓</span> 15-20mm Mid-Air Float
                   </div>
-                )}
+                  <div className="bg-[#18181B] p-2 rounded-lg border border-[#27272A] flex items-center gap-1.5">
+                    <span className="text-emerald-400 font-bold">✓</span> Continuous 360° Spin
+                  </div>
+                  <div className="bg-[#18181B] p-2 rounded-lg border border-[#27272A] flex items-center gap-1.5">
+                    <span className="text-emerald-400 font-bold">✓</span> Alignment Tool Included
+                  </div>
+                  <div className="bg-[#18181B] p-2 rounded-lg border border-[#27272A] flex items-center gap-1.5">
+                    <span className="text-emerald-400 font-bold">✓</span> 12V Power Adapter In Box
+                  </div>
+                </div>
 
                 {/* Urgency Progress Bar */}
                 <div className="mb-5 bg-[#18181B] p-3 rounded-xl border border-[#27272A]">
                   <div className="flex items-center justify-between text-xs mb-1.5 font-medium">
                     <span className="text-[#A1A1AA] flex items-center gap-1.5">
-                      <Flame className="w-3.5 h-3.5 text-purple-400" /> Only 6 units remaining at ₹999
+                      <Flame className="w-3.5 h-3.5 text-emerald-400" /> Only 5 units remaining at ₹999
                     </span>
-                    <span className="text-[11px] font-semibold text-purple-400">76% Claimed</span>
+                    <span className="text-[11px] font-semibold text-emerald-400">82% Claimed</span>
                   </div>
                   <div className="w-full h-1.5 bg-[#27272A] rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 w-[76%] rounded-full" />
+                    <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 w-[82%] rounded-full" />
                   </div>
                 </div>
               </div>
@@ -360,10 +327,10 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
               <div className="flex items-center gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => handleClaimDeal(gtaLamp, selectedGtaVariantId || undefined)}
-                  className="flex-1 h-12 rounded-xl text-xs sm:text-sm font-semibold uppercase tracking-wider bg-purple-600 hover:bg-purple-500 text-white active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer touch-manipulation select-none"
+                  onClick={() => handleClaimDeal(levitatingLamp)}
+                  className="flex-1 h-12 rounded-xl text-xs sm:text-sm font-semibold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer touch-manipulation select-none"
                 >
-                  {addedSlug === gtaLamp.slug ? (
+                  {addedSlug === levitatingLamp.slug ? (
                     <>
                       <Check className="w-4 h-4 text-white" />
                       <span>Claimed at ₹999! Added to Bag</span>
@@ -371,15 +338,15 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
                   ) : (
                     <>
                       <Zap className="w-4 h-4 fill-current" />
-                      <span>Claim GTA Lamp at ₹999</span>
+                      <span>Claim Levitating Lamp at ₹999</span>
                     </>
                   )}
                 </button>
 
                 <Link
-                  href={`/product/${gtaLamp.slug}`}
+                  href={`/product/${levitatingLamp.slug}`}
                   className="h-12 px-4 rounded-xl text-xs font-medium bg-[#27272A] text-white hover:bg-[#3F3F46] active:scale-95 transition-all flex items-center justify-center shrink-0 border border-[#3F3F46]"
-                  aria-label="View GTA Lamp Details"
+                  aria-label="View Levitating Lamp Details"
                 >
                   <ArrowRight className="w-4 h-4" />
                 </Link>

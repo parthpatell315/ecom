@@ -94,41 +94,42 @@ export default async function HomePage() {
             {/* Right Column: Featured Studio Stage Card */}
             <div className="lg:col-span-5">
               <div className="bg-white rounded-[24px] border border-[#ECE7DE] overflow-hidden shadow-luxury shadow-luxury-hover transition-all duration-300 group">
-                <Link href="/product/marvel-inspired-led-lightbox" className="block">
+                <Link href="/product/marvel-iron-man-arc-reactor-wireless-charger" className="block">
                   {/* Media Frame (Clean 16:10 Horizontal Aspect Ratio) */}
-                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#F5F2EB]">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#18181B]">
                     <Image
-                      src="https://cdn.shopify.com/s/files/1/0992/7816/0178/files/ChatGPT_Image_Aug_24_2026_06_52_17_PM.png?v=1787577750"
-                      alt="Marvel-Inspired LED Lightbox"
+                      src="https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_fullxfull.8281487299_9aq9.webp?v=1791795990"
+                      alt="Marvel Iron Man Arc Reactor – Ambient Core Desk Light"
                       fill
                       priority
                       className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                       sizes="(max-width: 1024px) 100vw, 500px"
                     />
-                    <div className="absolute top-3.5 left-3.5 bg-white/95 backdrop-blur-md text-[#222225] text-[10.5px] font-semibold tracking-wider uppercase px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm border border-[#E5E0D5]">
-                      <span className="w-2 h-2 rounded-full bg-[#E61E2A]" />
-                      <span>Studio Bestseller</span>
+                    <div className="absolute top-3.5 left-3.5 bg-black/85 backdrop-blur-md text-white text-[10.5px] font-semibold tracking-wider uppercase px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm border border-white/20">
+                      <span className="w-2 h-2 rounded-full bg-[#E61E2A] animate-pulse" />
+                      <span>⚡ 12H Drop • ₹999</span>
                     </div>
                   </div>
 
                   {/* Metadata Bar */}
                   <div className="p-5 flex items-start justify-between gap-4 border-t border-[#F5F2EB] bg-white">
                     <div>
-                      <span className="text-[10px] font-semibold tracking-widest uppercase text-[#B45309] block">
-                        ICONIC LIGHTBOX
+                      <span className="text-[10px] font-semibold tracking-widest uppercase text-[#E61E2A] block font-bold">
+                        FLAGSHIP ILLUMINATION • 60% OFF
                       </span>
-                      <h3 className="text-sm sm:text-[15px] font-medium text-[#222225] group-hover:text-[#E61E2A] transition-colors mt-0.5 line-clamp-1">
-                        Marvel-Inspired LED Lightbox – Premium Room Lighting
+                      <h3 className="text-sm sm:text-[15px] font-semibold text-[#222225] group-hover:text-[#E61E2A] transition-colors mt-0.5 line-clamp-1">
+                        Marvel Iron Man Arc Reactor – Ambient Desk Core
                       </h3>
                       <p className="text-xs text-[#5C554B] mt-0.5">
-                        Ambient cinematic glow • Precision illuminated display
+                        Breathing LED core • Weighted sanctuary stand • USB-C powered
                       </p>
                     </div>
 
                     <div className="text-right flex-shrink-0">
-                      <div className="text-base font-semibold text-[#E61E2A]">Rs. 899.00</div>
-                      <span className="text-xs font-medium text-[#222225] flex items-center gap-0.5 justify-end mt-1">
-                        View Piece →
+                      <div className="text-base font-bold text-[#E61E2A]">Rs. 999.00</div>
+                      <span className="text-xs text-[#71717A] line-through block">Rs. 2,499.00</span>
+                      <span className="text-xs font-semibold text-[#222225] flex items-center gap-0.5 justify-end mt-1">
+                        Claim Deal →
                       </span>
                     </div>
                   </div>

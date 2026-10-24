@@ -28,31 +28,27 @@ export function Navbar() {
       <div className="bg-[#1D1D20] text-[#F3F4F6] text-[11px] font-medium tracking-wider uppercase py-2 overflow-hidden border-b border-[#2A2A2E] select-none">
         <div className="flex animate-marquee whitespace-nowrap">
           <div className="flex items-center gap-6 pr-6">
-            <span className="text-[#F43F5E] font-bold flex items-center gap-1">⚡ LIMITED 12-HOUR FLASH SALE: ARC REACTOR & GTA LAMP AT ₹999 ONLY (ENDS TONIGHT)</span>
+            <span className="text-[#F43F5E] font-bold flex items-center gap-1">⚡ LIMITED 12-HOUR FLASH SALE: ARC REACTOR & LEVITATING MONEY LAMP AT ₹999 ONLY (ENDS TONIGHT)</span>
             <span className="text-[#9CA3AF]">•</span>
-            <span>Free delivery on orders ₹999+</span>
+            <span>Free express delivery on ₹999 drops</span>
             <span className="text-[#9CA3AF]">•</span>
-            <span>7-day replacement if damaged</span>
+            <span>7-day transit replacement guarantee</span>
             <span className="text-[#9CA3AF]">•</span>
-            <span>100% Secure Instant UPI Checkout</span>
+            <span>Partial COD Available (₹249 Advance, ₹750 at Doorstep)</span>
             <span className="text-[#9CA3AF]">•</span>
-            <span>Made in India with 0.12mm precision</span>
-            <span className="text-[#9CA3AF]">•</span>
-            <span>Use code <strong className="text-white underline decoration-[#E61E2A]">LAUNCH10</strong> for 10% Off</span>
+            <span>Studio calibrated & 0.12mm precision printed</span>
             <span className="text-[#9CA3AF]">•</span>
           </div>
           <div className="flex items-center gap-6 pr-6" aria-hidden="true">
-            <span className="text-[#F43F5E] font-bold flex items-center gap-1">⚡ LIMITED 12-HOUR FLASH SALE: ARC REACTOR & GTA LAMP AT ₹999 ONLY (ENDS TONIGHT)</span>
+            <span className="text-[#F43F5E] font-bold flex items-center gap-1">⚡ LIMITED 12-HOUR FLASH SALE: ARC REACTOR & LEVITATING MONEY LAMP AT ₹999 ONLY (ENDS TONIGHT)</span>
             <span className="text-[#9CA3AF]">•</span>
-            <span>Free delivery on orders ₹999+</span>
+            <span>Free express delivery on ₹999 drops</span>
             <span className="text-[#9CA3AF]">•</span>
-            <span>7-day replacement if damaged</span>
+            <span>7-day transit replacement guarantee</span>
             <span className="text-[#9CA3AF]">•</span>
-            <span>100% Secure Instant UPI Checkout</span>
+            <span>Partial COD Available (₹249 Advance, ₹750 at Doorstep)</span>
             <span className="text-[#9CA3AF]">•</span>
-            <span>Made in India with 0.12mm precision</span>
-            <span className="text-[#9CA3AF]">•</span>
-            <span>Use code <strong className="text-white underline decoration-[#E61E2A]">LAUNCH10</strong> for 10% Off</span>
+            <span>Studio calibrated & 0.12mm precision printed</span>
             <span className="text-[#9CA3AF]">•</span>
           </div>
         </div>
