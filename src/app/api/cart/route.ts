@@ -5,6 +5,9 @@ import { getSession } from '@/lib/auth';
 
 const CART_COOKIE = 'flirta_cart_session';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 async function getOrCreateCartId(): Promise<string> {
   const session = await getSession();
   const cookieStore = await cookies();

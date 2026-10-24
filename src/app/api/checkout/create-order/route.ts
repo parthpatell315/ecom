@@ -8,6 +8,9 @@ import { DiscountType, PaymentGateway } from '@prisma/client';
 
 const CART_COOKIE = 'flirta_cart_session';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
