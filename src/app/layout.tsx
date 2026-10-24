@@ -7,6 +7,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { AuthModal } from '@/components/auth/AuthModal';
+import { WhatsAppFloat } from '@/components/layout/WhatsAppFloat';
 
 const poppins = Poppins({
   weight: ['300', '400', '500', '600', '700', '800'],
@@ -64,6 +65,7 @@ export default function RootLayout({
             <Footer />
             <CartDrawer />
             <AuthModal />
+            <WhatsAppFloat />
           </CartProvider>
         </AuthProvider>
       </body>
