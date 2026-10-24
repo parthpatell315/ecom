@@ -27,7 +27,7 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const initialCoupon = searchParams.get('coupon') || '';
 
-  const { items, subtotalMinor, refreshCart } = useCart();
+  const { items, subtotalMinor, refreshCart, isLoaded } = useCart();
   const { user } = useAuth();
 
   // Contact & Shipping Form State
@@ -151,6 +151,11 @@ function CheckoutContent() {
           couponCode: appliedCoupon?.code || null,
           notes: formData.notes,
           paymentGateway: paymentMethod,
+          clientItems: items.map((it) => ({
+            productId: it.productId,
+            variantId: it.variantId,
+            quantity: it.quantity,
+          })),
         }),
       });
 
@@ -182,6 +187,17 @@ function CheckoutContent() {
       setIsSubmitting(false);
     }
   };
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-[#FAFBFD] flex flex-col items-center justify-center p-4">
+        <Loader2 className="w-8 h-8 animate-spin text-[#D9232D] mb-3" />
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
+          Loading your bag...
+        </p>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

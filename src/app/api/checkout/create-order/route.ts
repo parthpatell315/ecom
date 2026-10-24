@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
       couponCode,
       notes,
       paymentGateway = 'UPI', // Defaults to Direct Merchant UPI
+      clientItems,
     } = body;
 
     // 1. Basic validation
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Email and phone number are required' }, { status: 400 });
     }
 
-    // 2. Fetch current cart
+    // 2. Fetch current cart from server session/cookie
     const session = await getSession();
     const cookieStore = await cookies();
     const guestSessionId = cookieStore.get(CART_COOKIE)?.value;
@@ -69,13 +70,36 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    if (!cart || cart.items.length === 0) {
+    // Fallback: Reconstitute order items from verified database products if clientItems passed
+    let orderItemsData: any[] = [];
+    if (cart && cart.items && cart.items.length > 0) {
+      orderItemsData = cart.items;
+    } else if (Array.isArray(clientItems) && clientItems.length > 0) {
+      for (const ci of clientItems) {
+        if (!ci.productId) continue;
+        const prod = await prisma.product.findUnique({
+          where: { id: ci.productId },
+          include: { variants: true },
+        });
+        if (!prod) continue;
+        const variant = ci.variantId ? prod.variants.find((v) => v.id === ci.variantId) || null : null;
+        orderItemsData.push({
+          productId: prod.id,
+          variantId: variant?.id || null,
+          quantity: Math.max(1, ci.quantity || 1),
+          product: prod,
+          variant,
+        });
+      }
+    }
+
+    if (orderItemsData.length === 0) {
       return NextResponse.json({ success: false, error: 'Your cart is empty' }, { status: 400 });
     }
 
     // 3. Compute strict server-validated pricing
     let subtotalMinor = 0;
-    for (const item of cart.items) {
+    for (const item of orderItemsData) {
       const stock = item.variant ? item.variant.stockCount : item.product.stockCount;
       if (stock < item.quantity) {
         return NextResponse.json({
@@ -120,14 +144,6 @@ export async function POST(req: NextRequest) {
     const randomHex = Math.random().toString(36).substring(2, 7).toUpperCase();
     const orderNumber = `FL-${year}-${randomHex}`;
 
-    const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
-    const proto = req.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https');
-    const detectedUrl = host ? `${proto}://${host}` : '';
-    const envUrl = process.env.NEXT_PUBLIC_APP_URL;
-    const appBaseUrl = (detectedUrl && !detectedUrl.includes('localhost:3000'))
-      ? detectedUrl
-      : (envUrl || detectedUrl || 'http://localhost:3000');
-
     // 7. Branch by Payment Gateway
     if (paymentGateway === 'PARTIAL_COD') {
       const advanceMinor = 24900; // Rs. 249.00 advance via UPI
@@ -161,7 +177,7 @@ export async function POST(req: NextRequest) {
           shippingAddress,
           notes: combinedNotes,
           items: {
-            create: cart.items.map((item) => {
+            create: orderItemsData.map((item) => {
               const unitPrice = item.product.priceMinor + (item.variant?.priceAdjustmentMinor || 0);
               return {
                 productId: item.productId,
@@ -235,7 +251,7 @@ export async function POST(req: NextRequest) {
           shippingAddress,
           notes: notes || null,
           items: {
-            create: cart.items.map((item) => {
+            create: orderItemsData.map((item) => {
               const unitPrice = item.product.priceMinor + (item.variant?.priceAdjustmentMinor || 0);
               return {
                 productId: item.productId,
@@ -296,7 +312,7 @@ export async function POST(req: NextRequest) {
             shippingAddress,
             notes: notes || null,
             items: {
-              create: cart.items.map((item) => {
+              create: orderItemsData.map((item) => {
                 const unitPrice = item.product.priceMinor + (item.variant?.priceAdjustmentMinor || 0);
                 return {
                   productId: item.productId,
@@ -324,7 +340,7 @@ export async function POST(req: NextRequest) {
         });
 
         // Decrement inventory
-        for (const item of cart.items) {
+        for (const item of orderItemsData) {
           if (item.variantId) {
             await tx.productVariant.update({
               where: { id: item.variantId },
@@ -378,7 +394,7 @@ export async function POST(req: NextRequest) {
         shippingAddress,
         notes: notes || null,
         items: {
-          create: cart.items.map((item) => {
+          create: orderItemsData.map((item) => {
             const unitPrice = item.product.priceMinor + (item.variant?.priceAdjustmentMinor || 0);
             return {
               productId: item.productId,

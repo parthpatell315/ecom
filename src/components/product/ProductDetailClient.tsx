@@ -53,7 +53,13 @@ export function ProductDetailClient({
   const handleAddToCart = async () => {
     setIsAdding(true);
     try {
-      const success = await addItem(product.id, selectedVariant?.id, quantity);
+      const success = await addItem(product.id, selectedVariant?.id, quantity, {
+        title: product.title,
+        variantName: selectedVariant?.name || null,
+        colorHex: selectedVariant?.colorHex || null,
+        unitPriceMinor: effectivePriceMinor,
+        image: selectedImage || (product.images && product.images[0]?.url) || '',
+      });
       if (success) {
         setAdded(true);
         setTimeout(() => setAdded(false), 2500);
@@ -66,14 +72,16 @@ export function ProductDetailClient({
   const handleBuyNow = async () => {
     setIsBuying(true);
     try {
-      const success = await addItem(product.id, selectedVariant?.id, quantity);
-      if (success) {
-        window.location.href = '/checkout';
-      } else {
-        setIsBuying(false);
-      }
+      addItem(product.id, selectedVariant?.id, quantity, {
+        title: product.title,
+        variantName: selectedVariant?.name || null,
+        colorHex: selectedVariant?.colorHex || null,
+        unitPriceMinor: effectivePriceMinor,
+        image: selectedImage || (product.images && product.images[0]?.url) || '',
+      });
+      router.push('/checkout');
     } catch {
-      setIsBuying(false);
+      router.push('/checkout');
     }
   };
 
