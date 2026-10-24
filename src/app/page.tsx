@@ -6,15 +6,22 @@ import { ProductCard } from '@/components/product/ProductCard';
 import { FaqSection } from '@/components/home/FaqSection';
 import { ArrowRight, ChevronRight, Truck, ShieldCheck, Clock } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   // Fetch real products from PostgreSQL
-  const products = await prisma.product.findMany({
-    include: {
-      images: { orderBy: { displayOrder: 'asc' } },
-      variants: { orderBy: { name: 'asc' } },
-    },
-    orderBy: { reviewCount: 'desc' },
-  });
+  let products: any[] = [];
+  try {
+    products = await prisma.product.findMany({
+      include: {
+        images: { orderBy: { displayOrder: 'asc' } },
+        variants: { orderBy: { name: 'asc' } },
+      },
+      orderBy: { reviewCount: 'desc' },
+    });
+  } catch (error) {
+    console.error('HomePage: Failed to fetch products from database:', error);
+  }
 
   const studioEditProducts = products.slice(0, 8);
 

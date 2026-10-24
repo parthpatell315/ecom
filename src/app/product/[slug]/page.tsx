@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { ProductDetailClient } from '@/components/product/ProductDetailClient';
 import type { Metadata } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 interface ProductDetailPageProps {
   params: Promise<{ slug: string }>;
 }
