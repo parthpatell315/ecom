@@ -1,8 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getCachedProducts } from '@/lib/catalog';
+import { getCachedProducts, getFlashSaleProducts } from '@/lib/catalog';
 import { ProductCard } from '@/components/product/ProductCard';
+import { FlashSaleSection } from '@/components/home/FlashSaleSection';
 import { FaqSection } from '@/components/home/FaqSection';
 import { ArrowRight, ChevronRight, Truck, ShieldCheck, Clock } from 'lucide-react';
 
@@ -11,8 +12,14 @@ export const revalidate = 60;
 export default async function HomePage() {
   // Fetch products via high-performance catalog cache
   let products: any[] = [];
+  let flashSaleProducts: any[] = [];
   try {
-    products = await getCachedProducts();
+    const [allProducts, flashProducts] = await Promise.all([
+      getCachedProducts(),
+      getFlashSaleProducts(),
+    ]);
+    products = allProducts;
+    flashSaleProducts = flashProducts;
   } catch (error) {
     console.error('HomePage: Failed to fetch products from catalog cache:', error);
   }
@@ -133,7 +140,14 @@ export default async function HomePage() {
       </section>
 
       {/* =========================================================================
-          2. THE STUDIO EDIT: MOST LOVED PRODUCTS
+          2. FEATURED 12-HOUR FLASH SALE: ARC REACTOR & GTA LAMP (FLAT ₹999)
+          ========================================================================= */}
+      {flashSaleProducts.length > 0 && (
+        <FlashSaleSection products={flashSaleProducts} />
+      )}
+
+      {/* =========================================================================
+          3. THE STUDIO EDIT: MOST LOVED PRODUCTS
           ========================================================================= */}
       <section className="py-16 md:py-20 bg-white border-b border-[#ECE7DE]" aria-label="Most Loved Products">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6">

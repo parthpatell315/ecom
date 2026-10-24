@@ -200,6 +200,22 @@ export function ProductDetailClient({
                 )}
               </div>
 
+              {/* 12-Hour Flash Sale Urgency Callout */}
+              {(effectivePriceMinor === 99900 || product.badge?.includes('12H')) && (
+                <div className="mt-4 p-3.5 rounded-xl bg-[#FFF1F2] border border-[#FECDD3] flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#E61E2A] animate-pulse shrink-0" />
+                    <div>
+                      <strong className="text-[#9F1239] block font-semibold text-xs">⚡ 12-Hour Studio Flash Deal: Flat ₹999</strong>
+                      <span className="text-[#BE123C] text-[11px]">Exclusive promotional pricing. Free Pan-India Delivery included.</span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold bg-[#E61E2A] text-white px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 shadow-xs">
+                    ACTIVE NOW
+                  </span>
+                </div>
+              )}
+
               {/* Variant Selector */}
               {product.variants && product.variants.length > 0 && (
                 <div className="mt-6">

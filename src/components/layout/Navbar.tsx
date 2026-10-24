@@ -28,6 +28,8 @@ export function Navbar() {
       <div className="bg-[#1D1D20] text-[#F3F4F6] text-[11px] font-medium tracking-wider uppercase py-2 overflow-hidden border-b border-[#2A2A2E] select-none">
         <div className="flex animate-marquee whitespace-nowrap">
           <div className="flex items-center gap-6 pr-6">
+            <span className="text-[#F43F5E] font-bold flex items-center gap-1">⚡ LIMITED 12-HOUR FLASH SALE: ARC REACTOR & GTA LAMP AT ₹999 ONLY (ENDS TONIGHT)</span>
+            <span className="text-[#9CA3AF]">•</span>
             <span>Free delivery on orders ₹999+</span>
             <span className="text-[#9CA3AF]">•</span>
             <span>7-day replacement if damaged</span>
@@ -40,6 +42,8 @@ export function Navbar() {
             <span className="text-[#9CA3AF]">•</span>
           </div>
           <div className="flex items-center gap-6 pr-6" aria-hidden="true">
+            <span className="text-[#F43F5E] font-bold flex items-center gap-1">⚡ LIMITED 12-HOUR FLASH SALE: ARC REACTOR & GTA LAMP AT ₹999 ONLY (ENDS TONIGHT)</span>
+            <span className="text-[#9CA3AF]">•</span>
             <span>Free delivery on orders ₹999+</span>
             <span className="text-[#9CA3AF]">•</span>
             <span>7-day replacement if damaged</span>

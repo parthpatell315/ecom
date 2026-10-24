@@ -183,3 +183,15 @@ export async function getCachedCategories(): Promise<CachedCategory[]> {
     return [];
   }
 }
+
+export async function getFlashSaleProducts(): Promise<CachedProduct[]> {
+  const products = await getCachedProducts();
+  const flashSlugs = [
+    'marvel-iron-man-arc-reactor-wireless-charger',
+    'gta-6-vi-lightbox',
+  ];
+  return flashSlugs
+    .map((slug) => products.find((p) => p.slug === slug))
+    .filter((p): p is CachedProduct => Boolean(p));
+}
+
