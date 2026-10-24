@@ -10,66 +10,76 @@ interface ProductDetailPageProps {
 }
 
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const product = await prisma.product.findUnique({
-    where: { slug },
-    select: { title: true, subtitle: true, description: true },
-  });
+  try {
+    const { slug } = await params;
+    const product = await prisma.product.findUnique({
+      where: { slug },
+      select: { title: true, subtitle: true, description: true },
+    });
 
-  if (!product) return { title: 'Product Not Found | flirta.network' };
+    if (!product) return { title: 'Product Not Found | flirta.network' };
 
-  return {
-    title: `${product.title} | flirta.network`,
-    description: product.subtitle || product.description?.substring(0, 150),
-  };
+    return {
+      title: `${product.title} | flirta.network`,
+      description: product.subtitle || product.description?.substring(0, 150),
+    };
+  } catch (error) {
+    console.error('generateMetadata error:', error);
+    return { title: 'flirta.network — Precision 3D Printed Studio' };
+  }
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const { slug } = await params;
+  try {
+    const { slug } = await params;
 
-  const product = await prisma.product.findUnique({
-    where: { slug },
-    include: {
-      category: true,
-      images: {
-        orderBy: { displayOrder: 'asc' },
+    const product = await prisma.product.findUnique({
+      where: { slug },
+      include: {
+        category: true,
+        images: {
+          orderBy: { displayOrder: 'asc' },
+        },
+        variants: {
+          orderBy: { name: 'asc' },
+        },
+        reviews: {
+          where: { isApproved: true },
+          orderBy: { createdAt: 'desc' },
+        },
       },
-      variants: {
-        orderBy: { name: 'asc' },
-      },
-      reviews: {
-        where: { isApproved: true },
-        orderBy: { createdAt: 'desc' },
-      },
-    },
-  });
+    });
 
-  if (!product) {
+    if (!product) {
+      notFound();
+    }
+
+    const relatedProducts = await prisma.product.findMany({
+      where: {
+        categoryId: product.categoryId,
+        id: { not: product.id },
+      },
+      take: 4,
+      include: {
+        category: true,
+        images: {
+          where: { isPrimary: true },
+          take: 1,
+        },
+        variants: {
+          take: 1,
+        },
+      },
+    });
+
+    return (
+      <ProductDetailClient
+        product={JSON.parse(JSON.stringify(product))}
+        relatedProducts={JSON.parse(JSON.stringify(relatedProducts))}
+      />
+    );
+  } catch (error) {
+    console.error('ProductDetailPage error:', error);
     notFound();
   }
-
-  const relatedProducts = await prisma.product.findMany({
-    where: {
-      categoryId: product.categoryId,
-      id: { not: product.id },
-    },
-    take: 4,
-    include: {
-      category: true,
-      images: {
-        where: { isPrimary: true },
-        take: 1,
-      },
-      variants: {
-        take: 1,
-      },
-    },
-  });
-
-  return (
-    <ProductDetailClient
-      product={JSON.parse(JSON.stringify(product))}
-      relatedProducts={JSON.parse(JSON.stringify(relatedProducts))}
-    />
-  );
 }
