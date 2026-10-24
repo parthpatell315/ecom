@@ -55,15 +55,19 @@ export function CartDrawer() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
+    <div className="fixed inset-0 z-[9999] flex justify-end">
       {/* Backdrop */}
       <div
         onClick={closeCart}
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-fade-in"
+        onTouchEnd={(e) => {
+          e.preventDefault();
+          closeCart();
+        }}
+        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300"
       />
 
       {/* Drawer */}
-      <div className="relative w-full max-w-md h-full bg-white border-l border-[#E5E0D5] shadow-2xl flex flex-col z-10 animate-fade-in">
+      <div className="relative w-full max-w-md h-full bg-white border-l border-[#E5E0D5] shadow-2xl flex flex-col z-10 transition-transform duration-300 ease-out">
         {/* Header */}
         <div className="p-5 border-b border-[#F0EAE1] flex items-center justify-between bg-[#FAF8F5]">
           <div>
@@ -76,8 +80,9 @@ export function CartDrawer() {
             <p className="text-xs text-[#8C827A] mt-0.5">Complimentary delivery on orders over ₹999</p>
           </div>
           <button
+            type="button"
             onClick={closeCart}
-            className="p-1 rounded-full text-gray-400 hover:text-[#222225] transition-colors"
+            className="w-9 h-9 rounded-full text-gray-500 hover:text-[#222225] hover:bg-gray-100 active:scale-90 transition-all flex items-center justify-center cursor-pointer touch-manipulation"
             aria-label="Close cart"
           >
             <X className="w-5 h-5" />

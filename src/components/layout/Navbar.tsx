@@ -147,15 +147,19 @@ export function Navbar() {
               </Link>
             </nav>
 
-            {/* Cart Icon Trigger with Badge */}
+            {/* Cart Icon Trigger with Badge - 44px Touch Target with Zero Lag */}
             <button
-              onClick={openCart}
-              className="relative p-2 rounded-full text-[#1D1D20] hover:text-[#E61E2A] hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer"
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                openCart();
+              }}
+              className="relative w-11 h-11 rounded-full text-[#1D1D20] hover:text-[#E61E2A] active:scale-90 hover:bg-gray-100 active:bg-gray-200 transition-all flex items-center justify-center cursor-pointer touch-manipulation select-none"
               aria-label="Shopping Cart"
             >
               <ShoppingBag className="w-5 h-5 stroke-[1.8]" />
               {totalItems > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#1D1D20] text-white text-[9.5px] font-medium flex items-center justify-center">
+                <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#1D1D20] text-white text-[9.5px] font-medium flex items-center justify-center pointer-events-none shadow-xs">
                   {totalItems}
                 </span>
               )}

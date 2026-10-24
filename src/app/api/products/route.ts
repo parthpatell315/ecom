@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
+import { getCachedProducts, CachedProduct } from '@/lib/catalog';
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,56 +9,49 @@ export async function GET(req: NextRequest) {
     const sort = searchParams.get('sort'); // 'price-asc' | 'price-desc' | 'rating' | 'featured'
     const featured = searchParams.get('featured');
 
-    const where: Prisma.ProductWhereInput = {};
+    const allProducts = await getCachedProducts();
+    let filtered: CachedProduct[] = [...allProducts];
 
     if (category && category !== 'all') {
-      where.category = {
-        slug: category,
-      };
+      filtered = filtered.filter((p) => p.category?.slug === category);
     }
 
     if (featured === 'true') {
-      where.isFeatured = true;
+      filtered = filtered.filter((p) => p.isFeatured);
     }
 
     if (search && search.trim() !== '') {
-      where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { tagline: { contains: search, mode: 'insensitive' } },
-      ];
+      const q = search.trim().toLowerCase();
+      filtered = filtered.filter(
+        (p) =>
+          p.title?.toLowerCase().includes(q) ||
+          p.description?.toLowerCase().includes(q) ||
+          p.tagline?.toLowerCase().includes(q)
+      );
     }
 
-    let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' };
     if (sort === 'price-asc') {
-      orderBy = { priceMinor: 'asc' };
+      filtered.sort((a, b) => a.priceMinor - b.priceMinor);
     } else if (sort === 'price-desc') {
-      orderBy = { priceMinor: 'desc' };
+      filtered.sort((a, b) => b.priceMinor - a.priceMinor);
     } else if (sort === 'rating') {
-      orderBy = { rating: 'desc' };
+      filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
     } else if (sort === 'featured') {
-      orderBy = { isFeatured: 'desc' };
+      filtered.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
     }
 
-    const products = await prisma.product.findMany({
-      where,
-      orderBy,
-      include: {
-        category: true,
-        images: {
-          orderBy: { displayOrder: 'asc' },
-        },
-        variants: {
-          orderBy: { name: 'asc' },
-        },
+    return NextResponse.json(
+      {
+        success: true,
+        count: filtered.length,
+        products: filtered,
       },
-    });
-
-    return NextResponse.json({
-      success: true,
-      count: products.length,
-      products,
-    });
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      }
+    );
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json(
@@ -68,3 +60,4 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+

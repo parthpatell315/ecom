@@ -48,66 +48,70 @@ async function getOrCreateCartId(): Promise<string> {
   return newCart.id;
 }
 
+async function fetchFormattedCart(cartId: string) {
+  const cart = await prisma.cart.findUnique({
+    where: { id: cartId },
+    include: {
+      items: {
+        include: {
+          product: {
+            include: {
+              images: { where: { isPrimary: true }, take: 1 },
+            },
+          },
+          variant: true,
+        },
+        orderBy: { createdAt: 'asc' },
+      },
+    },
+  });
+
+  if (!cart) {
+    return { items: [], subtotalMinor: 0, totalItems: 0, qualifiesForFreeShipping: false };
+  }
+
+  let subtotalMinor = 0;
+  let totalItems = 0;
+
+  const formattedItems = cart.items.map((item) => {
+    const unitPriceMinor = item.product.priceMinor + (item.variant?.priceAdjustmentMinor || 0);
+    const itemTotalMinor = unitPriceMinor * item.quantity;
+    subtotalMinor += itemTotalMinor;
+    totalItems += item.quantity;
+
+    const image = item.variant?.image || item.product.images[0]?.url || '';
+
+    return {
+      id: item.id,
+      productId: item.productId,
+      variantId: item.variantId,
+      title: item.product.title,
+      variantName: item.variant?.name || null,
+      colorHex: item.variant?.colorHex || null,
+      unitPriceMinor,
+      quantity: item.quantity,
+      totalMinor: itemTotalMinor,
+      image,
+      inStock: item.variant ? item.variant.inStock : item.product.inStock,
+      maxStock: item.variant ? item.variant.stockCount : item.product.stockCount,
+    };
+  });
+
+  return {
+    items: formattedItems,
+    subtotalMinor,
+    totalItems,
+    freeShippingThresholdMinor: 149900,
+    qualifiesForFreeShipping: subtotalMinor >= 149900,
+  };
+}
+
 // GET: Fetch cart items and server-validated totals
 export async function GET() {
   try {
     const cartId = await getOrCreateCartId();
-    const cart = await prisma.cart.findUnique({
-      where: { id: cartId },
-      include: {
-        items: {
-          include: {
-            product: {
-              include: {
-                images: { where: { isPrimary: true }, take: 1 },
-              },
-            },
-            variant: true,
-          },
-          orderBy: { createdAt: 'asc' },
-        },
-      },
-    });
-
-    if (!cart) {
-      return NextResponse.json({ success: true, items: [], subtotalMinor: 0, totalItems: 0 });
-    }
-
-    let subtotalMinor = 0;
-    let totalItems = 0;
-
-    const formattedItems = cart.items.map((item) => {
-      const unitPriceMinor = item.product.priceMinor + (item.variant?.priceAdjustmentMinor || 0);
-      const itemTotalMinor = unitPriceMinor * item.quantity;
-      subtotalMinor += itemTotalMinor;
-      totalItems += item.quantity;
-
-      const image = item.variant?.image || item.product.images[0]?.url || '';
-
-      return {
-        id: item.id,
-        productId: item.productId,
-        variantId: item.variantId,
-        title: item.product.title,
-        variantName: item.variant?.name || null,
-        colorHex: item.variant?.colorHex || null,
-        unitPriceMinor,
-        quantity: item.quantity,
-        totalMinor: itemTotalMinor,
-        image,
-        inStock: item.variant ? item.variant.inStock : item.product.inStock,
-        maxStock: item.variant ? item.variant.stockCount : item.product.stockCount,
-      };
-    });
-
-    return NextResponse.json({
-      success: true,
-      items: formattedItems,
-      subtotalMinor,
-      totalItems,
-      freeShippingThresholdMinor: 149900, // ₹1,499
-      qualifiesForFreeShipping: subtotalMinor >= 149900,
-    });
+    const cartData = await fetchFormattedCart(cartId);
+    return NextResponse.json({ success: true, ...cartData });
   } catch (error) {
     console.error('Cart GET error:', error);
     return NextResponse.json({ success: false, error: 'Failed to retrieve cart' }, { status: 500 });
@@ -124,24 +128,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Invalid product or quantity' }, { status: 400 });
     }
 
-    const product = await prisma.product.findUnique({
-      where: { id: productId },
-      include: { variants: true },
-    });
+    // Run product check and cart resolution concurrently
+    const [product, cartId] = await Promise.all([
+      prisma.product.findUnique({
+        where: { id: productId },
+        select: { id: true },
+      }),
+      getOrCreateCartId(),
+    ]);
 
     if (!product) {
       return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
     }
 
-    const cartId = await getOrCreateCartId();
-
-    // Check if item already exists in cart
+    // Upsert or check existing
     const existingItem = await prisma.cartItem.findFirst({
       where: {
         cartId,
         productId,
         variantId: variantId || null,
       },
+      select: { id: true, quantity: true },
     });
 
     if (existingItem) {
@@ -160,7 +167,8 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ success: true, message: 'Item added to cart' });
+    const cartData = await fetchFormattedCart(cartId);
+    return NextResponse.json({ success: true, ...cartData });
   } catch (error) {
     console.error('Cart POST error:', error);
     return NextResponse.json({ success: false, error: 'Failed to add item to cart' }, { status: 500 });
@@ -190,7 +198,8 @@ export async function PATCH(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ success: true, message: 'Cart updated' });
+    const cartData = await fetchFormattedCart(cartId);
+    return NextResponse.json({ success: true, ...cartData });
   } catch (error) {
     console.error('Cart PATCH error:', error);
     return NextResponse.json({ success: false, error: 'Failed to update cart' }, { status: 500 });
@@ -212,9 +221,11 @@ export async function DELETE(req: NextRequest) {
       where: { id: cartItemId, cartId },
     });
 
-    return NextResponse.json({ success: true, message: 'Item removed from cart' });
+    const cartData = await fetchFormattedCart(cartId);
+    return NextResponse.json({ success: true, ...cartData });
   } catch (error) {
     console.error('Cart DELETE error:', error);
     return NextResponse.json({ success: false, error: 'Failed to remove item' }, { status: 500 });
   }
 }
+

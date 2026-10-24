@@ -30,14 +30,16 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
   const defaultVariantId = product.variants[0]?.id;
   const hasMultipleVariants = product.variants && product.variants.length > 1;
 
-  const handleQuickAdd = async (e: React.MouseEvent) => {
+  const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const success = await addItem(product.id, defaultVariantId, 1);
-    if (success) {
-      setAdded(true);
-      setTimeout(() => setAdded(false), 2000);
-    }
+    setAdded(true);
+    addItem(product.id, defaultVariantId, 1, {
+      title: product.title,
+      unitPriceMinor: product.priceMinor,
+      image: primaryImage,
+    });
+    setTimeout(() => setAdded(false), 2000);
   };
 
   const discountPercent = product.originalPriceMinor && product.originalPriceMinor > product.priceMinor
@@ -46,8 +48,8 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
 
   return (
     <div className="group flex flex-col bg-white rounded-2xl border border-[#EBEBEB] shadow-luxury shadow-luxury-hover transition-all duration-300 overflow-hidden">
-      {/* Clickable Image & Header Link */}
-      <Link href={`/product/${product.slug}`} className="block">
+      {/* Clickable Image & Header Link with Prefetch */}
+      <Link href={`/product/${product.slug}`} prefetch={true} className="block active:opacity-90 transition-opacity">
         {/* Media Frame (Clean 1:1 Square) */}
         <div className="relative aspect-square w-full overflow-hidden bg-[#F9FAFB]">
           <Image
@@ -71,7 +73,7 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
 
       {/* Card Body */}
       <div className="p-4 sm:p-5 flex flex-col flex-1 justify-between bg-white">
-        <Link href={`/product/${product.slug}`} className="block">
+        <Link href={`/product/${product.slug}`} prefetch={true} className="block">
           {/* Title */}
           <h3 className="text-[14px] sm:text-[14.5px] font-medium text-[#222225] group-hover:text-[#E61E2A] transition-colors line-clamp-2 min-h-[44px] leading-snug">
             {product.title}
@@ -103,15 +105,17 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
           {hasMultipleVariants ? (
             <Link
               href={`/product/${product.slug}`}
-              className="w-full h-[42px] rounded-lg text-xs font-medium uppercase tracking-[0.06em] bg-[#222225] text-white hover:bg-[#38383D] active:scale-[0.99] transition-all flex items-center justify-center cursor-pointer shadow-sm"
+              prefetch={true}
+              className="w-full h-[44px] rounded-lg text-xs font-medium uppercase tracking-[0.06em] bg-[#222225] text-white hover:bg-[#38383D] active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer shadow-sm touch-manipulation select-none"
             >
               Choose Options
             </Link>
           ) : (
             <button
+              type="button"
               onClick={handleQuickAdd}
-              disabled={!product.inStock || isLoading}
-              className="w-full h-[42px] rounded-lg text-xs font-medium uppercase tracking-[0.06em] bg-[#222225] text-white hover:bg-[#38383D] active:scale-[0.99] transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm disabled:opacity-50"
+              disabled={!product.inStock}
+              className="w-full h-[44px] rounded-lg text-xs font-medium uppercase tracking-[0.06em] bg-[#222225] text-white hover:bg-[#38383D] active:scale-[0.98] active:bg-black transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm disabled:opacity-50 touch-manipulation select-none"
             >
               {added ? (
                 <>

@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+import { getCachedProductBySlug, getCachedRelatedProducts } from '@/lib/catalog';
 import { ProductDetailClient } from '@/components/product/ProductDetailClient';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+// Revalidate every 60 seconds (ISR Edge Caching)
+export const revalidate = 60;
 
 interface ProductDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -12,10 +13,7 @@ interface ProductDetailPageProps {
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
-    const product = await prisma.product.findUnique({
-      where: { slug },
-      select: { title: true, subtitle: true, description: true },
-    });
+    const product = await getCachedProductBySlug(slug);
 
     if (!product) return { title: 'Product Not Found | flirta.network' };
 
@@ -32,45 +30,13 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   try {
     const { slug } = await params;
-
-    const product = await prisma.product.findUnique({
-      where: { slug },
-      include: {
-        category: true,
-        images: {
-          orderBy: { displayOrder: 'asc' },
-        },
-        variants: {
-          orderBy: { name: 'asc' },
-        },
-        reviews: {
-          where: { isApproved: true },
-          orderBy: { createdAt: 'desc' },
-        },
-      },
-    });
+    const product = await getCachedProductBySlug(slug);
 
     if (!product) {
       notFound();
     }
 
-    const relatedProducts = await prisma.product.findMany({
-      where: {
-        categoryId: product.categoryId,
-        id: { not: product.id },
-      },
-      take: 4,
-      include: {
-        category: true,
-        images: {
-          where: { isPrimary: true },
-          take: 1,
-        },
-        variants: {
-          take: 1,
-        },
-      },
-    });
+    const relatedProducts = await getCachedRelatedProducts(product.categoryId, product.id, 4);
 
     return (
       <ProductDetailClient
@@ -83,3 +49,4 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     notFound();
   }
 }
+

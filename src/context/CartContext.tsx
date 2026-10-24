@@ -113,58 +113,52 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     quantity = 1,
     optimisticItem?: Partial<CartItemType>
   ): Promise<boolean> => {
-    setIsLoading(true);
-
-    // Optimistically add to state if details provided
-    if (optimisticItem && optimisticItem.title) {
-      const existingIdx = items.findIndex(
-        (it) => it.productId === productId && (it.variantId || null) === (variantId || null)
-      );
-      let updated: CartItemType[];
-      if (existingIdx > -1) {
-        updated = [...items];
-        updated[existingIdx].quantity += quantity;
-        updated[existingIdx].totalMinor = updated[existingIdx].quantity * updated[existingIdx].unitPriceMinor;
-      } else {
-        const newItem: CartItemType = {
-          id: `temp_${Date.now()}`,
-          productId,
-          variantId: variantId || null,
-          title: optimisticItem.title,
-          variantName: optimisticItem.variantName || null,
-          colorHex: optimisticItem.colorHex || null,
-          unitPriceMinor: optimisticItem.unitPriceMinor || 0,
-          quantity,
-          totalMinor: (optimisticItem.unitPriceMinor || 0) * quantity,
-          image: optimisticItem.image || '',
-          inStock: true,
-          maxStock: 99,
-        };
-        updated = [newItem, ...items];
-      }
-      updateLocalCart(updated);
-      setIsOpen(true);
+    // 1. Instant 0ms Optimistic Update
+    const existingIdx = items.findIndex(
+      (it) => it.productId === productId && (it.variantId || null) === (variantId || null)
+    );
+    let updated: CartItemType[];
+    if (existingIdx > -1) {
+      updated = [...items];
+      updated[existingIdx].quantity += quantity;
+      updated[existingIdx].totalMinor = updated[existingIdx].quantity * updated[existingIdx].unitPriceMinor;
+    } else {
+      const newItem: CartItemType = {
+        id: `temp_${Date.now()}`,
+        productId,
+        variantId: variantId || null,
+        title: optimisticItem?.title || 'Selected Product',
+        variantName: optimisticItem?.variantName || null,
+        colorHex: optimisticItem?.colorHex || null,
+        unitPriceMinor: optimisticItem?.unitPriceMinor || 0,
+        quantity,
+        totalMinor: (optimisticItem?.unitPriceMinor || 0) * quantity,
+        image: optimisticItem?.image || '',
+        inStock: true,
+        maxStock: 99,
+      };
+      updated = [newItem, ...items];
     }
+    updateLocalCart(updated);
+    setIsOpen(true);
 
-    try {
-      const res = await fetch('/api/cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, variantId, quantity }),
+    // 2. Non-blocking Background Sync
+    fetch('/api/cart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId, variantId, quantity }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.items)) {
+          updateLocalCart(data.items);
+        }
+      })
+      .catch((err) => {
+        console.warn('Background cart sync error:', err);
       });
-      const data = await res.json();
-      if (data.success) {
-        await refreshCart();
-        setIsOpen(true);
-        return true;
-      }
-      return false;
-    } catch (err) {
-      console.error('Failed to add item to cart:', err);
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
+
+    return true;
   };
 
   const updateQuantity = async (cartItemId: string, quantity: number) => {
@@ -173,28 +167,36 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       .filter((it) => it.quantity > 0);
     updateLocalCart(updated);
 
-    try {
-      await fetch('/api/cart', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cartItemId, quantity }),
+    fetch('/api/cart', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cartItemId, quantity }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.items)) {
+          updateLocalCart(data.items);
+        }
+      })
+      .catch((err) => {
+        console.warn('Failed to update item quantity:', err);
       });
-      await refreshCart();
-    } catch (err) {
-      console.error('Failed to update item quantity:', err);
-    }
   };
 
   const removeItem = async (cartItemId: string) => {
     const updated = items.filter((it) => it.id !== cartItemId);
     updateLocalCart(updated);
 
-    try {
-      await fetch(`/api/cart?id=${cartItemId}`, { method: 'DELETE' });
-      await refreshCart();
-    } catch (err) {
-      console.error('Failed to remove item:', err);
-    }
+    fetch(`/api/cart?id=${cartItemId}`, { method: 'DELETE' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.items)) {
+          updateLocalCart(data.items);
+        }
+      })
+      .catch((err) => {
+        console.warn('Failed to remove item:', err);
+      });
   };
 
   return (

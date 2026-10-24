@@ -1,26 +1,20 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { prisma } from '@/lib/prisma';
+import { getCachedProducts } from '@/lib/catalog';
 import { ProductCard } from '@/components/product/ProductCard';
 import { FaqSection } from '@/components/home/FaqSection';
 import { ArrowRight, ChevronRight, Truck, ShieldCheck, Clock } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function HomePage() {
-  // Fetch real products from PostgreSQL
+  // Fetch products via high-performance catalog cache
   let products: any[] = [];
   try {
-    products = await prisma.product.findMany({
-      include: {
-        images: { orderBy: { displayOrder: 'asc' } },
-        variants: { orderBy: { name: 'asc' } },
-      },
-      orderBy: { reviewCount: 'desc' },
-    });
+    products = await getCachedProducts();
   } catch (error) {
-    console.error('HomePage: Failed to fetch products from database:', error);
+    console.error('HomePage: Failed to fetch products from catalog cache:', error);
   }
 
   const studioEditProducts = products.slice(0, 8);

@@ -1,28 +1,21 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getCachedCategories } from '@/lib/catalog';
 
 export async function GET() {
   try {
-    const categories = await prisma.category.findMany({
-      orderBy: { displayOrder: 'asc' },
-      include: {
-        _count: {
-          select: { products: true },
-        },
-      },
-    });
+    const categories = await getCachedCategories();
 
-    return NextResponse.json({
-      success: true,
-      categories: categories.map((c) => ({
-        id: c.id,
-        slug: c.slug,
-        name: c.name,
-        description: c.description,
-        image: c.image,
-        productCount: c._count.products,
-      })),
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        categories,
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      }
+    );
   } catch (error) {
     console.error('Error fetching categories:', error);
     return NextResponse.json(
@@ -31,3 +24,4 @@ export async function GET() {
     );
   }
 }
+
