@@ -412,8 +412,11 @@ export async function POST(req: NextRequest) {
       keyId: gatewayOrder.keyId,
       customerDetails: { name, email, phone },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Checkout create-order error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to initiate order' }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      error: error?.message || 'Failed to initiate order',
+    }, { status: 500 });
   }
 }
