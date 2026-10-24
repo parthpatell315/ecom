@@ -19,6 +19,7 @@ import {
   Sparkles,
   Smartphone,
   IndianRupee,
+  Zap,
 } from 'lucide-react';
 import { UpiPaymentModal } from '@/components/checkout/UpiPaymentModal';
 
@@ -402,103 +403,124 @@ function CheckoutContent() {
               </div>
 
               {/* 3. Payment Method: Choose between Full UPI or Partial COD */}
-              <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-xs">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-gray-900">
-                    3. Select Payment Option
-                  </h3>
-                  <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>Exact Amount Dynamic QR</span>
+              <div className="p-4 sm:p-6 rounded-2xl bg-white border border-gray-200 shadow-xs">
+                <div className="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-gray-100">
+                  <div>
+                    <h3 className="text-sm sm:text-base font-bold text-gray-900">
+                      3. Select Payment Option
+                    </h3>
+                    <p className="text-[11px] text-gray-500 mt-0.5">
+                      Zero convenience fees • Instant confirmation
+                    </p>
+                  </div>
+                  <span className="text-[10.5px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1 shrink-0">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Dynamic QR</span>
                   </span>
                 </div>
 
                 <div className="space-y-3">
                   {/* Option 1: Full Payment via UPI */}
-                  <label
+                  <div
                     onClick={() => setPaymentMethod('UPI')}
-                    className={`block p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                    className={`p-3.5 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
                       paymentMethod === 'UPI'
-                        ? 'border-[#D9232D] bg-[#FFF8F8]/60 shadow-xs'
+                        ? 'border-[#D9232D] bg-[#FFF8F8]/60 shadow-xs ring-1 ring-[#D9232D]/10'
                         : 'border-gray-200 bg-white hover:border-gray-300'
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="UPI"
-                        checked={paymentMethod === 'UPI'}
-                        onChange={() => setPaymentMethod('UPI')}
-                        className="mt-1 text-[#D9232D] focus:ring-[#D9232D]"
-                      />
-                      <div className="flex-1">
-                        <div className="flex flex-wrap items-center justify-between gap-1 mb-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-gray-900">
+                      <div
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+                          paymentMethod === 'UPI' ? 'border-[#D9232D]' : 'border-gray-300'
+                        }`}
+                      >
+                        {paymentMethod === 'UPI' && (
+                          <div className="w-2 h-2 rounded-full bg-[#D9232D]" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs sm:text-sm font-bold text-gray-900">
                               Full Instant UPI
                             </span>
-                            <span className="text-[10px] uppercase font-bold tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">
+                            <span className="text-[9.5px] uppercase font-bold tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">
                               Instant Dispatch
                             </span>
                           </div>
-                          <span className="text-sm font-extrabold text-[#D9232D]">
+                          <span className="text-xs sm:text-sm font-extrabold text-[#D9232D] shrink-0">
                             {formatCurrency(finalTotalMinor)}
                           </span>
                         </div>
-                        <p className="text-xs text-gray-600 leading-relaxed">
+                        <p className="text-[11.5px] text-gray-600 leading-relaxed">
                           Pay 100% via dynamic exact amount QR code. Fast verification, 0% platform fee, priority studio dispatch within 24 hours.
                         </p>
-                        <div className="mt-2 text-[11px] text-gray-500 flex items-center gap-2">
-                          <Smartphone className="w-3.5 h-3.5 text-gray-400" />
-                          <span>Supports GPay, PhonePe, Paytm, CRED, BHIM & all banking apps</span>
+                        <div className="mt-2 text-[10.5px] text-gray-500 flex items-center gap-1.5 flex-wrap">
+                          <Smartphone className="w-3 h-3 text-gray-400 shrink-0" />
+                          <span>Supports GPay, PhonePe, Paytm, CRED &amp; all UPI apps</span>
                         </div>
                       </div>
                     </div>
-                  </label>
+                  </div>
 
                   {/* Option 2: Partial COD (₹249 Advance via UPI) */}
-                  <label
+                  <div
                     onClick={() => setPaymentMethod('PARTIAL_COD')}
-                    className={`block p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                    className={`p-3.5 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
                       paymentMethod === 'PARTIAL_COD'
-                        ? 'border-[#D9232D] bg-[#FFF8F8]/60 shadow-xs'
+                        ? 'border-[#D9232D] bg-[#FFF8F8]/60 shadow-xs ring-1 ring-[#D9232D]/10'
                         : 'border-gray-200 bg-white hover:border-gray-300'
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="PARTIAL_COD"
-                        checked={paymentMethod === 'PARTIAL_COD'}
-                        onChange={() => setPaymentMethod('PARTIAL_COD')}
-                        className="mt-1 text-[#D9232D] focus:ring-[#D9232D]"
-                      />
-                      <div className="flex-1">
-                        <div className="flex flex-wrap items-center justify-between gap-1 mb-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-gray-900">
-                              Partial COD (Cash on Delivery)
+                      <div
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${
+                          paymentMethod === 'PARTIAL_COD' ? 'border-[#D9232D]' : 'border-gray-300'
+                        }`}
+                      >
+                        {paymentMethod === 'PARTIAL_COD' && (
+                          <div className="w-2 h-2 rounded-full bg-[#D9232D]" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs sm:text-sm font-bold text-gray-900">
+                              Partial COD
                             </span>
-                            <span className="text-[10px] uppercase font-bold tracking-wider bg-amber-600 text-white px-2 py-0.5 rounded">
+                            <span className="text-[9.5px] uppercase font-bold tracking-wider bg-amber-600 text-white px-2 py-0.5 rounded">
                               Pay ₹249 Advance
                             </span>
                           </div>
-                          <span className="text-sm font-extrabold text-[#D9232D]">
+                          <span className="text-xs sm:text-sm font-extrabold text-[#D9232D] shrink-0">
                             ₹249 Now
                           </span>
                         </div>
-                        <p className="text-xs text-gray-600 leading-relaxed">
-                          Pay ₹249 advance now via exact amount UPI QR to confirm your order. Pay the remaining balance of <strong className="text-gray-900">{formatCurrency(Math.max(0, finalTotalMinor - 24900))}</strong> in cash or UPI when delivered at your doorstep.
+                        <p className="text-[11.5px] text-gray-600 leading-relaxed">
+                          Pay ₹249 advance now via UPI QR to reserve your order. Pay remaining balance when courier delivers to your doorstep.
                         </p>
-                        <div className="mt-2.5 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 flex flex-wrap items-center justify-between text-[11px] text-amber-900 font-medium">
-                          <span>Advance Payable Now: <strong className="font-bold text-[#D9232D]">₹249.00</strong></span>
-                          <span>Balance on Delivery: <strong className="font-bold text-gray-900">{formatCurrency(Math.max(0, finalTotalMinor - 24900))}</strong></span>
+
+                        {/* Clean 2-Row Breakdown Box */}
+                        <div className="mt-2.5 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] space-y-1">
+                          <div className="flex items-center justify-between text-amber-900">
+                            <span className="font-medium flex items-center gap-1">
+                              <Zap className="w-3 h-3 text-[#D9232D]" /> Advance Payable Now:
+                            </span>
+                            <strong className="font-bold text-[#D9232D]">₹249.00</strong>
+                          </div>
+                          <div className="flex items-center justify-between text-amber-900 pt-1 border-t border-amber-500/15">
+                            <span className="font-medium flex items-center gap-1">
+                              <Truck className="w-3 h-3 text-amber-700" /> Balance on Doorstep:
+                            </span>
+                            <strong className="font-bold text-gray-900">
+                              {formatCurrency(Math.max(0, finalTotalMinor - 24900))}
+                            </strong>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </label>
+                  </div>
                 </div>
               </div>
 
@@ -513,23 +535,28 @@ function CheckoutContent() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 px-6 rounded-full bg-[#D9232D] text-white text-sm font-bold hover:bg-[#b91c1c] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer"
+                className="w-full py-3.5 sm:py-4 px-5 rounded-2xl bg-[#D9232D] hover:bg-[#b91c1c] active:scale-[0.98] transition-all text-white shadow-lg shadow-[#D9232D]/20 disabled:opacity-50 cursor-pointer flex flex-col items-center justify-center gap-0.5 select-none touch-manipulation"
               >
                 {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <Loader2 className="w-4 h-4 animate-spin text-white" />
                     <span>Generating Exact Amount UPI QR...</span>
-                  </>
+                  </div>
                 ) : paymentMethod === 'PARTIAL_COD' ? (
                   <>
-                    <Lock className="w-4 h-4" />
-                    <span>Pay ₹249 Advance via UPI (Balance {formatCurrency(Math.max(0, finalTotalMinor - 24900))} on COD)</span>
+                    <div className="flex items-center gap-1.5 text-sm sm:text-base font-bold">
+                      <Lock className="w-4 h-4 text-white/90" />
+                      <span>Pay ₹249 Advance via UPI</span>
+                    </div>
+                    <span className="text-[11px] text-white/85 font-medium">
+                      Balance {formatCurrency(Math.max(0, finalTotalMinor - 24900))} on Doorstep Delivery
+                    </span>
                   </>
                 ) : (
-                  <>
-                    <Lock className="w-4 h-4" />
-                    <span>Proceed to UPI Payment ({formatCurrency(finalTotalMinor)})</span>
-                  </>
+                  <div className="flex items-center gap-2 text-sm sm:text-base font-bold">
+                    <Lock className="w-4 h-4 text-white/90" />
+                    <span>Proceed to UPI Payment • {formatCurrency(finalTotalMinor)}</span>
+                  </div>
                 )}
               </button>
             </form>
