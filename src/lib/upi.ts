@@ -72,13 +72,13 @@ export async function generateUpiPayload(params: UpiOrderParams): Promise<Genera
   const amountRupees = (params.amountMinor / 100).toFixed(2);
   const upiUrl = generateUpiUrl(upiId, payeeName, amountRupees, params.orderNumber, params.note);
 
-  // Generate crisp QR code as PNG data URL
+  // Generate crisp lightweight QR code as PNG data URL (optimized for speed & mobile data)
   const qrCodeDataUrl = await QRCode.toDataURL(upiUrl, {
     errorCorrectionLevel: 'M',
-    margin: 2,
-    scale: 8,
+    margin: 1,
+    scale: 5,
     color: {
-      dark: '#111827', // Deep slate for crisp scanning
+      dark: '#111827',
       light: '#ffffff',
     },
   });
