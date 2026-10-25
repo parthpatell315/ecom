@@ -22,6 +22,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { UpiPaymentModal } from '@/components/checkout/UpiPaymentModal';
+import { trackPixelEvent } from '@/components/analytics/MetaPixel';
 
 function CheckoutContent() {
   const router = useRouter();
@@ -108,8 +109,20 @@ function CheckoutContent() {
   };
 
   const discountMinor = appliedCoupon ? appliedCoupon.discountMinor : 0;
-  const shippingMinor = subtotalMinor >= 149900 ? 0 : 9900;
+  // Prepaid UPI is flat ₹999 with 0 shipping. Partial COD adds ₹99 courier cash handling fee (total ₹1,098).
+  const shippingMinor = paymentMethod === 'UPI' ? 0 : 9900;
   const finalTotalMinor = Math.max(0, subtotalMinor - discountMinor + shippingMinor);
+
+  // Fire InitiateCheckout Meta Pixel Event
+  useEffect(() => {
+    if (isLoaded && items.length > 0) {
+      trackPixelEvent('InitiateCheckout', {
+        num_items: items.length,
+        value: finalTotalMinor / 100,
+        currency: 'INR',
+      });
+    }
+  }, [isLoaded, items.length, finalTotalMinor]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -131,6 +144,24 @@ function CheckoutContent() {
 
     setIsSubmitting(true);
     try {
+      // Capture UTM & Attribution parameters from URL
+      const utmSource = searchParams.get('utm_source');
+      const utmMedium = searchParams.get('utm_medium');
+      const utmCampaign = searchParams.get('utm_campaign');
+      const fbclid = searchParams.get('fbclid');
+
+      const attributionParts = [
+        utmSource ? `utm_source=${utmSource}` : '',
+        utmMedium ? `utm_medium=${utmMedium}` : '',
+        utmCampaign ? `utm_campaign=${utmCampaign}` : '',
+        fbclid ? `fbclid=${fbclid}` : '',
+      ].filter(Boolean);
+
+      const combinedNotes = [
+        formData.notes,
+        attributionParts.length > 0 ? `[Attribution: ${attributionParts.join(', ')}]` : '',
+      ].filter(Boolean).join(' | ');
+
       const res = await fetch('/api/checkout/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -150,7 +181,7 @@ function CheckoutContent() {
             country: formData.country,
           },
           couponCode: appliedCoupon?.code || null,
-          notes: formData.notes,
+          notes: combinedNotes,
           paymentGateway: paymentMethod,
           clientItems: items.map((it) => ({
             productId: it.productId,
@@ -442,11 +473,12 @@ function CheckoutContent() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs sm:text-sm font-bold text-gray-900">
-                              Full Instant UPI
+                            <span className="text-xs sm:text-sm font-bold text-gray-900 flex items-center gap-1.5">
+                              <Zap className="w-3.5 h-3.5 text-amber-500 fill-current" />
+                              ⚡ Prepaid UPI (Recommended)
                             </span>
                             <span className="text-[9.5px] uppercase font-bold tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">
-                              Instant Dispatch
+                              Save ₹99 COD Fee
                             </span>
                           </div>
                           <span className="text-xs sm:text-sm font-extrabold text-[#D9232D] shrink-0">
@@ -454,11 +486,11 @@ function CheckoutContent() {
                           </span>
                         </div>
                         <p className="text-[11.5px] text-gray-600 leading-relaxed">
-                          Pay 100% via dynamic exact amount QR code. Fast verification, 0% platform fee, priority studio dispatch within 24 hours.
+                          Pay flat <strong>₹999</strong> via dynamic UPI QR code. <strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
                         </p>
-                        <div className="mt-2 text-[10.5px] text-gray-500 flex items-center gap-1.5 flex-wrap">
-                          <Smartphone className="w-3 h-3 text-gray-400 shrink-0" />
-                          <span>Supports GPay, PhonePe, Paytm, CRED &amp; all UPI apps</span>
+                        <div className="mt-2 text-[10.5px] text-emerald-700 font-semibold flex items-center gap-1.5 flex-wrap">
+                          <Smartphone className="w-3 h-3 text-emerald-600 shrink-0" />
+                          <span>Instant auto-verification via GPay, PhonePe, Paytm, CRED &amp; all UPI apps</span>
                         </div>
                       </div>
                     </div>
@@ -494,18 +526,18 @@ function CheckoutContent() {
                             </span>
                           </div>
                           <span className="text-xs sm:text-sm font-extrabold text-[#D9232D] shrink-0">
-                            ₹249 Now
+                            ₹249 Now + ₹849 Doorstep
                           </span>
                         </div>
                         <p className="text-[11.5px] text-gray-600 leading-relaxed">
-                          Pay ₹249 advance now via UPI QR to reserve your order. Pay remaining balance when courier delivers to your doorstep.
+                          Pay ₹249 advance now via UPI QR to reserve your piece. Pay remaining ₹849 in cash/UPI when courier delivers to your hands (total ₹1,098 includes ₹99 courier handling).
                         </p>
 
                         {/* Clean 2-Row Breakdown Box */}
                         <div className="mt-2.5 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] space-y-1">
                           <div className="flex items-center justify-between text-amber-900">
                             <span className="font-medium flex items-center gap-1">
-                              <Zap className="w-3 h-3 text-[#D9232D]" /> Advance Payable Now:
+                              <Zap className="w-3 h-3 text-[#D9232D]" /> Advance Reservation Fee:
                             </span>
                             <strong className="font-bold text-[#D9232D]">₹249.00</strong>
                           </div>
@@ -513,9 +545,7 @@ function CheckoutContent() {
                             <span className="font-medium flex items-center gap-1">
                               <Truck className="w-3 h-3 text-amber-700" /> Balance on Doorstep:
                             </span>
-                            <strong className="font-bold text-gray-900">
-                              {formatCurrency(Math.max(0, finalTotalMinor - 24900))}
-                            </strong>
+                            <strong className="font-bold text-gray-900">₹849.00</strong>
                           </div>
                         </div>
                       </div>

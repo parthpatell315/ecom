@@ -7,6 +7,7 @@ import confetti from 'canvas-confetti';
 import { formatCurrency } from '@/lib/currency';
 import { CheckCircle2, Package, Truck, ArrowRight, ShieldCheck, Printer } from 'lucide-react';
 import Image from 'next/image';
+import { trackPixelEvent } from '@/components/analytics/MetaPixel';
 
 function OrderSuccessContent() {
   const searchParams = useSearchParams();
@@ -16,6 +17,7 @@ function OrderSuccessContent() {
 
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const purchaseTrackedRef = React.useRef(false);
 
   useEffect(() => {
     // Fire celebratory confetti on mount
@@ -36,6 +38,17 @@ function OrderSuccessContent() {
         .then((data) => {
           if (data.success && data.order) {
             setOrder(data.order);
+            if (!purchaseTrackedRef.current) {
+              purchaseTrackedRef.current = true;
+              trackPixelEvent('Purchase', {
+                content_type: 'product',
+                content_ids: data.order.items?.map((it: any) => it.productId) || [],
+                value: (data.order.totalMinor || 0) / 100,
+                currency: 'INR',
+                num_items: data.order.items?.length || 1,
+                order_id: data.order.orderNumber,
+              });
+            }
           }
         })
         .catch(console.error)

@@ -17,9 +17,41 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 
     if (!product) return { title: 'Product Not Found | flirta.network' };
 
+    const canonicalUrl = `https://www.flirta.network/product/${slug}`;
+    const primaryImage = product.images?.[0]?.url || 'https://www.flirta.network/images/hero-arc.webp';
+    const pageDescription =
+      product.subtitle ||
+      product.description?.replace(/<[^>]*>?/gm, '').substring(0, 160) ||
+      'Precision 3D Printed Studio ambient lighting handcrafted in India with 0.12mm precision.';
+
     return {
       title: `${product.title} | flirta.network`,
-      description: product.subtitle || product.description?.substring(0, 150),
+      description: pageDescription,
+      alternates: {
+        canonical: canonicalUrl,
+      },
+      openGraph: {
+        title: `${product.title} | flirta.network`,
+        description: pageDescription,
+        url: canonicalUrl,
+        siteName: 'flirta.network',
+        locale: 'en_IN',
+        type: 'website',
+        images: [
+          {
+            url: primaryImage,
+            width: 1200,
+            height: 800,
+            alt: product.title,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${product.title} | flirta.network`,
+        description: pageDescription,
+        images: [primaryImage],
+      },
     };
   } catch (error) {
     console.error('generateMetadata error:', error);

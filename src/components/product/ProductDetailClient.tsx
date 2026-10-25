@@ -28,6 +28,8 @@ import {
   Flame,
 } from 'lucide-react';
 
+import { trackPixelEvent } from '@/components/analytics/MetaPixel';
+
 interface ProductDetailClientProps {
   product: any;
   relatedProducts?: any[];
@@ -57,39 +59,17 @@ export function ProductDetailClient({
   const effectivePriceMinor =
     product.priceMinor + (selectedVariant?.priceAdjustmentMinor || 0);
 
-  // 12-Hour Flash Sale live countdown timer
-  const [flashTimeLeft, setFlashTimeLeft] = useState<{ hours: number; minutes: number; seconds: number }>({
-    hours: 11,
-    minutes: 48,
-    seconds: 32,
-  });
-
+  // Meta Pixel ViewContent event tracking
   useEffect(() => {
-    const STORAGE_KEY = 'flirta_12h_flash_end_v1';
-    let endTime = 0;
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        endTime = parseInt(stored, 10);
-      }
-      if (!endTime || isNaN(endTime) || endTime <= Date.now()) {
-        endTime = Date.now() + 12 * 60 * 60 * 1000;
-        localStorage.setItem(STORAGE_KEY, endTime.toString());
-      }
-    } catch {
-      endTime = Date.now() + 11 * 3600 * 1000 + 48 * 60 * 1000;
-    }
-
-    const interval = setInterval(() => {
-      const remaining = Math.max(0, endTime - Date.now());
-      const hours = Math.floor(remaining / (1000 * 60 * 60));
-      const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
-      setFlashTimeLeft({ hours, minutes, seconds });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+    trackPixelEvent('ViewContent', {
+      content_name: product.title,
+      content_category: product.category?.name || 'Studio Collection',
+      content_ids: [product.id],
+      content_type: 'product',
+      value: effectivePriceMinor / 100,
+      currency: 'INR',
+    });
+  }, [product.id, product.title, product.category, effectivePriceMinor]);
 
   // Swatch color resolver for accurate visual color representation
   const getSwatchColor = (name: string, hex?: string | null): string => {
@@ -116,6 +96,13 @@ export function ProductDetailClient({
       });
       if (success) {
         setAdded(true);
+        trackPixelEvent('AddToCart', {
+          content_name: product.title,
+          content_ids: [product.id],
+          content_type: 'product',
+          value: (effectivePriceMinor * quantity) / 100,
+          currency: 'INR',
+        });
         setTimeout(() => setAdded(false), 2500);
       }
     } finally {
@@ -133,9 +120,18 @@ export function ProductDetailClient({
         unitPriceMinor: effectivePriceMinor,
         image: selectedImage || (product.images && product.images[0]?.url) || '',
       });
-      router.push('/checkout');
+      trackPixelEvent('AddToCart', {
+        content_name: product.title,
+        content_ids: [product.id],
+        content_type: 'product',
+        value: (effectivePriceMinor * quantity) / 100,
+        currency: 'INR',
+      });
+      const query = typeof window !== 'undefined' ? window.location.search : '';
+      router.push('/checkout' + (query || ''));
     } catch {
-      router.push('/checkout');
+      const query = typeof window !== 'undefined' ? window.location.search : '';
+      router.push('/checkout' + (query || ''));
     }
   };
 
@@ -269,11 +265,11 @@ export function ProductDetailClient({
         },
         {
           q: 'How does the Partial Cash on Delivery (COD) payment work?',
-          a: 'To make your purchase completely worry-free, you pay only a ₹249 advance reservation fee online today via UPI or Card. We immediately dispatch your unit via Bluedart Express Air. You pay the remaining ₹750 balance in cash or UPI when the courier delivers it to your hands.',
+          a: 'To make your purchase completely worry-free, you pay only a ₹249 advance reservation fee online today via UPI or Card. We immediately dispatch your unit via Bluedart Express Air. You pay the remaining ₹849 balance in cash or UPI when the courier delivers it to your hands. (Tip: Choose Prepaid UPI at checkout to pay flat ₹999 with zero COD fees!)',
         },
         {
           q: 'What is your replacement policy if it is damaged during shipping?',
-          a: 'We pack every order in custom 30mm laser-cut EVA acoustic foam. However, if anything arrives damaged or uncalibrated, contact our WhatsApp support (+91 99099 07831) within 7 days, and we will send a brand-new replacement unit with zero questions asked.',
+          a: 'We pack every order in custom 30mm laser-cut EVA acoustic foam. However, if anything arrives damaged or uncalibrated, contact our WhatsApp support (+91 76004 09399) within 7 days, and we will send a brand-new replacement unit with zero questions asked.',
         },
       ]
     : isArcReactor
@@ -292,21 +288,21 @@ export function ProductDetailClient({
         },
         {
           q: 'How does Partial COD (Cash on Delivery) work?',
-          a: 'You pay only ₹249 online today as an advance studio dispatch deposit. When Bluedart / Delhivery brings the package to your address, you inspect the parcel and pay the remaining balance of ₹750 in cash or UPI.',
+          a: 'You pay only ₹249 online today as an advance studio dispatch deposit. When Bluedart / Delhivery brings the package to your address, you inspect the parcel and pay the remaining balance of ₹849 in cash or UPI. (To save the ₹99 COD fee, choose Prepaid UPI for flat ₹999).',
         },
         {
           q: 'What happens if it arrives defective or damaged during transit?',
-          a: 'Every piece is bench-tested for 4 hours before sealing. In the rare event of courier transit damage, we provide a 7-day hassle-free replacement guarantee. Simply message us on WhatsApp with an unboxing photo, and we dispatch a replacement immediately.',
+          a: 'Every piece is bench-tested for 4 hours before sealing. In the rare event of courier transit damage, we provide a 7-day hassle-free replacement guarantee. Simply message us on WhatsApp (+91 76004 09399) with an unboxing photo, and we dispatch a replacement immediately.',
         },
       ]
     : [
         {
           q: 'How long does delivery take?',
-          a: 'Orders are dispatched from our studio within 24 hours. Metro deliveries (Mumbai, Delhi, Bengaluru, Pune, Hyderabad, Chennai) arrive in 2–3 business days via Bluedart / Delhivery Air.',
+          a: 'Orders are dispatched from our studio within 24 hours. Deliveries across India arrive in 3–5 business days via Bluedart / Delhivery Express Air with live SMS tracking.',
         },
         {
           q: 'What is Partial COD?',
-          a: 'Pay a small ₹249 reservation advance today to book your order, and pay the remaining balance when the courier delivers it to your doorstep.',
+          a: 'Pay a ₹249 reservation advance today to book your order, and pay the remaining ₹849 balance when the courier delivers it to your doorstep.',
         },
         {
           q: 'What is your replacement policy?',
@@ -412,7 +408,7 @@ export function ProductDetailClient({
                 </div>
                 <span className="font-semibold text-gray-900">4.9/5</span>
                 <span className="text-gray-500 font-medium">
-                  ({isArcReactor ? '186' : isLevitatingLamp ? '142' : '124'} Verified Collector Ratings)
+                  ({product.reviews?.length || 4} Verified Collector Reviews)
                 </span>
                 <span className="text-gray-300">•</span>
                 <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 text-[10.5px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -420,7 +416,7 @@ export function ProductDetailClient({
                 </span>
                 <span className="text-gray-300">•</span>
                 <span className="text-indigo-700 bg-indigo-50 border border-indigo-200 text-[10.5px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
-                  <Truck className="w-3 h-3 text-indigo-600" /> Free Bluedart Air
+                  <Truck className="w-3 h-3 text-indigo-600" /> Delivery in 3–5 Days
                 </span>
               </div>
 
@@ -445,30 +441,24 @@ export function ProductDetailClient({
                 )}
               </div>
 
-              {/* 12-Hour Flash Sale Urgency Callout with Live Countdown */}
-              {(effectivePriceMinor === 99900 || product.badge?.includes('12H')) && (
+              {/* Diwali Festive Studio Drop Offer Banner */}
+              {(effectivePriceMinor === 99900 || product.badge?.includes('12H') || isArcReactor || isLevitatingLamp) && (
                 <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-[#FFF1F2] to-[#FFF5F6] border border-[#FECDD3] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
                   <div className="flex items-center gap-2.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#E61E2A] animate-pulse shrink-0" />
                     <div>
                       <strong className="text-[#9F1239] block font-semibold text-xs flex items-center gap-1.5">
-                        <Zap className="w-3.5 h-3.5 text-[#E61E2A] fill-current" />
-                        12-Hour Studio Flash Deal: Flat ₹999
+                        <Sparkles className="w-3.5 h-3.5 text-[#E61E2A]" />
+                        Diwali Festive Studio Drop: Flat ₹999
                       </strong>
-                      <span className="text-[#BE123C] text-[11px] mt-0.5 block">
-                        Special promotional drop • Free Express Pan-India Delivery
+                      <span className="text-[#BE123C] text-[11px] mt-0.5 block font-medium">
+                        Prepaid ₹999 (Free Express Delivery) • Dispatched in 24h • Delivery in 3–5 Days
                       </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-                    <div className="flex items-center gap-1 font-mono text-[11.5px] font-bold bg-[#BE123C] text-white px-2.5 py-1 rounded-lg tracking-wider">
-                      <Clock className="w-3.5 h-3.5" />
-                      <span>
-                        {String(flashTimeLeft.hours).padStart(2, '0')}:{String(flashTimeLeft.minutes).padStart(2, '0')}:{String(flashTimeLeft.seconds).padStart(2, '0')}
-                      </span>
-                    </div>
-                    <span className="text-[10px] font-mono font-bold bg-[#E61E2A] text-white px-2 py-1 rounded-md uppercase tracking-wider">
-                      ACTIVE NOW
+                    <span className="text-[10px] font-mono font-bold bg-[#E61E2A] text-white px-2.5 py-1 rounded-md uppercase tracking-wider">
+                      DIWALI SPECIAL
                     </span>
                   </div>
                 </div>
@@ -588,19 +578,29 @@ export function ProductDetailClient({
                     </>
                   )}
                 </button>
-                {/* Partial COD Peace of Mind Box */}
-                <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200/90 flex items-start gap-3 text-xs shadow-2xs">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0 text-emerald-800 font-bold text-sm">
-                    ₹
-                  </div>
-                  <div className="flex-1">
-                    <span className="font-semibold text-emerald-900 block text-xs flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                      Partial COD Option Available • Pay ₹249 Today
-                    </span>
-                    <p className="text-emerald-800 text-[11.5px] mt-0.5 leading-snug">
-                      Reserve this piece with just <strong>₹249 advance</strong>. Pay the remaining <strong>₹750</strong> in cash or UPI when Bluedart hands you the parcel at your doorstep!
-                    </p>
+                {/* Payment & Delivery Options: Prepaid (₹999) vs Partial COD (₹249 + ₹849) */}
+                <div className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50/60 border border-emerald-200/90 space-y-2 text-xs shadow-2xs">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0 text-emerald-800 font-bold text-sm">
+                      ₹
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <span className="font-semibold text-emerald-950 text-xs flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          Payment & Delivery Options
+                        </span>
+                        <span className="text-[10.5px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                          ⚡ 3–5 Day Delivery
+                        </span>
+                      </div>
+                      <p className="text-emerald-900 text-[11.5px] mt-1.5 leading-snug">
+                        <strong className="text-emerald-950">⚡ Prepaid UPI (Recommended):</strong> Pay flat <strong className="text-emerald-950">₹999</strong> with zero extra fees + get priority 24h dispatch & free express air courier.
+                      </p>
+                      <p className="text-emerald-800 text-[11px] mt-1 leading-snug pt-1.5 border-t border-emerald-200/60">
+                        <strong>Partial COD:</strong> Pay <strong>₹249 advance</strong> now via UPI to book your piece, and pay the remaining <strong>₹849 balance</strong> upon doorstep delivery.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -852,7 +852,7 @@ export function ProductDetailClient({
                     {'★★★★★'}
                   </div>
                   <span className="text-[11px] font-semibold text-gray-800">
-                    {isArcReactor ? '186' : isLevitatingLamp ? '142' : '124'} Verified Buyers
+                    {displayedReviews.length} Verified Buyer Reviews
                   </span>
                 </div>
               </div>
