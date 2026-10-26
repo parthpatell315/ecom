@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
@@ -16,7 +16,7 @@ import {
   QrCode,
   X,
   Copy,
-  ExternalLink,
+  CheckCircle2,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
 
@@ -39,6 +39,7 @@ interface UpiPaymentModalProps {
       gpay: string;
       phonepe: string;
       paytm: string;
+      cred?: string;
     };
   };
   onClose?: () => void;
@@ -62,13 +63,54 @@ export function UpiPaymentModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [hasInitiatedPayment, setHasInitiatedPayment] = useState(false);
+  const [userReturnedFromApp, setUserReturnedFromApp] = useState(false);
+  const [selectedQrType, setSelectedQrType] = useState<'dynamic' | 'paytm'>('dynamic');
 
-  // Fast direct UPI intent trigger for mobile apps
-  const triggerUpi = (url: string) => {
+  // Auto-select QR on Desktop & auto-detect customer returning from UPI app
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 640) {
+      setActiveTab('qr');
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible' && hasInitiatedPayment) {
+        setUserReturnedFromApp(true);
+      }
+    };
+
+    const handleFocus = () => {
+      if (hasInitiatedPayment) {
+        setUserReturnedFromApp(true);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [hasInitiatedPayment]);
+
+  // Robust UPI trigger supporting Android intents, iOS, and universal fallback
+  const triggerUpi = (targetUrl: string, fallbackUrl?: string) => {
+    setHasInitiatedPayment(true);
     try {
-      window.location.href = url;
+      const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768 && !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      if (isDesktop) {
+        setActiveTab('qr');
+        return;
+      }
+
+      // iOS devices do not understand Android intent:// URIs, so always use upi:// scheme on iOS
+      const finalUrl = isIOS && targetUrl.startsWith('intent://') ? (fallbackUrl || upiPayload.upiUrl) : targetUrl;
+      window.location.href = finalUrl;
     } catch (err) {
       console.error('UPI deep link error:', err);
+      window.location.href = fallbackUrl || upiPayload.upiUrl;
     }
   };
 
@@ -217,6 +259,42 @@ export function UpiPaymentModal({
             </div>
           )}
 
+          {/* Automatic Return From Payment App Detection */}
+          {userReturnedFromApp && (
+            <div className="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-500/40 space-y-3 text-center animate-fade-in shadow-sm">
+              <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-sm">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-extrabold text-emerald-950 text-sm sm:text-base">
+                  Welcome Back! Did you complete your payment?
+                </h3>
+                <p className="text-[11.5px] text-emerald-800 mt-0.5">
+                  Tap below to verify your payment and generate your studio order receipt.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleConfirmWithoutUtr}
+                disabled={isSubmitting}
+                className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Confirming Order...</span>
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" />
+                    <span>Yes, Payment Completed — Confirm Order</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+
           {/* Mobile-Friendly Tabs: 1-Tap Pay vs QR Code */}
           <div className="flex rounded-xl bg-gray-100 p-1">
             <button
@@ -287,7 +365,7 @@ export function UpiPaymentModal({
                   </button>
                   <button
                     type="button"
-                    onClick={() => triggerUpi(upiPayload.upiUrl)}
+                    onClick={() => triggerUpi(upiPayload.deepLinks.cred || upiPayload.upiUrl, upiPayload.upiUrl)}
                     className="py-3 px-4 rounded-xl bg-[#D9232D]/10 text-[#D9232D] border border-[#D9232D]/20 font-bold text-xs hover:bg-[#D9232D]/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <span>CRED / BHIM</span>
@@ -313,18 +391,29 @@ export function UpiPaymentModal({
           {/* TAB 2: VECTOR QR CODE */}
           {activeTab === 'qr' && (
             <div className="flex flex-col items-center justify-center p-5 rounded-2xl bg-gray-50 border border-gray-200 text-center space-y-3 animate-fade-in">
-              <div className="relative w-48 h-48 p-2.5 bg-white rounded-2xl shadow-sm border border-gray-200 flex items-center justify-center overflow-hidden">
-                {upiPayload.qrCodeDataUrl ? (
+              <div className="relative w-48 h-48 sm:w-52 sm:h-52 p-2.5 bg-white rounded-2xl shadow-sm border border-gray-200 flex items-center justify-center overflow-hidden">
+                {selectedQrType === 'dynamic' ? (
+                  upiPayload.qrCodeDataUrl ? (
+                    <Image
+                      src={upiPayload.qrCodeDataUrl}
+                      alt={`UPI QR Code for ${orderNumber}`}
+                      width={200}
+                      height={200}
+                      className="rounded-xl object-contain"
+                      priority
+                    />
+                  ) : (
+                    <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+                  )
+                ) : (
                   <Image
-                    src={upiPayload.qrCodeDataUrl}
-                    alt={`UPI QR Code for ${orderNumber}`}
-                    width={180}
-                    height={180}
+                    src="/images/paytm-qr.jpg"
+                    alt={`Official Paytm Merchant QR for ${orderNumber}`}
+                    width={200}
+                    height={200}
                     className="rounded-xl object-contain"
                     priority
                   />
-                ) : (
-                  <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
                 )}
               </div>
               <div className="space-y-1">
@@ -332,8 +421,34 @@ export function UpiPaymentModal({
                   Exact Amount: ₹{upiPayload.amountRupees}
                 </span>
                 <p className="text-[11px] text-gray-500">
-                  Scan from any bank or UPI app with your other phone
+                  Scan using GPay, PhonePe, Paytm, or any banking app
                 </p>
+              </div>
+
+              {/* QR Mode Switcher */}
+              <div className="pt-1 flex items-center justify-center gap-2 text-[11px]">
+                <button
+                  type="button"
+                  onClick={() => setSelectedQrType('dynamic')}
+                  className={`px-3 py-1 rounded-full font-medium transition-colors cursor-pointer ${
+                    selectedQrType === 'dynamic'
+                      ? 'bg-gray-900 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  Auto-Amount QR
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedQrType('paytm')}
+                  className={`px-3 py-1 rounded-full font-medium transition-colors cursor-pointer ${
+                    selectedQrType === 'paytm'
+                      ? 'bg-gray-900 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  Paytm Official QR
+                </button>
               </div>
             </div>
           )}

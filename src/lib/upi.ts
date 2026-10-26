@@ -23,6 +23,7 @@ export interface GeneratedUpiPayload {
     phonepe: string;
     paytm: string;
     generic: string;
+    cred?: string;
   };
 }
 
@@ -83,6 +84,8 @@ export async function generateUpiPayload(params: UpiOrderParams): Promise<Genera
     },
   });
 
+  const upiQuery = `pa=${encodeURIComponent(upiId.trim())}&pn=${encodeURIComponent(payeeName.trim())}&am=${encodeURIComponent(amountRupees)}&cu=INR&tn=${encodeURIComponent(params.note || `Order ${params.orderNumber}`)}`;
+
   return {
     upiId,
     payeeName,
@@ -92,10 +95,11 @@ export async function generateUpiPayload(params: UpiOrderParams): Promise<Genera
     qrCodeDataUrl,
     deepLinks: {
       generic: upiUrl,
-      // Mobile app specific intent protocols (fallback to generic if specific not registered)
-      gpay: upiUrl,
-      phonepe: upiUrl.replace('upi://', 'phonepe://'),
-      paytm: upiUrl.replace('upi://', 'paytmmp://'),
+      // Target specific apps via official Android intent scheme with universal fallback
+      gpay: `intent://pay?${upiQuery}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`,
+      phonepe: `intent://pay?${upiQuery}#Intent;scheme=upi;package=com.phonepe.app;end`,
+      paytm: `intent://pay?${upiQuery}#Intent;scheme=upi;package=net.one97.paytm;end`,
+      cred: `intent://pay?${upiQuery}#Intent;scheme=upi;package=com.dreamplug.androidapp;end`,
     },
   };
 }
