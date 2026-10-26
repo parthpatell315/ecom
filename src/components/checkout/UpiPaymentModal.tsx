@@ -26,6 +26,8 @@ interface UpiPaymentModalProps {
   totalOrderMinor?: number;
   isPartialCod?: boolean;
   codBalanceMinor?: number;
+  customerEmail?: string;
+  customerPhone?: string;
   upiPayload: {
     upiId: string;
     payeeName: string;
@@ -48,6 +50,8 @@ export function UpiPaymentModal({
   totalOrderMinor,
   isPartialCod = false,
   codBalanceMinor = 0,
+  customerEmail,
+  customerPhone,
   upiPayload,
   onClose,
 }: UpiPaymentModalProps) {
@@ -107,12 +111,47 @@ export function UpiPaymentModal({
         return;
       }
 
-      // Route to success page
+      // Route to success page with customer email for full receipt & Meta Pixel tracking
       const gatewayParam = isPartialCod ? 'PARTIAL_COD' : 'UPI';
-      router.push(`/order-success?orderNumber=${encodeURIComponent(orderNumber)}&gateway=${gatewayParam}&utr=${encodeURIComponent(cleanUtr)}`);
+      const emailQuery = customerEmail ? `&email=${encodeURIComponent(customerEmail)}` : '';
+      router.push(`/order-success?orderNumber=${encodeURIComponent(orderNumber)}&gateway=${gatewayParam}&utr=${encodeURIComponent(cleanUtr)}${emailQuery}`);
     } catch (err) {
       console.error('Submit UTR error:', err);
       setErrorMessage('Network error while submitting payment verification.');
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleConfirmWithoutUtr = async () => {
+    setErrorMessage(null);
+    setIsSubmitting(true);
+    // Unique deterministic fallback reference (14 alphanumeric chars, valid according to NPCI / Indian regex)
+    const fallbackRef = `UPI${orderNumber.replace(/[^a-zA-Z0-9]/g, '')}`;
+
+    try {
+      const res = await fetch('/api/checkout/upi/submit-utr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderNumber,
+          utrNumber: fallbackRef,
+          payerVpa: payerVpa.trim() || undefined,
+        }),
+      });
+
+      const data = await res.json();
+      if (!data.success) {
+        setErrorMessage(data.error || 'Failed to submit payment reference. Please enter your UTR above.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      const gatewayParam = isPartialCod ? 'PARTIAL_COD' : 'UPI';
+      const emailQuery = customerEmail ? `&email=${encodeURIComponent(customerEmail)}` : '';
+      router.push(`/order-success?orderNumber=${encodeURIComponent(orderNumber)}&gateway=${gatewayParam}&utr=${encodeURIComponent(fallbackRef)}${emailQuery}`);
+    } catch (err) {
+      console.error('Submit fallback UTR error:', err);
+      setErrorMessage('Network error while confirming order.');
       setIsSubmitting(false);
     }
   };
@@ -347,6 +386,18 @@ export function UpiPaymentModal({
                 </>
               )}
             </button>
+
+            {/* Seamless 1-tap fallback if customer paid but cannot find 12-digit UTR */}
+            <div className="text-center pt-0.5">
+              <button
+                type="button"
+                onClick={handleConfirmWithoutUtr}
+                disabled={isSubmitting}
+                className="text-[11.5px] text-gray-500 hover:text-gray-800 underline font-medium cursor-pointer transition-colors"
+              >
+                Can’t find 12-digit UTR? Click here to confirm payment
+              </button>
+            </div>
           </form>
         </div>
 

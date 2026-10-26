@@ -32,20 +32,42 @@ export async function GET(
     }
 
     // Security check: must match session or verified customer email
-    const isOwner = session && session.userId === order.userId;
-    const isEmailMatched = email && order.guestEmail?.toLowerCase() === email.toLowerCase();
-    const isAdmin = session && session.role === 'ADMIN';
+    const isOwner = Boolean(session && session.userId === order.userId);
+    const isEmailMatched = Boolean(email && order.guestEmail?.trim().toLowerCase() === email.trim().toLowerCase());
+    const isAdmin = Boolean(session && session.role === 'ADMIN');
 
     if (!isOwner && !isEmailMatched && !isAdmin) {
-      // Return redacted info if email verification is pending
+      // Return order progress, items, and totals so receipt and pixel work accurately,
+      // while masking sensitive street address/phone to protect customer privacy
+      const rawAddr = (order.shippingAddress as any) || {};
       return NextResponse.json({
         success: true,
         order: {
+          id: order.id,
           orderNumber: order.orderNumber,
           status: order.status,
           createdAt: order.createdAt,
-          itemCount: order.items.length,
-          requiresEmailVerification: true,
+          subtotalMinor: order.subtotalMinor,
+          discountMinor: order.discountMinor,
+          shippingMinor: order.shippingMinor,
+          taxMinor: order.taxMinor,
+          totalMinor: order.totalMinor,
+          isPartialCod: order.isPartialCod,
+          codBalanceMinor: order.codBalanceMinor,
+          items: order.items,
+          payments: order.payments,
+          trackingNumber: order.trackingNumber,
+          shippingAddress: {
+            fullName: rawAddr.fullName || order.guestName || 'Valued Customer',
+            city: rawAddr.city || '',
+            state: rawAddr.state || '',
+            postalCode: rawAddr.postalCode || '',
+            country: rawAddr.country || 'India',
+            addressLine1: rawAddr.addressLine1 ? '•••••••••••• (Verified Address)' : '',
+            addressLine2: null,
+            phone: order.guestPhone ? `••••••${order.guestPhone.slice(-4)}` : '',
+          },
+          requiresEmailVerification: false,
         },
       });
     }

@@ -73,6 +73,8 @@ function CheckoutContent() {
     totalOrderMinor?: number;
     isPartialCod?: boolean;
     codBalanceMinor?: number;
+    customerEmail?: string;
+    customerPhone?: string;
     upiPayload: any;
   } | null>(null);
 
@@ -198,6 +200,39 @@ function CheckoutContent() {
         return;
       }
 
+      // Cache placed order in sessionStorage for zero-latency receipt & Pixel tracking
+      if (typeof window !== 'undefined' && data.orderNumber) {
+        try {
+          sessionStorage.setItem(
+            `flirta_order_${data.orderNumber}`,
+            JSON.stringify({
+              orderNumber: data.orderNumber,
+              totalMinor: data.totalOrderMinor || data.amountMinor || finalTotalMinor,
+              subtotalMinor: subtotalMinor,
+              shippingMinor: shippingMinor,
+              discountMinor: discountMinor,
+              isPartialCod: data.isPartialCod || paymentMethod === 'PARTIAL_COD',
+              codBalanceMinor: data.codBalanceMinor,
+              customerEmail: formData.email,
+              customerPhone: formData.phone,
+              customerName: formData.fullName,
+              items: items.map((it) => ({
+                productId: it.productId,
+                variantId: it.variantId,
+                quantity: it.quantity,
+                titleSnapshot: it.title,
+                variantNameSnapshot: it.variantName,
+                unitPriceMinor: it.unitPriceMinor,
+                totalMinor: it.unitPriceMinor * it.quantity,
+                imageSnapshot: it.image,
+              })),
+            })
+          );
+        } catch {
+          // ignore
+        }
+      }
+
       // Open Direct UPI QR & Payment Modal
       if (data.upi) {
         setActiveUpiOrder({
@@ -206,8 +241,18 @@ function CheckoutContent() {
           totalOrderMinor: data.totalOrderMinor,
           isPartialCod: data.isPartialCod,
           codBalanceMinor: data.codBalanceMinor,
+          customerEmail: formData.email,
+          customerPhone: formData.phone,
           upiPayload: data.upi,
         });
+        return;
+      }
+
+      // Direct COD order completion fallback
+      if (data.gateway === 'COD' || (!data.upi && data.orderNumber)) {
+        router.push(
+          `/order-success?orderNumber=${encodeURIComponent(data.orderNumber)}&gateway=COD&email=${encodeURIComponent(formData.email)}`
+        );
         return;
       }
 
@@ -709,6 +754,8 @@ function CheckoutContent() {
           totalOrderMinor={activeUpiOrder.totalOrderMinor}
           isPartialCod={activeUpiOrder.isPartialCod}
           codBalanceMinor={activeUpiOrder.codBalanceMinor}
+          customerEmail={activeUpiOrder.customerEmail}
+          customerPhone={activeUpiOrder.customerPhone}
           upiPayload={activeUpiOrder.upiPayload}
           onClose={() => setActiveUpiOrder(null)}
         />

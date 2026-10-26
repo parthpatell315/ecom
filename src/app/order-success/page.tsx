@@ -7,13 +7,14 @@ import confetti from 'canvas-confetti';
 import { formatCurrency } from '@/lib/currency';
 import { CheckCircle2, Package, Truck, ArrowRight, ShieldCheck, Printer } from 'lucide-react';
 import Image from 'next/image';
-import { trackPixelEvent } from '@/components/analytics/MetaPixel';
+import { trackPurchaseEvent } from '@/components/analytics/MetaPixel';
 
 function OrderSuccessContent() {
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get('orderNumber');
   const utrParam = searchParams.get('utr');
   const gatewayParam = searchParams.get('gateway');
+  const emailParam = searchParams.get('email');
 
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -32,21 +33,60 @@ function OrderSuccessContent() {
       // ignore
     }
 
+    // 1. Immediately read cached order from sessionStorage if available (zero latency)
+    if (orderNumber && typeof window !== 'undefined') {
+      try {
+        const cachedStr = sessionStorage.getItem(`flirta_order_${orderNumber}`);
+        if (cachedStr) {
+          const cached = JSON.parse(cachedStr);
+          setOrder((prev: any) => prev || cached);
+          setLoading(false);
+
+          if (!purchaseTrackedRef.current && cached.items?.length > 0) {
+            purchaseTrackedRef.current = true;
+            trackPurchaseEvent({
+              orderNumber: cached.orderNumber,
+              value: (cached.totalMinor || 0) / 100,
+              items: cached.items.map((it: any) => ({
+                productId: it.productId,
+                title: it.titleSnapshot || it.title,
+                quantity: it.quantity || 1,
+                price: (it.unitPriceMinor || 0) / 100,
+              })),
+              customerEmail: cached.customerEmail,
+              customerPhone: cached.customerPhone,
+            });
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    // 2. Fetch verified server order data
     if (orderNumber) {
-      fetch(`/api/orders/${orderNumber}`)
+      const url = emailParam
+        ? `/api/orders/${orderNumber}?email=${encodeURIComponent(emailParam)}`
+        : `/api/orders/${orderNumber}`;
+
+      fetch(url)
         .then((res) => res.json())
         .then((data) => {
           if (data.success && data.order) {
             setOrder(data.order);
             if (!purchaseTrackedRef.current) {
               purchaseTrackedRef.current = true;
-              trackPixelEvent('Purchase', {
-                content_type: 'product',
-                content_ids: data.order.items?.map((it: any) => it.productId) || [],
+              trackPurchaseEvent({
+                orderNumber: data.order.orderNumber,
                 value: (data.order.totalMinor || 0) / 100,
-                currency: 'INR',
-                num_items: data.order.items?.length || 1,
-                order_id: data.order.orderNumber,
+                items: (data.order.items || []).map((it: any) => ({
+                  productId: it.productId,
+                  title: it.titleSnapshot,
+                  quantity: it.quantity,
+                  price: (it.unitPriceMinor || 0) / 100,
+                })),
+                customerEmail: data.order.guestEmail || emailParam || undefined,
+                customerPhone: data.order.guestPhone || undefined,
               });
             }
           }
@@ -56,7 +96,7 @@ function OrderSuccessContent() {
     } else {
       setLoading(false);
     }
-  }, [orderNumber]);
+  }, [orderNumber, emailParam]);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">

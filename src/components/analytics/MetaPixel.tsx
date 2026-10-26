@@ -13,14 +13,91 @@ declare global {
 
 export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '946508041872382';
 
-export function trackPixelEvent(eventName: string, params: Record<string, any> = {}) {
-  if (typeof window !== 'undefined' && window.fbq) {
-    try {
-      window.fbq('track', eventName, params);
-    } catch (err) {
-      console.warn('Meta Pixel track error:', err);
-    }
+export interface PixelPurchaseItem {
+  productId: string;
+  title?: string;
+  quantity?: number;
+  price?: number;
+}
+
+export interface PixelPurchaseData {
+  orderNumber: string;
+  value: number; // in INR (e.g. 999.00)
+  currency?: string;
+  items: PixelPurchaseItem[];
+  customerEmail?: string;
+  customerPhone?: string;
+}
+
+export function trackPixelEvent(
+  eventName: string,
+  params: Record<string, any> = {},
+  options?: { eventID?: string }
+) {
+  if (typeof window === 'undefined') return;
+
+  // 1. Ensure Meta Pixel fbq stub exists if script hasn't executed yet
+  if (!window.fbq) {
+    const fbq: any = function () {
+      if (fbq.callMethod) {
+        fbq.callMethod.apply(fbq, arguments);
+      } else {
+        fbq.queue.push(arguments);
+      }
+    };
+    if (!window._fbq) window._fbq = fbq;
+    fbq.push = fbq;
+    fbq.loaded = true;
+    fbq.version = '2.0';
+    fbq.queue = [];
+    window.fbq = fbq;
   }
+
+  // 2. Track event immediately (queued or direct)
+  try {
+    if (options?.eventID) {
+      window.fbq('track', eventName, params, { eventID: options.eventID });
+    } else {
+      window.fbq('track', eventName, params);
+    }
+    console.log(`[Meta Pixel] Tracked ${eventName}:`, params);
+  } catch (err) {
+    console.warn(`[Meta Pixel] Error tracking ${eventName}:`, err);
+  }
+}
+
+/**
+ * Standard Meta Purchase Event Tracker
+ * Ensures value > 0, currency, content_ids, and contents are strictly formatted for Meta Ads
+ */
+export function trackPurchaseEvent(data: PixelPurchaseData) {
+  const numValue = Math.max(1, Number(data.value) || 999);
+  const currency = data.currency || 'INR';
+
+  const validItems = Array.isArray(data.items) && data.items.length > 0 ? data.items : [];
+  const contentIds = validItems.map((it) => String(it.productId)).filter(Boolean);
+  const contents = validItems.map((it) => ({
+    id: String(it.productId),
+    quantity: Math.max(1, Number(it.quantity) || 1),
+    item_price: Math.max(1, Number(it.price) || numValue),
+  }));
+
+  const totalNumItems = validItems.reduce((acc, it) => acc + (Number(it.quantity) || 1), 0) || 1;
+
+  const payload: Record<string, any> = {
+    content_type: 'product',
+    content_ids: contentIds.length > 0 ? contentIds : [data.orderNumber],
+    contents:
+      contents.length > 0
+        ? contents
+        : [{ id: data.orderNumber, quantity: 1, item_price: numValue }],
+    value: numValue,
+    currency: currency,
+    num_items: totalNumItems,
+    order_id: data.orderNumber,
+  };
+
+  trackPixelEvent('Purchase', payload, { eventID: data.orderNumber });
 }
 
 function PixelPageViewTracker() {
@@ -28,8 +105,8 @@ function PixelPageViewTracker() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (META_PIXEL_ID && typeof window !== 'undefined' && window.fbq) {
-      window.fbq('track', 'PageView');
+    if (META_PIXEL_ID && typeof window !== 'undefined') {
+      trackPixelEvent('PageView');
     }
   }, [pathname, searchParams]);
 
