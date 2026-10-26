@@ -13,9 +13,6 @@ export function Footer() {
               <h4 className="font-semibold text-base tracking-tight lowercase text-white">
                 flirta<span className="text-[#E61E2A]">.network</span>
               </h4>
-              <span className="text-[10px] font-semibold tracking-wider text-[#A89F91] uppercase">
-                by whitelayer
-              </span>
             </div>
             <p className="text-xs text-[#A89F91] leading-relaxed max-w-xs">
               Precision 3D printed lifestyle products engineered for modern desks and sanctuary spaces. Handcrafted in India with 0.12mm layer precision. 100% Secure Instant UPI checkout available India-wide.
@@ -182,7 +179,7 @@ export function Footer() {
       {/* Footer Bottom Bar */}
       <div className="border-t border-[#2D2822] bg-[#141210] py-6">
         <div className="page-width flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#8C827A]">
-          <p>© 2026 flirta.network by whitelayer. All rights reserved.</p>
+          <p>© 2026 flirta.network. All rights reserved.</p>
           <p className="text-center sm:text-right">
             Follow us <a href="https://www.instagram.com/flirtabywhitelayer" target="_blank" rel="noopener noreferrer" className="text-white hover:underline font-semibold">@flirtabywhitelayer</a> and use <strong className="text-[#E61E2A]">#FlirtaByWhitelayer</strong> to get featured.
           </p>

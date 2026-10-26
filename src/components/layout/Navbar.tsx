@@ -68,19 +68,14 @@ export function Navbar() {
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
 
-            {/* Official flirta by whitelayer Circular Monogram & Wordmark */}
-            <Link href="/" className="flex items-center gap-2.5 group select-none" aria-label="flirtabywhitelayer">
+            {/* Official flirta.network Circular Monogram & Wordmark */}
+            <Link href="/" className="flex items-center gap-2.5 group select-none" aria-label="flirta.network">
               <div className="w-8 h-8 rounded-full bg-[#1D1D20] text-white flex items-center justify-center font-bold text-xs tracking-tight group-hover:scale-105 transition-transform shadow-xs">
                 fn
               </div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-lg sm:text-[19px] tracking-tight text-[#1D1D20] leading-none">
-                  flirta<span className="text-[#E61E2A]">.network</span>
-                </span>
-                <span className="text-[9px] font-semibold text-[#8C827A] tracking-wider uppercase leading-none mt-0.5">
-                  by whitelayer
-                </span>
-              </div>
+              <span className="font-semibold text-lg sm:text-[19px] tracking-tight text-[#1D1D20] leading-none">
+                flirta<span className="text-[#E61E2A]">.network</span>
+              </span>
             </Link>
           </div>
 
