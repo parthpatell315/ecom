@@ -7,7 +7,6 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { AuthModal } from '@/components/auth/AuthModal';
-import { WhatsAppFloat } from '@/components/layout/WhatsAppFloat';
 import { MetaPixel } from '@/components/analytics/MetaPixel';
 
 const poppins = Poppins({
@@ -66,7 +65,6 @@ export default function RootLayout({
             <Footer />
             <CartDrawer />
             <AuthModal />
-            <WhatsAppFloat />
             <MetaPixel />
           </CartProvider>
         </AuthProvider>
