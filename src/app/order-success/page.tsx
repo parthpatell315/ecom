@@ -44,14 +44,17 @@ function OrderSuccessContent() {
 
           if (!purchaseTrackedRef.current && cached.items?.length > 0) {
             purchaseTrackedRef.current = true;
+            const isPartialCod = Boolean(cached.isPartialCod || gatewayParam === 'PARTIAL_COD');
+            const purchaseValue = isPartialCod ? 249 : (cached.totalMinor || 0) / 100;
+
             trackPurchaseEvent({
               orderNumber: cached.orderNumber,
-              value: (cached.totalMinor || 0) / 100,
+              value: purchaseValue,
               items: cached.items.map((it: any) => ({
                 productId: it.productId,
                 title: it.titleSnapshot || it.title,
                 quantity: it.quantity || 1,
-                price: (it.unitPriceMinor || 0) / 100,
+                price: isPartialCod ? purchaseValue : (it.unitPriceMinor || 0) / 100,
               })),
               customerEmail: cached.customerEmail,
               customerPhone: cached.customerPhone,
@@ -76,14 +79,20 @@ function OrderSuccessContent() {
             setOrder(data.order);
             if (!purchaseTrackedRef.current) {
               purchaseTrackedRef.current = true;
+              const isPartialCod = Boolean(data.order.isPartialCod || gatewayParam === 'PARTIAL_COD');
+              const paymentAmount = data.order.payments?.[0]?.amountMinor
+                ? data.order.payments[0].amountMinor / 100
+                : 249;
+              const purchaseValue = isPartialCod ? paymentAmount : (data.order.totalMinor || 0) / 100;
+
               trackPurchaseEvent({
                 orderNumber: data.order.orderNumber,
-                value: (data.order.totalMinor || 0) / 100,
+                value: purchaseValue,
                 items: (data.order.items || []).map((it: any) => ({
                   productId: it.productId,
                   title: it.titleSnapshot,
                   quantity: it.quantity,
-                  price: (it.unitPriceMinor || 0) / 100,
+                  price: isPartialCod ? purchaseValue : (it.unitPriceMinor || 0) / 100,
                 })),
                 customerEmail: data.order.guestEmail || emailParam || undefined,
                 customerPhone: data.order.guestPhone || undefined,
