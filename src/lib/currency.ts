@@ -1,7 +1,8 @@
 /**
- * Converts minor integer units (paise) to human-readable INR format.
- * E.g., 139900 -> "₹1,399"
+ * Standard Indian Rupee (INR ₹) currency formatting.
+ * Single source of truth for all prices across the storefront.
  */
+
 export function formatCurrency(amountMinor: number): string {
   const rupees = Math.round(amountMinor / 100);
   return new Intl.NumberFormat('en-IN', {
@@ -12,13 +13,9 @@ export function formatCurrency(amountMinor: number): string {
 }
 
 /**
- * Authentic WhiteLayer Indian Rupee format.
- * E.g., 84900 -> "Rs. 849.00"
+ * Compatibility alias returning standard ₹ format (removes all legacy "Rs.").
  */
-export function formatPriceRs(amountMinor: number): string {
-  const rupees = Math.round(amountMinor / 100);
-  return `Rs. ${rupees.toLocaleString('en-IN')}.00`;
-}
+export const formatPriceRs = formatCurrency;
 
 /**
  * Parses user rupee input to integer minor units (paise).

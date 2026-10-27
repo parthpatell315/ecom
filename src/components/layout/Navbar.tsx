@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
-import { Menu, X, Search, ShoppingBag } from 'lucide-react';
+import { Menu, X, Search, ShoppingBag, Clock } from 'lucide-react';
+import { SALE_CONFIG, isSaleActive } from '@/config/sale';
+import { DELIVERY_PROMISE } from '@/config/shipping';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -13,6 +15,35 @@ export function Navbar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [timeLeft, setTimeLeft] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
+
+  // Real Countdown calculation when SALE_END_DATE is active in the future
+  useEffect(() => {
+    if (!SALE_CONFIG.SALE_END_DATE || !isSaleActive(SALE_CONFIG.SALE_END_DATE)) {
+      setTimeLeft(null);
+      return;
+    }
+
+    const targetTime = new Date(SALE_CONFIG.SALE_END_DATE).getTime();
+
+    const updateTimer = () => {
+      const difference = targetTime - Date.now();
+      if (difference <= 0) {
+        setTimeLeft(null);
+        return;
+      }
+
+      const hours = Math.floor(difference / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      setTimeLeft({ hours, minutes, seconds });
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,37 +53,54 @@ export function Navbar() {
     }
   };
 
+  const saleActive = isSaleActive(SALE_CONFIG.SALE_END_DATE) && timeLeft !== null;
+  const announcementText = saleActive
+    ? `Sale ends in ${String(timeLeft.hours).padStart(2, '0')}:${String(timeLeft.minutes).padStart(2, '0')}:${String(timeLeft.seconds).padStart(2, '0')}`
+    : SALE_CONFIG.DEFAULT_ANNOUNCEMENT;
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-2xs">
-      {/* 1. WhiteLayer Authentic Ticker Announcement Bar */}
-      <div className="bg-[#1D1D20] text-[#F3F4F6] text-[11px] font-medium tracking-wider uppercase py-2 overflow-hidden border-b border-[#2A2A2E] select-none">
-        <div className="flex animate-marquee whitespace-nowrap">
-          <div className="flex items-center gap-6 pr-6">
-            <span className="text-[#F43F5E] font-bold flex items-center gap-1">⚡ LIMITED 12-HOUR FLASH SALE: ARC REACTOR & LEVITATING MONEY LAMP AT ₹999 ONLY (ENDS TONIGHT)</span>
-            <span className="text-[#9CA3AF]">•</span>
-            <span>Free express delivery on ₹999 drops</span>
-            <span className="text-[#9CA3AF]">•</span>
-            <span>7-day transit replacement guarantee</span>
-            <span className="text-[#9CA3AF]">•</span>
-            <span>Partial COD Available (₹249 Advance, ₹750 at Doorstep)</span>
-            <span className="text-[#9CA3AF]">•</span>
-            <span>Studio calibrated & 0.12mm precision printed</span>
-            <span className="text-[#9CA3AF]">•</span>
-          </div>
-          <div className="flex items-center gap-6 pr-6" aria-hidden="true">
-            <span className="text-[#F43F5E] font-bold flex items-center gap-1">⚡ LIMITED 12-HOUR FLASH SALE: ARC REACTOR & LEVITATING MONEY LAMP AT ₹999 ONLY (ENDS TONIGHT)</span>
-            <span className="text-[#9CA3AF]">•</span>
-            <span>Free express delivery on ₹999 drops</span>
-            <span className="text-[#9CA3AF]">•</span>
-            <span>7-day transit replacement guarantee</span>
-            <span className="text-[#9CA3AF]">•</span>
-            <span>Partial COD Available (₹249 Advance, ₹750 at Doorstep)</span>
-            <span className="text-[#9CA3AF]">•</span>
-            <span>Studio calibrated & 0.12mm precision printed</span>
-            <span className="text-[#9CA3AF]">•</span>
+      {/* 1. Config-Driven Announcement Bar */}
+      {announcementText && (
+        <div className="bg-[#1D1D20] text-[#F3F4F6] text-[11px] font-medium tracking-wider uppercase py-2 overflow-hidden border-b border-[#2A2A2E] select-none">
+          <div className="flex animate-marquee whitespace-nowrap">
+            <div className="flex items-center gap-6 pr-6">
+              {saleActive ? (
+                <span className="text-[#F43F5E] font-bold flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5" />
+                  {announcementText}
+                </span>
+              ) : (
+                <span className="text-white font-semibold">{announcementText}</span>
+              )}
+              <span className="text-[#9CA3AF]">•</span>
+              <span>{DELIVERY_PROMISE}</span>
+              <span className="text-[#9CA3AF]">•</span>
+              <span>7-day transit replacement guarantee</span>
+              <span className="text-[#9CA3AF]">•</span>
+              <span>Partial COD Available (₹249 Advance, ₹750 at Doorstep)</span>
+              <span className="text-[#9CA3AF]">•</span>
+            </div>
+            <div className="flex items-center gap-6 pr-6" aria-hidden="true">
+              {saleActive ? (
+                <span className="text-[#F43F5E] font-bold flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5" />
+                  {announcementText}
+                </span>
+              ) : (
+                <span className="text-white font-semibold">{announcementText}</span>
+              )}
+              <span className="text-[#9CA3AF]">•</span>
+              <span>{DELIVERY_PROMISE}</span>
+              <span className="text-[#9CA3AF]">•</span>
+              <span>7-day transit replacement guarantee</span>
+              <span className="text-[#9CA3AF]">•</span>
+              <span>Partial COD Available (₹249 Advance, ₹750 at Doorstep)</span>
+              <span className="text-[#9CA3AF]">•</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* 2. Main Clean Header */}
       <div className="border-b border-[#EEEEEE] bg-white">
@@ -147,7 +195,7 @@ export function Navbar() {
               </Link>
             </nav>
 
-            {/* Cart Icon Trigger with Badge - 44px Touch Target with Zero Lag */}
+            {/* Cart Icon Trigger with Badge */}
             <button
               type="button"
               onClick={(e) => {

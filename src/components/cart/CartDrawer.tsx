@@ -72,12 +72,12 @@ export function CartDrawer() {
         <div className="p-5 border-b border-[#F0EAE1] flex items-center justify-between bg-[#FAF8F5]">
           <div>
             <h2 className="text-base font-semibold text-[#222225] flex items-center gap-2">
-              Your Bag
+              Your Cart
               <span className="text-xs font-semibold text-[#E61E2A] bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">
                 {totalItems} {totalItems === 1 ? 'piece' : 'pieces'}
               </span>
             </h2>
-            <p className="text-xs text-[#8C827A] mt-0.5">Complimentary delivery on orders over ₹999</p>
+            <p className="text-xs text-[#8C827A] mt-0.5">Free delivery on orders over ₹999</p>
           </div>
           <button
             type="button"
@@ -281,7 +281,7 @@ export function CartDrawer() {
             {/* Trust badge */}
             <div className="flex items-center justify-center gap-1.5 text-[11px] text-[#8C827A] pt-1">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>100% Secure Instant UPI Checkout</span>
+              <span>Secure Instant UPI Checkout</span>
             </div>
           </div>
         )}

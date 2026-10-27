@@ -191,7 +191,7 @@ export async function getCachedCategories(): Promise<CachedCategory[]> {
 export async function getFlashSaleProducts(): Promise<CachedProduct[]> {
   const products = await getCachedProducts();
   const flashSlugs = [
-    'marvel-iron-man-arc-reactor-wireless-charger',
+    'core-reactor-desk-light',
     'levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light',
   ];
   return flashSlugs

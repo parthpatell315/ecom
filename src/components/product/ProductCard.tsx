@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { formatPriceRs } from '@/lib/currency';
+import { formatCurrency } from '@/lib/currency';
 import { useCart } from '@/context/CartContext';
 import { Check } from 'lucide-react';
 
@@ -85,11 +85,11 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-baseline gap-1.5">
               <span className="text-[16px] sm:text-[17px] font-semibold text-[#222225] tracking-tight">
-                {formatPriceRs(product.priceMinor)}
+                {formatCurrency(product.priceMinor)}
               </span>
               {product.originalPriceMinor && (
                 <span className="text-xs text-[#9CA3AF] line-through">
-                  {formatPriceRs(product.originalPriceMinor)}
+                  {formatCurrency(product.originalPriceMinor)}
                 </span>
               )}
             </div>
@@ -120,7 +120,7 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
               {added ? (
                 <>
                   <Check className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Added to Bag</span>
+                  <span>Added to Cart</span>
                 </>
               ) : (
                 <span>Add to Cart</span>

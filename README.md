@@ -34,3 +34,26 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+---
+
+## Legal Compliance & Storefront Configuration
+
+All legal, statutory, shipping, and promotional configurations are centralized in dedicated config files:
+
+- `src/config/legal.ts`: Entity details, GSTIN, registered address, Grievance Officer details per Consumer Protection (E-Commerce) Rules 2020, and BIS registration numbers.
+- `src/config/sale.ts`: Announcement banner and countdown configuration. Real countdown renders only if `SALE_END_DATE` is set to a future timestamp.
+- `src/config/shipping.ts`: Delivery promise (`DELIVERY_PROMISE`) and partial COD parameters.
+- `src/config/social.ts`: Social media links (Instagram, WhatsApp, etc.).
+
+### IP & Trademark Scanner
+Run the automated build-time scanner to ensure no unauthorized third-party trademark terms exist in source code or catalog seeds:
+```bash
+npm run check:ip
+```
+
+### Media Rights & Photography Advisory
+> [!WARNING]
+> Several product image assets stored on the CDN currently follow marketplace naming conventions (e.g. `il_1588xN.*` originating from Etsy/AliExpress supplier listings). 
+> While dev-time warnings (`checkImageRights` in `src/config/media.ts`) will flag these in console, it is strongly advised to conduct in-house studio product photography and replace these assets before scaling paid ad campaigns to protect against DMCA notices or copyright claims.
+

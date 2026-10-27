@@ -11,35 +11,35 @@ import { AuthModal } from '@/components/auth/AuthModal';
 import { MetaPixel } from '@/components/analytics/MetaPixel';
 
 const poppins = Poppins({
-  weight: ['300', '400', '500', '600', '700', '800'],
+  weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-poppins',
   display: 'swap',
 });
 
+// Title <= 60 chars, description 140-160 chars, no emoji, no meta keywords
 export const metadata: Metadata = {
-  title: 'flirta.network — Precision 3D Printed Desk Sanctuaries',
+  title: 'flirta.network — Precision Desk Sanctuaries',
   description:
-    'Architectural ambient mood lighting, weighted controller stands, and modular desk accessories. Handcrafted in India with 0.12mm precision.',
-  keywords: [
-    'flirta.network',
-    'flirta',
-    '3D printed lamps',
-    'ambient lighting',
-    'desk setups',
-    'controller stand',
-    'perpetual calendar',
-    'kinetic clocks',
-    'desk architecture',
-  ],
+    'Architectural ambient mood lighting, weighted controller stands, and modular desk accessories. Handcrafted in India with free insured air delivery nationwide.',
   authors: [{ name: 'flirta.network Studio' }],
+  metadataBase: new URL('https://www.flirta.network'),
+  alternates: {
+    canonical: 'https://www.flirta.network',
+  },
   openGraph: {
-    title: 'flirta.network — Precision 3D Printed Desk Sanctuaries',
+    title: 'flirta.network — Precision Desk Sanctuaries',
     description:
-      'Architectural ambient mood lighting, weighted controller stands, and modular desk accessories. Handcrafted in India with 0.12mm precision.',
+      'Architectural ambient mood lighting, weighted controller stands, and modular desk accessories. Handcrafted in India with free insured air delivery nationwide.',
     siteName: 'flirta.network',
     locale: 'en_IN',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'flirta.network — Precision Desk Sanctuaries',
+    description:
+      'Architectural ambient mood lighting, weighted controller stands, and modular desk accessories. Handcrafted in India with free insured air delivery nationwide.',
   },
 };
 
@@ -51,12 +51,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} h-full antialiased`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap"
-          rel="stylesheet"
-        />
         {/* Meta Pixel NoScript Fallback */}
         <noscript>
           <img

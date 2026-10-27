@@ -25,11 +25,18 @@ import {
   ChevronDown,
   CheckCircle2,
   Package,
-  Flame,
   ArrowRight,
+  Play,
+  Video,
 } from 'lucide-react';
 
 import { trackPixelEvent } from '@/components/analytics/MetaPixel';
+import { LEGAL_CONFIG } from '@/config/legal';
+import { SALE_CONFIG, isSaleActive } from '@/config/sale';
+import { DELIVERY_PROMISE } from '@/config/shipping';
+import { MEDIA_CONFIG, checkImageRights } from '@/config/media';
+import { LEVITATING_LAMP_FAQS, GENERAL_STORE_FAQS } from '@/data/faq';
+import reviewsData from '@/data/reviews.json';
 
 interface ProductDetailClientProps {
   product: any;
@@ -51,6 +58,7 @@ export function ProductDetailClient({
       (product.images && product.images.length > 0 && product.images[0].url) ||
       ''
   );
+  const [activeMediaTab, setActiveMediaTab] = useState<'image' | 'video'>('image');
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
@@ -59,6 +67,13 @@ export function ProductDetailClient({
 
   const effectivePriceMinor =
     product.priceMinor + (selectedVariant?.priceAdjustmentMinor || 0);
+
+  // Dev warning for marketplace stock image naming patterns
+  useEffect(() => {
+    if (selectedImage) {
+      checkImageRights(selectedImage);
+    }
+  }, [selectedImage]);
 
   // Meta Pixel ViewContent event tracking
   useEffect(() => {
@@ -72,7 +87,7 @@ export function ProductDetailClient({
     });
   }, [product.id, product.title, product.category, effectivePriceMinor]);
 
-  // Swatch color resolver for accurate visual color representation
+  // Swatch color resolver
   const getSwatchColor = (name: string, hex?: string | null): string => {
     const n = (name || '').toLowerCase();
     if (n.includes('pink')) return '#EC4899';
@@ -137,185 +152,62 @@ export function ProductDetailClient({
   };
 
   const specs = typeof product.specs === 'object' && product.specs !== null ? product.specs : {};
-  const savings = product.originalPriceMinor
-    ? product.originalPriceMinor - effectivePriceMinor
-    : 0;
+  const hasCompareAt = Boolean(
+    product.originalPriceMinor && product.originalPriceMinor > effectivePriceMinor
+  );
+  const savings = hasCompareAt ? product.originalPriceMinor! - effectivePriceMinor : 0;
 
-  const isArcReactor = product.slug?.includes('arc');
   const isLevitatingLamp = product.slug?.includes('levitat');
+  const isSaleActiveNow = isSaleActive(SALE_CONFIG.SALE_END_DATE);
 
-  const defaultArcReviews = [
-    {
-      id: 'rev-arc-1',
-      authorName: 'Ankit Sharma',
-      city: 'Mumbai',
-      rating: 5,
-      title: 'Cinematic breathing LED pulse. Looks like Tony Stark left this on my desk',
-      comment:
-        'The 0.12mm layer finish is insane. You cannot see layer lines unless you hold it 2 inches away under bright light. The breathing cyan pulse at night creates the most incredible ambient desk vibe. USB-C powered from my monitor dock.',
-    },
-    {
-      id: 'rev-arc-2',
-      authorName: 'Rohan Verma',
-      city: 'Bengaluru',
-      rating: 5,
-      title: 'Partial COD made it zero risk. Delivered in 3 days in custom foam',
-      comment:
-        'Was skeptical about ordering online, but paid only ₹249 advance. Bluedart delivered within 3 days, paid ₹750 at door. Arrived inside custom laser-cut acoustic EVA foam. Extremely premium weighted base.',
-    },
-    {
-      id: 'rev-arc-3',
-      authorName: 'Siddharth Iyer',
-      city: 'Pune',
-      rating: 5,
-      title: 'Centerpiece of my minimal developer workstation',
-      comment:
-        'The copper ring coils and internal acrylic light-diffuser look authentic to the movie prop. Heavy matte finish base prevents any tipping. An absolute steal at flat ₹999.',
-    },
-    {
-      id: 'rev-arc-4',
-      authorName: 'Vikram Rathore',
-      city: 'New Delhi',
-      rating: 5,
-      title: '4-Hour bench testing shows in the quality',
-      comment:
-        'Ran it for 18 hours straight — LEDs stay cool to the touch and the brightness does not fade. 10/10 recommend flirta.network for studio lighting.',
-    },
-  ];
+  // Reviews data-driven requirement: hide entirely if fewer than 5 real reviews exist
+  const rawReviews = Array.isArray(product.reviews) && product.reviews.length > 0
+    ? product.reviews
+    : Array.isArray(reviewsData)
+    ? reviewsData
+    : [];
+  const showReviews = rawReviews.length >= 5;
 
-  const defaultLevitatingReviews = [
-    {
-      id: 'rev-lev-1',
-      authorName: 'Kabir Mehta',
-      city: 'Gurugram',
-      rating: 5,
-      title: 'It ACTUALLY floats and rotates 360° mid-air! Mind blown',
-      comment:
-        'I honestly thought magnetic levitation at ₹999 was a gimmick, but it genuinely suspends 15-20mm above the base and spins smoothly with zero friction or motor hum. Everyone who walks into my cabin is stunned.',
-    },
-    {
-      id: 'rev-lev-2',
-      authorName: 'Aditya Joshi',
-      city: 'Hyderabad',
-      rating: 5,
-      title: 'Alignment helper tool makes balancing effortless in 5 seconds',
-      comment:
-        'Comes with a patented centering ring tool in the box. Put the tool on the base, set the money capsule in the center, pull the tool away and it instantly floats. The RGB ambient base halo looks insane in dark rooms.',
-    },
-    {
-      id: 'rev-lev-3',
-      authorName: 'Pranav Kulkarni',
-      city: 'Pune',
-      rating: 5,
-      title: 'Zero motor noise and safe anti-drop failsafe',
-      comment:
-        'My roommate accidentally pulled the plug and the capsule snapped right to the center of the base magnetically instead of flying or falling. Safe engineering and packed in 30mm shockproof foam.',
-    },
-    {
-      id: 'rev-lev-4',
-      authorName: 'Yashwant Nair',
-      city: 'Chennai',
-      rating: 5,
-      title: 'Top-tier unboxing experience. Verified BIS certified power adapter',
-      comment:
-        'Arrived with a proper 12V 2A adapter with Indian 2-pin plug, calibration certificate, and warranty card. Partial COD (₹249 advance, ₹750 at doorstep) made this an absolute no-brainer purchase.',
-    },
-  ];
-
-  const displayedReviews =
-    product.reviews && product.reviews.length > 0
-      ? product.reviews
-      : isArcReactor
-      ? defaultArcReviews
-      : isLevitatingLamp
-      ? defaultLevitatingReviews
-      : [];
+  // What's in the box: Claims cleanup
+  const adapterText = LEGAL_CONFIG.BIS_REG_NO
+    ? `BIS registered: ${LEGAL_CONFIG.BIS_REG_NO}`
+    : '12V 2A power adapter';
 
   const whatsInTheBox = isLevitatingLamp
     ? [
-        { item: 'Electromagnetic Levitation Base', desc: 'Active sensor coils with ambient RGB halo lighting' },
-        { item: 'Precision Floating Money Capsule', desc: '15–20mm zero-gravity mid-air float' },
-        { item: 'Patented Magnetic Centering Guide', desc: 'Aligns and floats in under 10 seconds' },
-        { item: '12V 2A Certified Power Adapter', desc: 'BIS-certified Indian standard 2-pin plug' },
-        { item: 'Calibration & 1-Year Warranty Card', desc: 'Full coverage on levitation electromagnetics' },
-        { item: '30mm Laser-Cut EVA Acoustic Box', desc: 'Custom shockproof molded transit protection' },
-      ]
-    : isArcReactor
-    ? [
-        { item: 'Arc Reactor MK-50 Precision Core', desc: '0.12mm additive accuracy with breathing LED array' },
-        { item: 'Weighted Studio Display Sanctuary Stand', desc: 'Heavy matte black finish with anti-tip pads' },
-        { item: '1.5m Heavy-Duty Braided Type-C Cable', desc: 'Connects to any standard 5V USB / monitor port' },
-        { item: 'Numbered Certificate of Authenticity', desc: 'Individually verified studio craft batch seal' },
-        { item: '30mm Laser-Cut EVA Foam Collector Box', desc: 'Guarantees 100% damage-free courier delivery' },
+        { item: 'Electromagnetic Levitation Base', desc: 'Active sensor coils with ambient RGB halo illumination' },
+        { item: 'Floating Money Capsule', desc: 'Zero-gravity mid-air suspension (15–20mm elevation)' },
+        { item: 'Magnetic Centering Guide', desc: 'Effortless alignment tool for balanced floating' },
+        { item: adapterText, desc: 'Indian standard 2-pin wall plug with power cord' },
+        { item: 'Operating & Setup Guide', desc: 'Full step-by-step instructions and safety specifications' },
+        { item: 'Shockproof Acoustic EVA Box', desc: 'Custom laser-cut protective packaging for safe transit' },
       ]
     : null;
 
-  const faqs = isLevitatingLamp
-    ? [
-        {
-          q: 'Does it genuinely float in mid-air without wires or strings?',
-          a: 'Yes, 100%! It uses active electromagnetic repulsion coils and magnetic balance sensors inside the base that suspend the money stack capsule 15–20mm in mid-air. Once placed, it floats freely and rotates smoothly 360° continuously with zero friction or motor sound.',
-        },
-        {
-          q: 'How hard is it to balance? Will I struggle to set it up?',
-          a: 'Not at all. Every unit includes our custom magnetic centering alignment helper tool in the box. Simply place the helper guide on the base, rest the floating capsule in the center, and gently pull the tool away. It takes less than 10 seconds to float perfectly.',
-        },
-        {
-          q: 'What happens if there is a power cut or it gets accidentally unplugged?',
-          a: 'Safety is built-in: the base has an electromagnetic failsafe. If power is interrupted, the floating capsule immediately snaps securely onto the magnetic center of the base, preventing it from falling off the table or sustaining damage.',
-        },
-        {
-          q: 'How does the Partial Cash on Delivery (COD) payment work?',
-          a: 'To make your purchase completely worry-free, you pay only a ₹249 advance reservation fee online today via UPI. We immediately dispatch your unit via Bluedart Express Air. You pay the remaining ₹750 balance in cash or UPI when the courier delivers it to your hands (Total ₹999 with zero extra fees).',
-        },
-        {
-          q: 'What is your replacement policy if it is damaged during shipping?',
-          a: 'We pack every order in custom 30mm laser-cut EVA acoustic foam. However, if anything arrives damaged or uncalibrated, contact our WhatsApp support (+91 76004 09399) within 7 days, and we will send a brand-new replacement unit with zero questions asked.',
-        },
-      ]
-    : isArcReactor
-    ? [
-        {
-          q: 'What materials and precision standards are used to build this?',
-          a: 'The Arc Reactor is 3D-printed in high-density engineering biopolymer with 0.12mm ultra-fine layer height. It features metallic copper-tone core ring windings, translucent light-diffusing acrylic core, and a weighted matte black studio display sanctuary stand.',
-        },
-        {
-          q: 'What illumination modes does it support and does it heat up?',
-          a: 'It features cinematic breathing pulse and steady glow modes powered by high-efficiency LED arrays. Thermal management is engineered so the core remains cool to the touch even after 24 hours of continuous operation.',
-        },
-        {
-          q: 'Is the desk display stand and power cable included in the box?',
-          a: 'Yes! The package includes the Arc Reactor MK-50 Core, the weighted studio display stand, a 1.5m heavy-duty braided Type-C cable, a numbered Certificate of Authenticity, and custom shockproof EVA foam packaging.',
-        },
-        {
-          q: 'How does Partial COD (Cash on Delivery) work?',
-          a: 'You pay only ₹249 online today as an advance studio dispatch deposit. When Bluedart / Delhivery brings the package to your address, you inspect the parcel and pay the remaining balance of ₹750 in cash or UPI upon delivery (Total ₹999 with zero extra fees).',
-        },
-        {
-          q: 'What happens if it arrives defective or damaged during transit?',
-          a: 'Every piece is bench-tested for 4 hours before sealing. In the rare event of courier transit damage, we provide a 7-day hassle-free replacement guarantee. Simply message us on WhatsApp (+91 76004 09399) with an unboxing photo, and we dispatch a replacement immediately.',
-        },
-      ]
-    : [
-        {
-          q: 'How long does delivery take?',
-          a: 'Orders are dispatched from our studio within 24 hours. Deliveries across India arrive in 3–5 business days via Bluedart / Delhivery Express Air with live SMS tracking.',
-        },
-        {
-          q: 'What is Partial COD?',
-          a: 'Pay a ₹249 reservation advance today to book your order, and pay the remaining ₹750 balance when the courier delivers it to your doorstep (Total ₹999).',
-        },
-        {
-          q: 'What is your replacement policy?',
-          a: '7-Day Free Replacement guarantee if anything arrives damaged or defective in transit.',
-        },
-      ];
+  // Frequently Asked Questions
+  const faqs = isLevitatingLamp ? LEVITATING_LAMP_FAQS : GENERAL_STORE_FAQS;
+
+  // Stock inventory text
+  const stockCount = selectedVariant?.stockCount ?? product.stockCount ?? 10;
+  const stockText =
+    stockCount > 0 && stockCount <= 5
+      ? `Only ${stockCount} left`
+      : product.inStock
+      ? 'In stock'
+      : 'Out of stock';
+
+  // Variant selector: only display option group if more than 1 option exists
+  const hasMultipleVariants = Array.isArray(product.variants) && product.variants.length > 1;
+
+  // Video path
+  const videoSource = product.videoUrl || MEDIA_CONFIG.DEFAULT_FLOATING_VIDEO;
+  const videoPoster = product.images?.[0]?.url || MEDIA_CONFIG.DEFAULT_VIDEO_POSTER;
 
   return (
     <div className="bg-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-28 md:py-16">
         {/* Breadcrumb Navigation */}
-        <nav className="text-xs text-gray-500 mb-6 flex items-center gap-1.5 flex-wrap">
+        <nav className="text-xs text-gray-500 mb-6 flex items-center gap-1.5 flex-wrap" aria-label="Breadcrumb">
           <Link href="/" className="hover:text-[#D9232D] transition-colors">
             Home
           </Link>
@@ -348,37 +240,96 @@ export function ProductDetailClient({
                 {product.images.map((img: any, idx: number) => (
                   <button
                     key={img.id || idx}
-                    onClick={() => setSelectedImage(img.url)}
-                    className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border transition-all ${
-                      selectedImage === img.url
+                    type="button"
+                    onClick={() => {
+                      setSelectedImage(img.url);
+                      setActiveMediaTab('image');
+                    }}
+                    className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border transition-all cursor-pointer ${
+                      activeMediaTab === 'image' && selectedImage === img.url
                         ? 'border-[#D9232D] ring-2 ring-[#D9232D]/30'
                         : 'border-gray-200 opacity-70 hover:opacity-100'
                     }`}
                   >
-                    <Image src={img.url} alt={`Thumbnail ${idx + 1}`} fill className="object-cover" sizes="80px" />
+                    <Image
+                      src={img.url}
+                      alt={`${product.title} view ${idx + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="80px"
+                    />
                   </button>
                 ))}
+
+                {/* Video Slot Thumbnail */}
+                {isLevitatingLamp && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveMediaTab('video')}
+                    className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border transition-all cursor-pointer bg-neutral-900 flex flex-col items-center justify-center text-white ${
+                      activeMediaTab === 'video'
+                        ? 'border-[#D9232D] ring-2 ring-[#D9232D]/30'
+                        : 'border-gray-200 opacity-80 hover:opacity-100'
+                    }`}
+                    aria-label="Watch video demonstration"
+                  >
+                    <Play className="w-5 h-5 fill-white" />
+                    <span className="text-[9px] font-bold uppercase mt-1">Video</span>
+                  </button>
+                )}
               </div>
             )}
 
             {/* Primary View */}
             <div className="relative flex-1 aspect-square rounded-3xl overflow-hidden bg-gray-50 border border-gray-200 shadow-sm">
-              {selectedImage ? (
-                <Image
-                  src={selectedImage}
-                  alt={product.title}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 60vw"
-                  className="object-cover transition-all duration-500"
-                />
+              {activeMediaTab === 'video' ? (
+                <div className="w-full h-full relative bg-black flex items-center justify-center">
+                  <video
+                    src={videoSource}
+                    poster={videoPoster}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-md text-white text-[10.5px] font-semibold px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <Video className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Watch it float in mid-air</span>
+                  </div>
+                </div>
+              ) : selectedImage ? (
+                <>
+                  <Image
+                    src={selectedImage}
+                    alt={product.title}
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-all duration-500"
+                  />
+                  {/* Prominent Above-the-fold mobile video button */}
+                  {isLevitatingLamp && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveMediaTab('video')}
+                      className="md:hidden absolute bottom-3 right-3 bg-black/80 backdrop-blur-md text-white text-xs font-semibold px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-lg border border-white/20 active:scale-95 transition-transform"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-white text-white" />
+                      <span>Watch it float</span>
+                    </button>
+                  )}
+                </>
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400">No Image Available</div>
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  No Image Available
+                </div>
               )}
 
-              {product.badge && (
+              {/* Badges: Only render if valid non-fake urgency badge */}
+              {product.badge && !product.badge.includes('12H') && (
                 <div className="absolute top-4 left-4">
-                  <span className="py-1 px-3.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#D9232D] text-white shadow-sm">
+                  <span className="py-1 px-3.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#222225] text-white shadow-sm">
                     {product.badge}
                   </span>
                 </div>
@@ -400,79 +351,75 @@ export function ProductDetailClient({
                 {product.title}
               </h1>
 
-              {/* Star Rating & Verified Drop Strip */}
-              <div className="mt-2.5 flex items-center gap-2 flex-wrap text-xs">
-                <div className="flex items-center text-amber-500 gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  ))}
+              {/* Star Rating Line: Render ONLY if >= 5 real reviews exist */}
+              {showReviews && (
+                <div className="mt-2.5 flex items-center gap-2 flex-wrap text-xs">
+                  <div className="flex items-center text-amber-500 gap-0.5">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <span className="font-semibold text-gray-900">
+                    {product.rating ? product.rating.toFixed(1) : '5.0'}/5
+                  </span>
+                  <span className="text-gray-500 font-medium">
+                    ({rawReviews.length} Verified Reviews)
+                  </span>
                 </div>
-                <span className="font-semibold text-gray-900">4.9/5</span>
-                <span className="text-gray-500 font-medium">
-                  ({product.reviews?.length || 4} Verified Collector Reviews)
-                </span>
-                <span className="text-gray-300">•</span>
-                <span className="text-emerald-700 bg-emerald-50 border border-emerald-200 text-[10.5px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-600" /> 4-Hr Bench Tested
-                </span>
-                <span className="text-gray-300">•</span>
-                <span className="text-indigo-700 bg-indigo-50 border border-indigo-200 text-[10.5px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
-                  <Truck className="w-3 h-3 text-indigo-600" /> Delivery in 3–5 Days
-                </span>
-              </div>
+              )}
 
               <p className="text-sm text-gray-600 mt-2 font-normal leading-relaxed">
                 {product.subtitle || product.tagline}
               </p>
 
-              {/* Price Tag with savings */}
+              {/* Price Tag: Compare-at only rendered if real compare_at_price exists */}
               <div className="mt-5 pb-5 border-b border-gray-200 flex items-baseline gap-3">
                 <span className="text-3xl font-semibold text-[#222225]">
                   {formatCurrency(effectivePriceMinor)}
                 </span>
-                {product.originalPriceMinor && (
+                {hasCompareAt && (
                   <span className="text-base text-gray-400 line-through">
-                    {formatCurrency(product.originalPriceMinor)}
+                    {formatCurrency(product.originalPriceMinor!)}
                   </span>
                 )}
-                {savings > 0 && (
+                {hasCompareAt && savings > 0 && (
                   <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
                     Save {formatCurrency(savings)}
                   </span>
                 )}
               </div>
 
-              {/* Diwali Festive Studio Drop Offer Banner */}
-              {(effectivePriceMinor === 99900 || product.badge?.includes('12H') || isArcReactor || isLevitatingLamp) && (
+              {/* Promotional Banner: Rendered ONLY if sale is actively configured */}
+              {isSaleActiveNow && (
                 <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-[#FFF1F2] to-[#FFF5F6] border border-[#FECDD3] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
                   <div className="flex items-center gap-2.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#E61E2A] animate-pulse shrink-0" />
                     <div>
                       <strong className="text-[#9F1239] block font-semibold text-xs flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5 text-[#E61E2A]" />
-                        Diwali Festive Studio Drop: Flat ₹999
+                        {SALE_CONFIG.DEFAULT_ANNOUNCEMENT}
                       </strong>
                       <span className="text-[#BE123C] text-[11px] mt-0.5 block font-medium">
-                        Prepaid ₹999 (Free Express Delivery) • Dispatched in 24h • Delivery in 3–5 Days
+                        {DELIVERY_PROMISE}
                       </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
                     <span className="text-[10px] font-mono font-bold bg-[#E61E2A] text-white px-2.5 py-1 rounded-md uppercase tracking-wider">
-                      DIWALI SPECIAL
+                      {SALE_CONFIG.PROMOTION_LABEL}
                     </span>
                   </div>
                 </div>
               )}
 
-              {/* Variant Selector */}
-              {product.variants && product.variants.length > 0 && (
+              {/* Variant Selector: HIDE if only 1 option exists */}
+              {hasMultipleVariants && (
                 <div className="mt-6">
                   <div className="flex justify-between items-center text-xs mb-3">
-                    <span className="font-medium text-[#222225]">
-                      Finish & Biopolymer Material
+                    <span className="font-medium text-[#222225]">Available Finishes</span>
+                    <span className="text-gray-500 font-medium">
+                      {selectedVariant?.colorName || selectedVariant?.name}
                     </span>
-                    <span className="text-gray-500 font-medium">{selectedVariant?.colorName || selectedVariant?.name}</span>
                   </div>
 
                   <div className="flex flex-wrap gap-2.5">
@@ -482,7 +429,10 @@ export function ProductDetailClient({
                         type="button"
                         onClick={() => {
                           setSelectedVariant(v);
-                          if (v.image) setSelectedImage(v.image);
+                          if (v.image) {
+                            setSelectedImage(v.image);
+                            setActiveMediaTab('image');
+                          }
                         }}
                         className={`py-2 px-3.5 rounded-xl border text-xs font-medium flex items-center gap-2 transition-all cursor-pointer touch-manipulation ${
                           selectedVariant?.id === v.id
@@ -501,14 +451,19 @@ export function ProductDetailClient({
                 </div>
               )}
 
-              {/* Stock Availability */}
+              {/* Real Stock Inventory Status */}
               <div className="mt-6 flex items-center gap-2 text-xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-emerald-700 font-medium">
-                  In Stock & Ready for Studio Dispatch
-                </span>
-                <span className="text-gray-500">
-                  ({selectedVariant?.stockCount ?? product.stockCount} batch units available)
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    product.inStock ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'
+                  }`}
+                />
+                <span
+                  className={`font-medium ${
+                    product.inStock ? 'text-emerald-700' : 'text-gray-500'
+                  }`}
+                >
+                  {stockText}
                 </span>
               </div>
 
@@ -521,6 +476,7 @@ export function ProductDetailClient({
                       type="button"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="p-2 text-gray-600 hover:text-black cursor-pointer"
+                      aria-label="Decrease quantity"
                     >
                       -
                     </button>
@@ -529,32 +485,33 @@ export function ProductDetailClient({
                       type="button"
                       onClick={() => setQuantity(quantity + 1)}
                       className="p-2 text-gray-600 hover:text-black cursor-pointer"
+                      aria-label="Increase quantity"
                     >
                       +
                     </button>
                   </div>
 
-                  {/* Add to Bag (Vibrant Red) */}
+                  {/* Add to Cart */}
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    disabled={isCartLoading || isAdding}
+                    disabled={isCartLoading || isAdding || !product.inStock}
                     className="flex-1 py-3.5 px-6 rounded-xl bg-[#D9232D] text-white text-sm font-medium hover:bg-[#b91c1c] transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer"
                   >
                     {isAdding ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin text-white" />
-                        Adding to Bag...
+                        Adding to Cart...
                       </>
                     ) : added ? (
                       <>
                         <Check className="w-4 h-4 text-white" />
-                        Added to Bag
+                        Added to Cart
                       </>
                     ) : (
                       <>
                         <ShoppingBag className="w-4 h-4" />
-                        Add to Bag
+                        Add to Cart
                       </>
                     )}
                   </button>
@@ -564,22 +521,23 @@ export function ProductDetailClient({
                 <button
                   type="button"
                   onClick={handleBuyNow}
-                  disabled={isBuying || isAdding}
+                  disabled={isBuying || isAdding || !product.inStock}
                   className="w-full py-3.5 px-6 rounded-xl border border-gray-300 bg-[#222225] hover:bg-[#38383D] text-white text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
                 >
                   {isBuying ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin text-white" />
-                      Adding & Opening Checkout...
+                      Opening Checkout...
                     </>
                   ) : (
                     <>
                       <Zap className="w-4 h-4 text-amber-400" />
-                      Buy Now with Express Studio Dispatch
+                      Buy Now
                     </>
                   )}
                 </button>
-                {/* Payment & Delivery Options: Prepaid (₹999) vs Partial COD (₹249 + ₹750) */}
+
+                {/* Payment & Delivery Options Card */}
                 <div className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50/60 border border-emerald-200/90 space-y-2 text-xs shadow-2xs">
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0 text-emerald-800 font-bold text-sm">
@@ -589,60 +547,57 @@ export function ProductDetailClient({
                       <div className="flex items-center justify-between gap-2 flex-wrap">
                         <span className="font-semibold text-emerald-950 text-xs flex items-center gap-1.5">
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                          Payment & Delivery Options
+                          Payment &amp; Delivery Options
                         </span>
                         <span className="text-[10.5px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
-                          ⚡ 3–5 Day Delivery
+                          {DELIVERY_PROMISE}
                         </span>
                       </div>
                       <p className="text-emerald-900 text-[11.5px] mt-1.5 leading-snug">
-                        <strong className="text-emerald-950">⚡ Prepaid UPI (Recommended):</strong> Pay flat <strong className="text-emerald-950">₹999</strong> with zero extra fees + get priority 24h dispatch & free express air courier.
+                        <strong className="text-emerald-950">Prepaid UPI:</strong> Pay flat{' '}
+                        <strong className="text-emerald-950">{formatCurrency(effectivePriceMinor)}</strong> with free delivery.
                       </p>
                       <p className="text-emerald-800 text-[11px] mt-1 leading-snug pt-1.5 border-t border-emerald-200/60">
-                        <strong>Partial COD:</strong> Pay <strong>₹249 advance</strong> now via UPI to book your piece, and pay the remaining <strong>₹750 balance</strong> upon doorstep delivery (Total flat ₹999).
+                        <strong>Partial COD:</strong> Pay <strong>₹249 advance</strong> via UPI to confirm, and pay the remaining balance of <strong>₹750</strong> upon courier delivery.
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Studio Buyer Protection & Assurances Grid */}
+              {/* Trust Strip under CTA (Exactly 4 items max) */}
               <div className="mt-6 pt-5 border-t border-gray-200">
-                <h4 className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-3 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-[#D9232D]" />
-                  Studio Buyer Protection & Assurances
-                </h4>
                 <div className="grid grid-cols-2 gap-2.5 text-[11.5px]">
                   <div className="bg-[#F9FAFB] p-3 rounded-xl border border-gray-200 flex flex-col justify-between">
-                    <span className="font-semibold text-gray-900 flex items-center gap-1">
-                      <Sparkles className="w-3.5 h-3.5 text-[#D9232D]" /> 4-Hr Bench Tested
+                    <span className="font-semibold text-gray-900 flex items-center gap-1.5">
+                      <Truck className="w-3.5 h-3.5 text-[#D9232D]" /> Delivery Promise
                     </span>
                     <span className="text-[10.5px] text-gray-500 mt-1 leading-snug">
-                      Powered & stability-calibrated before sealing
+                      {DELIVERY_PROMISE}
                     </span>
                   </div>
                   <div className="bg-[#F9FAFB] p-3 rounded-xl border border-gray-200 flex flex-col justify-between">
-                    <span className="font-semibold text-gray-900 flex items-center gap-1">
-                      <Box className="w-3.5 h-3.5 text-[#D9232D]" /> Shockproof Packaging
+                    <span className="font-semibold text-gray-900 flex items-center gap-1.5">
+                      <RotateCcw className="w-3.5 h-3.5 text-[#D9232D]" /> 7-Day Replacement
                     </span>
                     <span className="text-[10.5px] text-gray-500 mt-1 leading-snug">
-                      Custom 30mm laser-cut EVA acoustic foam
+                      Damage replacement with unboxing video
                     </span>
                   </div>
                   <div className="bg-[#F9FAFB] p-3 rounded-xl border border-gray-200 flex flex-col justify-between">
-                    <span className="font-semibold text-gray-900 flex items-center gap-1">
-                      <Truck className="w-3.5 h-3.5 text-[#D9232D]" /> Tracked Express Air
+                    <span className="font-semibold text-gray-900 flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#D9232D]" /> Secure Checkout
                     </span>
                     <span className="text-[10.5px] text-gray-500 mt-1 leading-snug">
-                      Dispatched in 24h with Bluedart live SMS tracking
+                      Instant UPI &amp; Razorpay payment
                     </span>
                   </div>
                   <div className="bg-[#F9FAFB] p-3 rounded-xl border border-gray-200 flex flex-col justify-between">
-                    <span className="font-semibold text-gray-900 flex items-center gap-1">
-                      <RotateCcw className="w-3.5 h-3.5 text-[#D9232D]" /> 7-Day Free Replacement
+                    <span className="font-semibold text-gray-900 flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#D9232D]" /> WhatsApp Support
                     </span>
                     <span className="text-[10.5px] text-gray-500 mt-1 leading-snug">
-                      Instant zero-hassle replacement if damaged
+                      Support desk: +91 76004 09399
                     </span>
                   </div>
                 </div>
@@ -651,17 +606,19 @@ export function ProductDetailClient({
           </div>
         </div>
 
-        {/* Narrative & Specs Section */}
+        {/* Narrative & Data-Driven Specifications Section */}
         <div className="mt-20 pt-12 border-t border-gray-200 grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* Story */}
+          {/* Story & Description */}
           <div className="lg:col-span-7 space-y-6">
             <div>
-              <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold">Concept & Geometry</span>
+              <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold">
+                Overview &amp; Design
+              </span>
               <h2 className="text-2xl font-bold tracking-tight text-gray-900 mt-1">
                 Design Architecture
               </h2>
             </div>
-            <p className="text-sm text-gray-600 leading-relaxed">
+            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
               {product.description}
             </p>
             {product.story && (
@@ -671,39 +628,23 @@ export function ProductDetailClient({
             )}
           </div>
 
-          {/* Technical Specifications */}
+          {/* Data-Driven Technical Specifications */}
           <div className="lg:col-span-5">
             <div className="p-6 rounded-2xl bg-[#F9FAFB] border border-gray-200 space-y-4 shadow-2xs">
               <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
                 <Layers className="w-4 h-4 text-[#D9232D]" />
-                Additive Craft Specifications
+                Technical Specifications
               </h3>
 
               <div className="space-y-3 text-xs divide-y divide-gray-200 pt-1">
-                {specs.material && (
+                {(product.material || specs.material) && (
                   <div className="pt-2 flex justify-between">
                     <span className="text-gray-500 flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-[#D9232D]" /> Material
                     </span>
                     <span className="font-semibold text-gray-800 text-right max-w-[200px]">
-                      {specs.material}
+                      {product.material || specs.material}
                     </span>
-                  </div>
-                )}
-                {specs.printDuration && (
-                  <div className="pt-2 flex justify-between">
-                    <span className="text-gray-500 flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-[#D9232D]" /> Print Duration
-                    </span>
-                    <span className="font-semibold text-gray-800">{specs.printDuration}</span>
-                  </div>
-                )}
-                {specs.layerHeight && (
-                  <div className="pt-2 flex justify-between">
-                    <span className="text-gray-500 flex items-center gap-1.5">
-                      <Layers className="w-3.5 h-3.5 text-[#D9232D]" /> Layer Height
-                    </span>
-                    <span className="font-semibold text-gray-800">{specs.layerHeight}</span>
                   </div>
                 )}
                 {specs.dimensions && (
@@ -714,24 +655,33 @@ export function ProductDetailClient({
                     <span className="font-semibold text-gray-800">{specs.dimensions}</span>
                   </div>
                 )}
-                {specs.weight && (
+                {(product.weightGrams || specs.weight) && (
                   <div className="pt-2 flex justify-between">
                     <span className="text-gray-500 flex items-center gap-1.5">
                       <Scale className="w-3.5 h-3.5 text-[#D9232D]" /> Net Weight
                     </span>
-                    <span className="font-semibold text-gray-800">{specs.weight}</span>
+                    <span className="font-semibold text-gray-800">
+                      {product.weightGrams ? `${product.weightGrams}g` : specs.weight}
+                    </span>
                   </div>
                 )}
-                {specs.infillDensity && (
+                {specs.powerInput && (
                   <div className="pt-2 flex justify-between">
-                    <span className="text-gray-500">Internal Infill</span>
-                    <span className="font-semibold text-gray-800">{specs.infillDensity}</span>
+                    <span className="text-gray-500">Power Input</span>
+                    <span className="font-semibold text-gray-800">{specs.powerInput}</span>
                   </div>
                 )}
-                {specs.nozzleDiameter && (
+                {specs.levitationHeight && (
                   <div className="pt-2 flex justify-between">
-                    <span className="text-gray-500">Extrusion Nozzle</span>
-                    <span className="font-semibold text-gray-800">{specs.nozzleDiameter}</span>
+                    <span className="text-gray-500">Levitation Height</span>
+                    <span className="font-semibold text-gray-800">{specs.levitationHeight}</span>
+                  </div>
+                )}
+                {/* Only render 3D-printing specific fields if present on the product */}
+                {specs.layerHeight && (
+                  <div className="pt-2 flex justify-between">
+                    <span className="text-gray-500">Layer Precision</span>
+                    <span className="font-semibold text-gray-800">{specs.layerHeight}</span>
                   </div>
                 )}
               </div>
@@ -744,13 +694,13 @@ export function ProductDetailClient({
           <div className="mt-16 pt-12 border-t border-gray-200">
             <div className="max-w-2xl mb-6">
               <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold flex items-center gap-1.5">
-                <Package className="w-3.5 h-3.5" /> Complete Turnkey Package
+                <Package className="w-3.5 h-3.5" /> Package Contents
               </span>
               <h2 className="text-2xl font-bold tracking-tight text-gray-900 mt-1">
                 What&apos;s Included In The Box
               </h2>
               <p className="text-xs text-gray-500 mt-1">
-                Every component needed to power, display, and calibrate your piece right out of the box.
+                Everything required to set up and operate your lamp out of the box.
               </p>
             </div>
 
@@ -764,7 +714,7 @@ export function ProductDetailClient({
                     ✓
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-gray-900">{boxItem.item}</h4>
+                    <h3 className="text-xs font-bold text-gray-900">{boxItem.item}</h3>
                     <p className="text-[11px] text-gray-500 mt-0.5">{boxItem.desc}</p>
                   </div>
                 </div>
@@ -773,24 +723,27 @@ export function ProductDetailClient({
           </div>
         )}
 
-        {/* Interactive Collector FAQ Accordion */}
+        {/* Accessible FAQ Accordion */}
         {faqs && faqs.length > 0 && (
           <div className="mt-16 pt-12 border-t border-gray-200">
             <div className="max-w-2xl mb-8">
               <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold flex items-center gap-1.5">
-                <HelpCircle className="w-3.5 h-3.5" /> Buyer Transparency & Clarity
+                <HelpCircle className="w-3.5 h-3.5" /> Customer Clarity
               </span>
               <h2 className="text-2xl font-bold tracking-tight text-gray-900 mt-1">
                 Frequently Asked Questions
               </h2>
               <p className="text-xs text-gray-500 mt-1">
-                Have questions before ordering? Here is everything you need to know about setup, physics, and shipping.
+                Clear answers regarding setup, physics, power safety, and delivery terms.
               </p>
             </div>
 
             <div className="space-y-3 max-w-3xl">
               {faqs.map((faq, index) => {
                 const isOpen = openFaqIndex === index;
+                const faqId = `faq-control-${index}`;
+                const panelId = `faq-panel-${index}`;
+
                 return (
                   <div
                     key={index}
@@ -798,6 +751,9 @@ export function ProductDetailClient({
                   >
                     <button
                       type="button"
+                      id={faqId}
+                      aria-expanded={isOpen}
+                      aria-controls={panelId}
                       onClick={() => setOpenFaqIndex(isOpen ? null : index)}
                       className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-semibold text-xs sm:text-sm text-gray-900 hover:text-[#D9232D] transition-colors cursor-pointer select-none"
                     >
@@ -805,7 +761,7 @@ export function ProductDetailClient({
                         <span className="w-5 h-5 rounded-full bg-gray-100 text-[10px] flex items-center justify-center font-bold text-gray-600 shrink-0">
                           Q{index + 1}
                         </span>
-                        <span>{faq.q}</span>
+                        <span>{faq.question}</span>
                       </span>
                       <ChevronDown
                         className={`w-4 h-4 text-gray-500 transition-transform duration-200 shrink-0 ${
@@ -813,11 +769,17 @@ export function ProductDetailClient({
                         }`}
                       />
                     </button>
-                    {isOpen && (
-                      <div className="px-5 pb-5 pt-1 text-xs text-gray-600 leading-relaxed border-t border-gray-100 bg-[#FDFDFD]">
-                        {faq.a}
-                      </div>
-                    )}
+                    {/* All answers present in DOM for search crawlers / SEO with id and role */}
+                    <div
+                      id={panelId}
+                      role="region"
+                      aria-labelledby={faqId}
+                      className={`px-5 pb-5 pt-1 text-xs text-gray-600 leading-relaxed border-t border-gray-100 bg-[#FDFDFD] ${
+                        isOpen ? 'block' : 'hidden'
+                      }`}
+                    >
+                      {faq.answer}
+                    </div>
                   </div>
                 );
               })}
@@ -825,42 +787,22 @@ export function ProductDetailClient({
           </div>
         )}
 
-        {/* Customer Reviews Section */}
-        {displayedReviews.length > 0 && (
+        {/* Verified Reviews Section: Rendered ONLY if >= 5 verified reviews exist */}
+        {showReviews && (
           <div className="mt-20 pt-12 border-t border-gray-200">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
               <div>
-                <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold flex items-center gap-1.5">
-                  <Flame className="w-3.5 h-3.5 text-[#E61E2A]" /> Verified Collector Feedback
+                <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold">
+                  Verified Feedback
                 </span>
                 <h2 className="text-2xl font-bold tracking-tight text-gray-900 mt-1">
-                  Collector Reviews & Impressions
+                  Customer Reviews
                 </h2>
-                <p className="text-xs text-gray-500 mt-1">
-                  100% verified orders dispatched across Mumbai, Bengaluru, Delhi, Hyderabad, and Pune.
-                </p>
-              </div>
-
-              {/* Aggregate Score Pill */}
-              <div className="bg-[#FFF5F6] border border-[#FECDD3] px-4 py-2.5 rounded-2xl flex items-center gap-3 shrink-0">
-                <div className="text-center">
-                  <div className="text-xl font-bold text-[#BE123C] leading-none">4.9</div>
-                  <div className="text-[9.5px] uppercase tracking-wider text-[#BE123C]/70 font-semibold mt-0.5">Rating</div>
-                </div>
-                <div className="h-7 w-px bg-[#FECDD3]" />
-                <div>
-                  <div className="flex text-amber-500 text-xs">
-                    {'★★★★★'}
-                  </div>
-                  <span className="text-[11px] font-semibold text-gray-800">
-                    {displayedReviews.length} Verified Buyer Reviews
-                  </span>
-                </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {displayedReviews.map((rev: any) => (
+              {rawReviews.map((rev: any) => (
                 <div
                   key={rev.id}
                   className="p-6 rounded-2xl bg-white border border-gray-200 shadow-xs flex flex-col justify-between"
@@ -872,15 +814,20 @@ export function ProductDetailClient({
                           <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                         ))}
                       </div>
-                      <span className="text-[10px] font-mono text-gray-400">Verified Drop</span>
+                      {rev.verified && (
+                        <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md text-[10.5px] flex items-center gap-1">
+                          <Check className="w-3 h-3 text-emerald-600" /> Verified buyer
+                        </span>
+                      )}
                     </div>
-                    <h4 className="text-sm font-bold text-gray-900">&ldquo;{rev.title}&rdquo;</h4>
+                    {rev.title && (
+                      <h3 className="text-sm font-bold text-gray-900">&ldquo;{rev.title}&rdquo;</h3>
+                    )}
                     <p className="text-xs text-gray-600 mt-2 leading-relaxed">{rev.comment}</p>
                   </div>
                   <div className="mt-4 pt-3 border-t border-gray-100 text-[11px] text-gray-500 flex justify-between items-center">
-                    <span className="font-medium text-gray-700">{rev.authorName} {rev.city && `• ${rev.city}`}</span>
-                    <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md flex items-center gap-1">
-                      <Check className="w-3 h-3 text-emerald-600" /> Verified Collector
+                    <span className="font-medium text-gray-700">
+                      {rev.authorName} {rev.city && `• ${rev.city}`}
                     </span>
                   </div>
                 </div>
@@ -894,7 +841,9 @@ export function ProductDetailClient({
           <div className="mt-24 pt-12 border-t border-gray-200">
             <div className="flex justify-between items-end mb-8">
               <div>
-                <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold">Complementary Pieces</span>
+                <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold">
+                  Curated Catalog
+                </span>
                 <h2 className="text-2xl font-bold tracking-tight text-gray-900 mt-1">
                   You May Also Like
                 </h2>
@@ -930,12 +879,12 @@ export function ProductDetailClient({
         )}
       </div>
 
-      {/* Mobile Sticky Action Bar: Full-Width Instant Checkout */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-200 px-4 py-2.5 shadow-[0_-4px_25px_rgba(0,0,0,0.12)]">
+      {/* Mobile Sticky Action Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 px-4 py-2.5 shadow-[0_-4px_25px_rgba(0,0,0,0.12)]">
         <button
           type="button"
           onClick={handleBuyNow}
-          disabled={isBuying || isAdding}
+          disabled={isBuying || isAdding || !product.inStock}
           className="w-full h-12 rounded-xl bg-[#D9232D] hover:bg-[#b91c1c] active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-white font-bold text-sm shadow-md disabled:opacity-50 cursor-pointer touch-manipulation select-none"
         >
           {isBuying ? (
