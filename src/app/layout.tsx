@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { Poppins } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
@@ -56,8 +57,22 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap"
           rel="stylesheet"
         />
+        {/* Meta Pixel NoScript Fallback */}
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: 'none' }}
+            src="https://www.facebook.com/tr?id=946508041872382&ev=PageView&noscript=1"
+            alt=""
+          />
+        </noscript>
+      </head>
+      <body className="min-h-full flex flex-col bg-[#FAF8F5] text-[#222225] font-sans antialiased selection:bg-[#E61E2A]/15 selection:text-[#E61E2A]">
         {/* Official Meta Pixel (ID: 946508041872382) */}
-        <script
+        <Script
+          id="meta-pixel-init"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)
@@ -73,17 +88,6 @@ export default function RootLayout({
             `,
           }}
         />
-        <noscript>
-          <img
-            height="1"
-            width="1"
-            style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=946508041872382&ev=PageView&noscript=1"
-            alt=""
-          />
-        </noscript>
-      </head>
-      <body className="min-h-full flex flex-col bg-[#FAF8F5] text-[#222225] font-sans antialiased selection:bg-[#E61E2A]/15 selection:text-[#E61E2A]">
         <AuthProvider>
           <CartProvider>
             <Navbar />

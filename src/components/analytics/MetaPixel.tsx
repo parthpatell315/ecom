@@ -35,34 +35,34 @@ export function trackPixelEvent(
 ) {
   if (typeof window === 'undefined') return;
 
-  // 1. Ensure Meta Pixel fbq stub exists if script hasn't executed yet
-  if (!window.fbq) {
-    const fbq: any = function () {
-      if (fbq.callMethod) {
-        fbq.callMethod.apply(fbq, arguments);
-      } else {
-        fbq.queue.push(arguments);
+  const tryTrack = (): boolean => {
+    if (typeof window.fbq === 'function') {
+      try {
+        if (options?.eventID) {
+          window.fbq('track', eventName, params, { eventID: options.eventID });
+        } else {
+          window.fbq('track', eventName, params);
+        }
+        console.log(`[Meta Pixel] Successfully tracked ${eventName}:`, params);
+        return true;
+      } catch (err) {
+        console.warn(`[Meta Pixel] Error tracking ${eventName}:`, err);
       }
-    };
-    if (!window._fbq) window._fbq = fbq;
-    fbq.push = fbq;
-    fbq.loaded = true;
-    fbq.version = '2.0';
-    fbq.queue = [];
-    window.fbq = fbq;
-  }
-
-  // 2. Track event immediately (queued or direct)
-  try {
-    if (options?.eventID) {
-      window.fbq('track', eventName, params, { eventID: options.eventID });
-    } else {
-      window.fbq('track', eventName, params);
     }
-    console.log(`[Meta Pixel] Tracked ${eventName}:`, params);
-  } catch (err) {
-    console.warn(`[Meta Pixel] Error tracking ${eventName}:`, err);
-  }
+    return false;
+  };
+
+  // 1. If fbq is already initialized by Meta's script, fire immediately
+  if (tryTrack()) return;
+
+  // 2. Otherwise retry every 100ms for up to 5 seconds while Meta's fbevents.js downloads
+  let attempts = 0;
+  const timer = setInterval(() => {
+    attempts++;
+    if (tryTrack() || attempts >= 50) {
+      clearInterval(timer);
+    }
+  }, 100);
 }
 
 /**
