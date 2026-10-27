@@ -62,7 +62,7 @@ export default function RefundPolicyPage() {
               <strong>Original Payment Method:</strong> The full purchase amount will be credited back to your original payment mode (UPI, NetBanking, Credit/Debit Card) via our RBI-authorized payment gateway partner (Razorpay) within <strong>7 to 10 working days</strong>.
             </li>
             <li>
-              <strong>Partial COD Orders:</strong> For Partial COD orders where the product was delivered damaged and returned, any advance deposit paid (₹249) and doorstep balance paid (₹750) will be refunded directly to your verified UPI ID within 7 to 10 working days.
+              <strong>Partial COD Orders:</strong> For Partial COD orders where the product was delivered damaged and returned, any advance deposit paid (₹149) and doorstep balance paid (₹850) will be refunded directly to your verified UPI ID within 7 to 10 working days.
             </li>
           </ul>
         </section>

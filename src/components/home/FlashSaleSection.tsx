@@ -164,7 +164,7 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
                     </span>
                   </div>
                   <p className="text-[11px] text-[#A1A1AA] leading-snug">
-                    <strong className="text-white">Prepaid UPI:</strong> Flat {formatCurrency(coreReactor.priceMinor)} (Free Delivery) • <strong className="text-white">Partial COD:</strong> ₹249 advance + ₹750 at delivery
+                    <strong className="text-white">Prepaid UPI:</strong> Flat {formatCurrency(coreReactor.priceMinor)} (Free Delivery) • <strong className="text-white">Partial COD:</strong> ₹149 advance + ₹850 at delivery
                   </p>
                 </div>
               </div>
@@ -272,7 +272,7 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
                     </span>
                   </div>
                   <p className="text-[11px] text-[#A1A1AA] leading-snug">
-                    <strong className="text-white">Prepaid UPI:</strong> Flat {formatCurrency(levitatingLamp.priceMinor)} (Free Delivery) • <strong className="text-white">Partial COD:</strong> ₹249 advance + ₹750 at delivery
+                    <strong className="text-white">Prepaid UPI:</strong> Flat {formatCurrency(levitatingLamp.priceMinor)} (Free Delivery) • <strong className="text-white">Partial COD:</strong> ₹149 advance + ₹850 at delivery
                   </p>
                 </div>
               </div>
@@ -321,7 +321,7 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
           </div>
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-amber-400" />
-            <span>Instant UPI &amp; Partial COD (₹249)</span>
+            <span>Instant UPI &amp; Partial COD (₹149)</span>
           </div>
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-[#FB7185]" />

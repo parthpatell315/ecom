@@ -14,7 +14,6 @@ import {
   Check,
   ShoppingBag,
   Zap,
-  Clock,
   Layers,
   Box,
   Scale,
@@ -28,6 +27,7 @@ import {
   ArrowRight,
   Play,
   Video,
+  MessageCircle,
 } from 'lucide-react';
 
 import { trackPixelEvent } from '@/components/analytics/MetaPixel';
@@ -97,7 +97,7 @@ export function ProductDetailClient({
     if (n.includes('gold') || n.includes('champagne')) return '#D4AF37';
     if (n.includes('white') || n.includes('ivory')) return '#F5F2EB';
     if (n.includes('black') || n.includes('obsidian')) return '#18181B';
-    return hex || '#222225';
+    return hex || '#1D1D1F';
   };
 
   const handleAddToCart = async () => {
@@ -168,7 +168,7 @@ export function ProductDetailClient({
     : [];
   const showReviews = rawReviews.length >= 5;
 
-  // What's in the box: Claims cleanup
+  // What's in the box: Clean hardware contents
   const adapterText = LEGAL_CONFIG.BIS_REG_NO
     ? `BIS registered: ${LEGAL_CONFIG.BIS_REG_NO}`
     : '12V 2A power adapter';
@@ -191,7 +191,7 @@ export function ProductDetailClient({
   const stockCount = selectedVariant?.stockCount ?? product.stockCount ?? 10;
   const stockText =
     stockCount > 0 && stockCount <= 5
-      ? `Only ${stockCount} left`
+      ? `Only ${stockCount} left in batch`
       : product.inStock
       ? 'In stock'
       : 'Out of stock';
@@ -204,39 +204,39 @@ export function ProductDetailClient({
   const videoPoster = product.images?.[0]?.url || MEDIA_CONFIG.DEFAULT_VIDEO_POSTER;
 
   return (
-    <div className="bg-white min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-28 md:py-16">
+    <div className="bg-white min-h-screen text-[#1D1D1F]">
+      <div className="max-w-[1140px] mx-auto px-4 sm:px-6 pt-6 pb-28 md:py-16">
         {/* Breadcrumb Navigation */}
-        <nav className="text-xs text-gray-500 mb-6 flex items-center gap-1.5 flex-wrap" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-[#D9232D] transition-colors">
+        <nav className="text-xs text-[#86868B] mb-8 flex items-center gap-1.5 flex-wrap font-normal" aria-label="Breadcrumb">
+          <Link href="/" className="hover:text-[#1D1D1F] transition-colors">
             Home
           </Link>
           <span>/</span>
-          <Link href="/shop" className="hover:text-[#D9232D] transition-colors">
-            Collection
+          <Link href="/shop" className="hover:text-[#1D1D1F] transition-colors">
+            Store
           </Link>
           {product.category && (
             <>
               <span>/</span>
               <Link
                 href={`/shop?category=${product.category.slug}`}
-                className="hover:text-[#D9232D] transition-colors"
+                className="hover:text-[#1D1D1F] transition-colors"
               >
                 {product.category.name}
               </Link>
             </>
           )}
           <span>/</span>
-          <span className="text-gray-900 font-medium truncate">{product.title}</span>
+          <span className="text-[#1D1D1F] font-medium truncate">{product.title}</span>
         </nav>
 
         {/* Main Product Showcase Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
           {/* Left: Gallery (7 Cols) */}
           <div className="lg:col-span-7 flex flex-col-reverse md:flex-row gap-4">
             {/* Thumbnails */}
             {product.images && product.images.length > 1 && (
-              <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-y-auto max-h-[560px] pb-2 md:pb-0 scrollbar-none flex-shrink-0">
+              <div className="flex md:flex-col gap-2.5 overflow-x-auto md:overflow-y-auto max-h-[560px] pb-2 md:pb-0 scrollbar-none shrink-0">
                 {product.images.map((img: any, idx: number) => (
                   <button
                     key={img.id || idx}
@@ -245,17 +245,17 @@ export function ProductDetailClient({
                       setSelectedImage(img.url);
                       setActiveMediaTab('image');
                     }}
-                    className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border transition-all cursor-pointer ${
+                    className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border transition-all cursor-pointer ${
                       activeMediaTab === 'image' && selectedImage === img.url
-                        ? 'border-[#D9232D] ring-2 ring-[#D9232D]/30'
-                        : 'border-gray-200 opacity-70 hover:opacity-100'
+                        ? 'border-[#1D1D1F] ring-1 ring-[#1D1D1F]'
+                        : 'border-black/[0.08] opacity-75 hover:opacity-100'
                     }`}
                   >
                     <Image
                       src={img.url}
                       alt={`${product.title} view ${idx + 1}`}
                       fill
-                      className="object-cover"
+                      className="object-contain p-1"
                       sizes="80px"
                     />
                   </button>
@@ -266,24 +266,24 @@ export function ProductDetailClient({
                   <button
                     type="button"
                     onClick={() => setActiveMediaTab('video')}
-                    className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border transition-all cursor-pointer bg-neutral-900 flex flex-col items-center justify-center text-white ${
+                    className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border transition-all cursor-pointer bg-[#1D1D1F] flex flex-col items-center justify-center text-white ${
                       activeMediaTab === 'video'
-                        ? 'border-[#D9232D] ring-2 ring-[#D9232D]/30'
-                        : 'border-gray-200 opacity-80 hover:opacity-100'
+                        ? 'border-[#1D1D1F] ring-1 ring-[#1D1D1F]'
+                        : 'border-black/[0.08] opacity-80 hover:opacity-100'
                     }`}
                     aria-label="Watch video demonstration"
                   >
                     <Play className="w-5 h-5 fill-white" />
-                    <span className="text-[9px] font-bold uppercase mt-1">Video</span>
+                    <span className="text-[9.5px] font-semibold uppercase mt-1">Video</span>
                   </button>
                 )}
               </div>
             )}
 
-            {/* Primary View */}
-            <div className="relative flex-1 aspect-square rounded-3xl overflow-hidden bg-gray-50 border border-gray-200 shadow-sm">
+            {/* Primary View Frame */}
+            <div className="relative flex-1 aspect-square rounded-3xl overflow-hidden bg-[#F5F5F7] border border-black/[0.06] p-6 flex items-center justify-center shadow-apple">
               {activeMediaTab === 'video' ? (
-                <div className="w-full h-full relative bg-black flex items-center justify-center">
+                <div className="w-full h-full relative bg-black flex items-center justify-center rounded-2xl overflow-hidden">
                   <video
                     src={videoSource}
                     poster={videoPoster}
@@ -293,7 +293,7 @@ export function ProductDetailClient({
                     playsInline
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-md text-white text-[10.5px] font-semibold px-3 py-1 rounded-full flex items-center gap-1.5">
+                  <div className="absolute top-4 left-4 bg-black/70 backdrop-blur-md text-white text-[11px] font-semibold px-3 py-1 rounded-full flex items-center gap-1.5">
                     <Video className="w-3.5 h-3.5 text-amber-400" />
                     <span>Watch it float in mid-air</span>
                   </div>
@@ -306,16 +306,15 @@ export function ProductDetailClient({
                     fill
                     priority
                     sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition-all duration-500"
+                    className="object-contain p-4 sm:p-6 transition-all duration-500"
                   />
-                  {/* Prominent Above-the-fold mobile video button */}
                   {isLevitatingLamp && (
                     <button
                       type="button"
                       onClick={() => setActiveMediaTab('video')}
-                      className="md:hidden absolute bottom-3 right-3 bg-black/80 backdrop-blur-md text-white text-xs font-semibold px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-lg border border-white/20 active:scale-95 transition-transform"
+                      className="md:hidden absolute bottom-3.5 right-3.5 bg-black/80 backdrop-blur-md text-white text-xs font-semibold px-3.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-apple active:scale-95 transition-transform"
                     >
-                      <Play className="w-3.5 h-3.5 fill-white text-white" />
+                      <Play className="w-3 h-3 fill-white" />
                       <span>Watch it float</span>
                     </button>
                   )}
@@ -326,10 +325,9 @@ export function ProductDetailClient({
                 </div>
               )}
 
-              {/* Badges: Only render if valid non-fake urgency badge */}
               {product.badge && !product.badge.includes('12H') && (
                 <div className="absolute top-4 left-4">
-                  <span className="py-1 px-3.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#222225] text-white shadow-sm">
+                  <span className="py-1 px-3 rounded-full text-xs font-semibold bg-white/90 backdrop-blur-md text-[#1D1D1F] border border-black/[0.06]">
                     {product.badge}
                   </span>
                 </div>
@@ -340,18 +338,18 @@ export function ProductDetailClient({
           {/* Right: Info & Purchase Controls (5 Cols) */}
           <div className="lg:col-span-5 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
-                <span className="uppercase tracking-widest text-[#D9232D] font-bold">
+              <div className="flex items-center justify-between text-xs text-[#86868B] mb-2">
+                <span className="uppercase tracking-wider font-semibold text-[#1D1D1F]">
                   {product.category?.name || 'Studio Collection'}
                 </span>
-                <span className="font-mono text-gray-400">SKU: {selectedVariant?.sku || product.sku}</span>
+                <span className="font-mono text-[#86868B]">SKU: {selectedVariant?.sku || product.sku}</span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#222225] leading-tight">
+              <h1 className="text-2xl sm:text-3xl font-semibold tracking-[-0.025em] text-[#1D1D1F] leading-tight">
                 {product.title}
               </h1>
 
-              {/* Star Rating Line: Render ONLY if >= 5 real reviews exist */}
+              {/* Star Rating: Only if >= 5 real reviews exist */}
               {showReviews && (
                 <div className="mt-2.5 flex items-center gap-2 flex-wrap text-xs">
                   <div className="flex items-center text-amber-500 gap-0.5">
@@ -359,65 +357,57 @@ export function ProductDetailClient({
                       <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <span className="font-semibold text-gray-900">
-                    {product.rating ? product.rating.toFixed(1) : '5.0'}/5
+                  <span className="font-semibold text-[#1D1D1F]">
+                    {product.rating ? product.rating.toFixed(1) : '5.0'}
                   </span>
-                  <span className="text-gray-500 font-medium">
+                  <span className="text-[#86868B]">
                     ({rawReviews.length} Verified Reviews)
                   </span>
                 </div>
               )}
 
-              <p className="text-sm text-gray-600 mt-2 font-normal leading-relaxed">
+              <p className="text-sm text-[#6E6E73] mt-2 font-normal leading-relaxed">
                 {product.subtitle || product.tagline}
               </p>
 
-              {/* Price Tag: Compare-at only rendered if real compare_at_price exists */}
-              <div className="mt-5 pb-5 border-b border-gray-200 flex items-baseline gap-3">
-                <span className="text-3xl font-semibold text-[#222225]">
+              {/* Price Row */}
+              <div className="mt-5 pb-5 border-b border-black/[0.06] flex items-baseline gap-3">
+                <span className="text-3xl font-semibold text-[#1D1D1F] tracking-tight">
                   {formatCurrency(effectivePriceMinor)}
                 </span>
                 {hasCompareAt && (
-                  <span className="text-base text-gray-400 line-through">
+                  <span className="text-base text-[#86868B] line-through">
                     {formatCurrency(product.originalPriceMinor!)}
                   </span>
                 )}
                 {hasCompareAt && savings > 0 && (
-                  <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                  <span className="text-xs font-bold text-[#16A34A] bg-[#DCFCE7] border border-emerald-300/60 px-3 py-1 rounded-full shadow-2xs">
                     Save {formatCurrency(savings)}
                   </span>
                 )}
               </div>
 
-              {/* Promotional Banner: Rendered ONLY if sale is actively configured */}
+              {/* Optional Config-Driven Announcement Banner */}
               {isSaleActiveNow && (
-                <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-[#FFF1F2] to-[#FFF5F6] border border-[#FECDD3] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#E61E2A] animate-pulse shrink-0" />
-                    <div>
-                      <strong className="text-[#9F1239] block font-semibold text-xs flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-[#E61E2A]" />
-                        {SALE_CONFIG.DEFAULT_ANNOUNCEMENT}
-                      </strong>
-                      <span className="text-[#BE123C] text-[11px] mt-0.5 block font-medium">
-                        {DELIVERY_PROMISE}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-                    <span className="text-[10px] font-mono font-bold bg-[#E61E2A] text-white px-2.5 py-1 rounded-md uppercase tracking-wider">
-                      {SALE_CONFIG.PROMOTION_LABEL}
+                <div className="mt-4 p-4 rounded-2xl bg-[#F5F5F7] border border-black/[0.06] flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#0071E3] shrink-0" />
+                    <span className="font-medium text-[#1D1D1F]">
+                      {SALE_CONFIG.DEFAULT_ANNOUNCEMENT}
                     </span>
                   </div>
+                  <span className="text-[11px] font-semibold text-[#86868B]">
+                    {DELIVERY_PROMISE}
+                  </span>
                 </div>
               )}
 
-              {/* Variant Selector: HIDE if only 1 option exists */}
+              {/* Variant Selector */}
               {hasMultipleVariants && (
                 <div className="mt-6">
                   <div className="flex justify-between items-center text-xs mb-3">
-                    <span className="font-medium text-[#222225]">Available Finishes</span>
-                    <span className="text-gray-500 font-medium">
+                    <span className="font-semibold text-[#1D1D1F]">Finish</span>
+                    <span className="text-[#6E6E73]">
                       {selectedVariant?.colorName || selectedVariant?.name}
                     </span>
                   </div>
@@ -434,14 +424,14 @@ export function ProductDetailClient({
                             setActiveMediaTab('image');
                           }
                         }}
-                        className={`py-2 px-3.5 rounded-xl border text-xs font-medium flex items-center gap-2 transition-all cursor-pointer touch-manipulation ${
+                        className={`h-9 px-4 rounded-full border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
                           selectedVariant?.id === v.id
-                            ? 'border-[#D9232D] bg-[#FFF5F6] text-[#D9232D] ring-2 ring-[#D9232D]/20 shadow-xs'
-                            : 'border-gray-200 text-gray-700 hover:bg-gray-50'
+                            ? 'border-[#1D1D1F] bg-[#1D1D1F] text-white shadow-apple'
+                            : 'border-black/[0.08] text-[#1D1D1F] bg-[#F5F5F7] hover:bg-[#EBEBEF]'
                         }`}
                       >
                         <span
-                          className="w-3.5 h-3.5 rounded-full border border-black/10 inline-block shadow-2xs shrink-0"
+                          className="w-3 h-3 rounded-full border border-black/10 inline-block shrink-0"
                           style={{ backgroundColor: getSwatchColor(v.name, v.colorHex) }}
                         />
                         <span>{v.name}</span>
@@ -451,237 +441,199 @@ export function ProductDetailClient({
                 </div>
               )}
 
-              {/* Real Stock Inventory Status */}
+              {/* Stock Inventory */}
               <div className="mt-6 flex items-center gap-2 text-xs">
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    product.inStock ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'
+                    product.inStock ? 'bg-emerald-500' : 'bg-gray-400'
                   }`}
                 />
-                <span
-                  className={`font-medium ${
-                    product.inStock ? 'text-emerald-700' : 'text-gray-500'
-                  }`}
-                >
-                  {stockText}
-                </span>
+                <span className="font-medium text-[#6E6E73]">{stockText}</span>
               </div>
 
               {/* Quantity Selector and CTA Actions */}
               <div className="mt-8 space-y-3">
                 <div className="flex gap-3">
-                  {/* Quantity */}
-                  <div className="flex items-center border border-gray-300 rounded-xl px-2">
+                  {/* Quantity Stepper */}
+                  <div className="flex items-center border border-black/10 rounded-full px-2 bg-[#F5F5F7]">
                     <button
                       type="button"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="p-2 text-gray-600 hover:text-black cursor-pointer"
+                      className="p-2 text-[#1D1D1F] hover:opacity-70 cursor-pointer"
                       aria-label="Decrease quantity"
                     >
                       -
                     </button>
-                    <span className="px-3 text-xs font-medium text-[#222225]">{quantity}</span>
+                    <span className="px-3 text-xs font-semibold text-[#1D1D1F]">{quantity}</span>
                     <button
                       type="button"
                       onClick={() => setQuantity(quantity + 1)}
-                      className="p-2 text-gray-600 hover:text-black cursor-pointer"
+                      className="p-2 text-[#1D1D1F] hover:opacity-70 cursor-pointer"
                       aria-label="Increase quantity"
                     >
                       +
                     </button>
                   </div>
 
-                  {/* Add to Cart */}
+                  {/* Add to Bag (Avian High-Converting Red Button) */}
                   <button
                     type="button"
                     onClick={handleAddToCart}
                     disabled={isCartLoading || isAdding || !product.inStock}
-                    className="flex-1 py-3.5 px-6 rounded-xl bg-[#D9232D] text-white text-sm font-medium hover:bg-[#b91c1c] transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer"
+                    className="flex-1 h-12 rounded-xl bg-[#E53935] text-white text-xs sm:text-sm font-bold uppercase tracking-wider hover:bg-[#D32F2F] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md disabled:opacity-50 cursor-pointer"
                   >
                     {isAdding ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin text-white" />
-                        Adding to Cart...
+                        <span>Adding to Cart...</span>
                       </>
                     ) : added ? (
                       <>
                         <Check className="w-4 h-4 text-white" />
-                        Added to Cart
+                        <span>Added to Cart</span>
                       </>
                     ) : (
                       <>
                         <ShoppingBag className="w-4 h-4" />
-                        Add to Cart
+                        <span>Add to Cart</span>
                       </>
                     )}
                   </button>
                 </div>
 
-                {/* Instant Buy Now */}
+                {/* Instant Buy Now (Avian Dark Action Button) */}
                 <button
                   type="button"
                   onClick={handleBuyNow}
                   disabled={isBuying || isAdding || !product.inStock}
-                  className="w-full py-3.5 px-6 rounded-xl border border-gray-300 bg-[#222225] hover:bg-[#38383D] text-white text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
+                  className="w-full h-12 rounded-xl bg-[#111827] hover:bg-black text-white text-xs sm:text-sm font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer disabled:opacity-50 shadow-sm"
                 >
                   {isBuying ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin text-white" />
-                      Opening Checkout...
+                      <span>Opening Checkout...</span>
                     </>
                   ) : (
                     <>
-                      <Zap className="w-4 h-4 text-amber-400" />
-                      Buy Now
+                      <Zap className="w-4 h-4 text-amber-400 fill-current" />
+                      <span>Buy Now • Fast Checkout</span>
                     </>
                   )}
                 </button>
 
-                {/* Payment & Delivery Options Card */}
-                <div className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50/60 border border-emerald-200/90 space-y-2 text-xs shadow-2xs">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0 text-emerald-800 font-bold text-sm">
-                      ₹
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="font-semibold text-emerald-950 text-xs flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                          Payment &amp; Delivery Options
-                        </span>
-                        <span className="text-[10.5px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
-                          {DELIVERY_PROMISE}
-                        </span>
-                      </div>
-                      <p className="text-emerald-900 text-[11.5px] mt-1.5 leading-snug">
-                        <strong className="text-emerald-950">Prepaid UPI:</strong> Pay flat{' '}
-                        <strong className="text-emerald-950">{formatCurrency(effectivePriceMinor)}</strong> with free delivery.
-                      </p>
-                      <p className="text-emerald-800 text-[11px] mt-1 leading-snug pt-1.5 border-t border-emerald-200/60">
-                        <strong>Partial COD:</strong> Pay <strong>₹249 advance</strong> via UPI to confirm, and pay the remaining balance of <strong>₹750</strong> upon courier delivery.
-                      </p>
-                    </div>
+                {/* Payment & Partial COD Breakdown Card */}
+                <div className="p-4 rounded-2xl bg-[#F5F5F7] border border-black/[0.06] space-y-2 text-xs">
+                  <div className="flex items-center justify-between text-[#1D1D1F] font-semibold">
+                    <span className="flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                      <span>Payment &amp; Delivery Terms</span>
+                    </span>
+                    <span className="text-[11px] font-normal text-[#6E6E73]">{DELIVERY_PROMISE}</span>
+                  </div>
+                  <div className="text-[#6E6E73] text-[11.5px] leading-relaxed pt-1 space-y-1">
+                    <p>
+                      <strong className="text-[#1D1D1F]">Prepaid UPI:</strong> Flat {formatCurrency(effectivePriceMinor)} with free express delivery.
+                    </p>
+                    <p className="pt-1 border-t border-black/[0.04]">
+                      <strong className="text-[#1D1D1F]">Partial COD:</strong> Pay <strong>₹149 advance</strong> now via UPI, pay remaining <strong>₹850</strong> upon courier delivery to your hands.
+                    </p>
                   </div>
                 </div>
               </div>
 
-              {/* Trust Strip under CTA (Exactly 4 items max) */}
-              <div className="mt-6 pt-5 border-t border-gray-200">
-                <div className="grid grid-cols-2 gap-2.5 text-[11.5px]">
-                  <div className="bg-[#F9FAFB] p-3 rounded-xl border border-gray-200 flex flex-col justify-between">
-                    <span className="font-semibold text-gray-900 flex items-center gap-1.5">
-                      <Truck className="w-3.5 h-3.5 text-[#D9232D]" /> Delivery Promise
-                    </span>
-                    <span className="text-[10.5px] text-gray-500 mt-1 leading-snug">
-                      {DELIVERY_PROMISE}
-                    </span>
-                  </div>
-                  <div className="bg-[#F9FAFB] p-3 rounded-xl border border-gray-200 flex flex-col justify-between">
-                    <span className="font-semibold text-gray-900 flex items-center gap-1.5">
-                      <RotateCcw className="w-3.5 h-3.5 text-[#D9232D]" /> 7-Day Replacement
-                    </span>
-                    <span className="text-[10.5px] text-gray-500 mt-1 leading-snug">
-                      Damage replacement with unboxing video
-                    </span>
-                  </div>
-                  <div className="bg-[#F9FAFB] p-3 rounded-xl border border-gray-200 flex flex-col justify-between">
-                    <span className="font-semibold text-gray-900 flex items-center gap-1.5">
-                      <ShieldCheck className="w-3.5 h-3.5 text-[#D9232D]" /> Secure Checkout
-                    </span>
-                    <span className="text-[10.5px] text-gray-500 mt-1 leading-snug">
-                      Instant UPI &amp; Razorpay payment
-                    </span>
-                  </div>
-                  <div className="bg-[#F9FAFB] p-3 rounded-xl border border-gray-200 flex flex-col justify-between">
-                    <span className="font-semibold text-gray-900 flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#D9232D]" /> WhatsApp Support
-                    </span>
-                    <span className="text-[10.5px] text-gray-500 mt-1 leading-snug">
-                      Support desk: +91 76004 09399
-                    </span>
-                  </div>
+              {/* 4 Trust Badges */}
+              <div className="mt-6 pt-5 border-t border-black/[0.06] grid grid-cols-2 gap-2.5 text-[11.5px]">
+                <div className="p-3 rounded-2xl bg-[#F5F5F7] border border-black/[0.04] flex flex-col justify-between">
+                  <span className="font-semibold text-[#1D1D1F] flex items-center gap-1.5">
+                    <Truck className="w-3.5 h-3.5 text-[#0071E3]" /> Air Delivery
+                  </span>
+                  <span className="text-[10.5px] text-[#6E6E73] mt-1 leading-snug">
+                    {DELIVERY_PROMISE}
+                  </span>
+                </div>
+                <div className="p-3 rounded-2xl bg-[#F5F5F7] border border-black/[0.04] flex flex-col justify-between">
+                  <span className="font-semibold text-[#1D1D1F] flex items-center gap-1.5">
+                    <RotateCcw className="w-3.5 h-3.5 text-[#0071E3]" /> 7-Day Guarantee
+                  </span>
+                  <span className="text-[10.5px] text-[#6E6E73] mt-1 leading-snug">
+                    Replacement for transit damage
+                  </span>
+                </div>
+                <div className="p-3 rounded-2xl bg-[#F5F5F7] border border-black/[0.04] flex flex-col justify-between">
+                  <span className="font-semibold text-[#1D1D1F] flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Secure Payment
+                  </span>
+                  <span className="text-[10.5px] text-[#6E6E73] mt-1 leading-snug">
+                    Instant UPI &amp; Cards
+                  </span>
+                </div>
+                <div className="p-3 rounded-2xl bg-[#F5F5F7] border border-black/[0.04] flex flex-col justify-between">
+                  <span className="font-semibold text-[#1D1D1F] flex items-center gap-1.5">
+                    <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" /> Concierge Desk
+                  </span>
+                  <span className="text-[10.5px] text-[#6E6E73] mt-1 leading-snug">
+                    Direct studio support
+                  </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Narrative & Data-Driven Specifications Section */}
-        <div className="mt-20 pt-12 border-t border-gray-200 grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* Story & Description */}
-          <div className="lg:col-span-7 space-y-6">
-            <div>
-              <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold">
-                Overview &amp; Design
-              </span>
-              <h2 className="text-2xl font-bold tracking-tight text-gray-900 mt-1">
-                Design Architecture
-              </h2>
-            </div>
-            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+        {/* Narrative & Hardware Specifications */}
+        <div className="mt-20 pt-12 border-t border-black/[0.06] grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-7 space-y-4">
+            <span className="text-xs uppercase tracking-wider text-[#86868B] font-semibold">
+              Design Architecture
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1D1D1F]">
+              Crafted for Your Workstation
+            </h2>
+            <p className="text-sm text-[#6E6E73] leading-relaxed whitespace-pre-line">
               {product.description}
             </p>
-            {product.story && (
-              <div className="p-6 rounded-2xl bg-[#FFF5F6] border border-[#D9232D]/15 text-xs text-gray-700 italic leading-relaxed">
-                &ldquo;{product.story}&rdquo;
-              </div>
-            )}
           </div>
 
-          {/* Data-Driven Technical Specifications */}
           <div className="lg:col-span-5">
-            <div className="p-6 rounded-2xl bg-[#F9FAFB] border border-gray-200 space-y-4 shadow-2xs">
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
-                <Layers className="w-4 h-4 text-[#D9232D]" />
-                Technical Specifications
+            <div className="p-6 rounded-3xl bg-[#F5F5F7] border border-black/[0.06] space-y-3 shadow-apple">
+              <h3 className="text-xs font-semibold text-[#1D1D1F] uppercase tracking-wider flex items-center gap-2">
+                <Layers className="w-4 h-4 text-[#1D1D1F]" />
+                Hardware Specifications
               </h3>
 
-              <div className="space-y-3 text-xs divide-y divide-gray-200 pt-1">
+              <div className="space-y-2.5 text-xs divide-y divide-black/[0.04] pt-1">
                 {(product.material || specs.material) && (
                   <div className="pt-2 flex justify-between">
-                    <span className="text-gray-500 flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-[#D9232D]" /> Material
-                    </span>
-                    <span className="font-semibold text-gray-800 text-right max-w-[200px]">
+                    <span className="text-[#86868B]">Material</span>
+                    <span className="font-semibold text-[#1D1D1F] text-right max-w-[200px]">
                       {product.material || specs.material}
                     </span>
                   </div>
                 )}
                 {specs.dimensions && (
                   <div className="pt-2 flex justify-between">
-                    <span className="text-gray-500 flex items-center gap-1.5">
-                      <Box className="w-3.5 h-3.5 text-[#D9232D]" /> Dimensions
-                    </span>
-                    <span className="font-semibold text-gray-800">{specs.dimensions}</span>
+                    <span className="text-[#86868B]">Dimensions</span>
+                    <span className="font-semibold text-[#1D1D1F]">{specs.dimensions}</span>
                   </div>
                 )}
                 {(product.weightGrams || specs.weight) && (
                   <div className="pt-2 flex justify-between">
-                    <span className="text-gray-500 flex items-center gap-1.5">
-                      <Scale className="w-3.5 h-3.5 text-[#D9232D]" /> Net Weight
-                    </span>
-                    <span className="font-semibold text-gray-800">
+                    <span className="text-[#86868B]">Net Weight</span>
+                    <span className="font-semibold text-[#1D1D1F]">
                       {product.weightGrams ? `${product.weightGrams}g` : specs.weight}
                     </span>
                   </div>
                 )}
                 {specs.powerInput && (
                   <div className="pt-2 flex justify-between">
-                    <span className="text-gray-500">Power Input</span>
-                    <span className="font-semibold text-gray-800">{specs.powerInput}</span>
+                    <span className="text-[#86868B]">Power Input</span>
+                    <span className="font-semibold text-[#1D1D1F]">{specs.powerInput}</span>
                   </div>
                 )}
                 {specs.levitationHeight && (
                   <div className="pt-2 flex justify-between">
-                    <span className="text-gray-500">Levitation Height</span>
-                    <span className="font-semibold text-gray-800">{specs.levitationHeight}</span>
-                  </div>
-                )}
-                {/* Only render 3D-printing specific fields if present on the product */}
-                {specs.layerHeight && (
-                  <div className="pt-2 flex justify-between">
-                    <span className="text-gray-500">Layer Precision</span>
-                    <span className="font-semibold text-gray-800">{specs.layerHeight}</span>
+                    <span className="text-[#86868B]">Levitation Height</span>
+                    <span className="font-semibold text-[#1D1D1F]">{specs.levitationHeight}</span>
                   </div>
                 )}
               </div>
@@ -691,31 +643,28 @@ export function ProductDetailClient({
 
         {/* What's In The Box Section */}
         {whatsInTheBox && (
-          <div className="mt-16 pt-12 border-t border-gray-200">
+          <div className="mt-16 pt-12 border-t border-black/[0.06]">
             <div className="max-w-2xl mb-6">
-              <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold flex items-center gap-1.5">
+              <span className="text-xs uppercase tracking-wider text-[#86868B] font-semibold flex items-center gap-1.5">
                 <Package className="w-3.5 h-3.5" /> Package Contents
               </span>
-              <h2 className="text-2xl font-bold tracking-tight text-gray-900 mt-1">
+              <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1D1D1F] mt-1">
                 What&apos;s Included In The Box
               </h2>
-              <p className="text-xs text-gray-500 mt-1">
-                Everything required to set up and operate your lamp out of the box.
-              </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {whatsInTheBox.map((boxItem, idx) => (
                 <div
                   key={idx}
-                  className="p-4 rounded-xl bg-[#F9FAFB] border border-gray-200 flex items-start gap-3 shadow-2xs"
+                  className="p-5 rounded-2xl bg-[#F5F5F7] border border-black/[0.04] flex items-start gap-3"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-white border border-gray-200 flex items-center justify-center shrink-0 text-[#D9232D] font-bold text-xs shadow-2xs">
+                  <div className="w-6 h-6 rounded-full bg-white text-[#1D1D1F] flex items-center justify-center shrink-0 font-bold text-xs shadow-apple">
                     ✓
                   </div>
                   <div>
-                    <h3 className="text-xs font-bold text-gray-900">{boxItem.item}</h3>
-                    <p className="text-[11px] text-gray-500 mt-0.5">{boxItem.desc}</p>
+                    <h3 className="text-xs font-semibold text-[#1D1D1F]">{boxItem.item}</h3>
+                    <p className="text-[11px] text-[#6E6E73] mt-0.5">{boxItem.desc}</p>
                   </div>
                 </div>
               ))}
@@ -725,17 +674,14 @@ export function ProductDetailClient({
 
         {/* Accessible FAQ Accordion */}
         {faqs && faqs.length > 0 && (
-          <div className="mt-16 pt-12 border-t border-gray-200">
+          <div className="mt-16 pt-12 border-t border-black/[0.06]">
             <div className="max-w-2xl mb-8">
-              <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold flex items-center gap-1.5">
-                <HelpCircle className="w-3.5 h-3.5" /> Customer Clarity
+              <span className="text-xs uppercase tracking-wider text-[#86868B] font-semibold flex items-center gap-1.5">
+                <HelpCircle className="w-3.5 h-3.5" /> Product Clarity
               </span>
-              <h2 className="text-2xl font-bold tracking-tight text-gray-900 mt-1">
+              <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1D1D1F] mt-1">
                 Frequently Asked Questions
               </h2>
-              <p className="text-xs text-gray-500 mt-1">
-                Clear answers regarding setup, physics, power safety, and delivery terms.
-              </p>
             </div>
 
             <div className="space-y-3 max-w-3xl">
@@ -747,7 +693,7 @@ export function ProductDetailClient({
                 return (
                   <div
                     key={index}
-                    className="border border-gray-200 rounded-2xl bg-white overflow-hidden transition-all duration-200 shadow-2xs"
+                    className="border border-black/[0.06] rounded-2xl bg-[#F5F5F7] overflow-hidden transition-all duration-200"
                   >
                     <button
                       type="button"
@@ -755,26 +701,20 @@ export function ProductDetailClient({
                       aria-expanded={isOpen}
                       aria-controls={panelId}
                       onClick={() => setOpenFaqIndex(isOpen ? null : index)}
-                      className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-semibold text-xs sm:text-sm text-gray-900 hover:text-[#D9232D] transition-colors cursor-pointer select-none"
+                      className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-semibold text-xs sm:text-sm text-[#1D1D1F] cursor-pointer"
                     >
-                      <span className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-gray-100 text-[10px] flex items-center justify-center font-bold text-gray-600 shrink-0">
-                          Q{index + 1}
-                        </span>
-                        <span>{faq.question}</span>
-                      </span>
+                      <span>{faq.question}</span>
                       <ChevronDown
-                        className={`w-4 h-4 text-gray-500 transition-transform duration-200 shrink-0 ${
-                          isOpen ? 'rotate-180 text-[#D9232D]' : ''
+                        className={`w-4 h-4 text-[#86868B] transition-transform duration-200 shrink-0 ${
+                          isOpen ? 'rotate-180 text-[#1D1D1F]' : ''
                         }`}
                       />
                     </button>
-                    {/* All answers present in DOM for search crawlers / SEO with id and role */}
                     <div
                       id={panelId}
                       role="region"
                       aria-labelledby={faqId}
-                      className={`px-5 pb-5 pt-1 text-xs text-gray-600 leading-relaxed border-t border-gray-100 bg-[#FDFDFD] ${
+                      className={`px-5 pb-5 pt-1 text-xs text-[#6E6E73] leading-relaxed border-t border-black/[0.04] ${
                         isOpen ? 'block' : 'hidden'
                       }`}
                     >
@@ -787,70 +727,21 @@ export function ProductDetailClient({
           </div>
         )}
 
-        {/* Verified Reviews Section: Rendered ONLY if >= 5 verified reviews exist */}
-        {showReviews && (
-          <div className="mt-20 pt-12 border-t border-gray-200">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-              <div>
-                <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold">
-                  Verified Feedback
-                </span>
-                <h2 className="text-2xl font-bold tracking-tight text-gray-900 mt-1">
-                  Customer Reviews
-                </h2>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {rawReviews.map((rev: any) => (
-                <div
-                  key={rev.id}
-                  className="p-6 rounded-2xl bg-white border border-gray-200 shadow-xs flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between text-xs mb-2.5">
-                      <div className="flex text-amber-500 gap-0.5">
-                        {[...Array(rev.rating || 5)].map((_, i) => (
-                          <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                        ))}
-                      </div>
-                      {rev.verified && (
-                        <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md text-[10.5px] flex items-center gap-1">
-                          <Check className="w-3 h-3 text-emerald-600" /> Verified buyer
-                        </span>
-                      )}
-                    </div>
-                    {rev.title && (
-                      <h3 className="text-sm font-bold text-gray-900">&ldquo;{rev.title}&rdquo;</h3>
-                    )}
-                    <p className="text-xs text-gray-600 mt-2 leading-relaxed">{rev.comment}</p>
-                  </div>
-                  <div className="mt-4 pt-3 border-t border-gray-100 text-[11px] text-gray-500 flex justify-between items-center">
-                    <span className="font-medium text-gray-700">
-                      {rev.authorName} {rev.city && `• ${rev.city}`}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Related Products Showcase */}
         {relatedProducts.length > 0 && (
-          <div className="mt-24 pt-12 border-t border-gray-200">
+          <div className="mt-20 pt-12 border-t border-black/[0.06]">
             <div className="flex justify-between items-end mb-8">
               <div>
-                <span className="text-xs uppercase tracking-widest text-[#D9232D] font-bold">
+                <span className="text-xs uppercase tracking-wider text-[#86868B] font-semibold">
                   Curated Catalog
                 </span>
-                <h2 className="text-2xl font-bold tracking-tight text-gray-900 mt-1">
+                <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1D1D1F] mt-1">
                   You May Also Like
                 </h2>
               </div>
               <Link
                 href={`/shop?category=${product.category?.slug}`}
-                className="text-xs font-bold text-[#D9232D] hover:underline"
+                className="text-xs font-semibold text-[#0071E3] hover:underline"
               >
                 More in {product.category?.name} →
               </Link>
@@ -879,27 +770,38 @@ export function ProductDetailClient({
         )}
       </div>
 
-      {/* Mobile Sticky Action Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 px-4 py-2.5 shadow-[0_-4px_25px_rgba(0,0,0,0.12)]">
-        <button
-          type="button"
-          onClick={handleBuyNow}
-          disabled={isBuying || isAdding || !product.inStock}
-          className="w-full h-12 rounded-xl bg-[#D9232D] hover:bg-[#b91c1c] active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-white font-bold text-sm shadow-md disabled:opacity-50 cursor-pointer touch-manipulation select-none"
-        >
-          {isBuying ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin text-white" />
-              <span>Opening Checkout...</span>
-            </>
-          ) : (
-            <>
-              <Zap className="w-4 h-4 fill-amber-300 text-amber-300" />
-              <span>Buy Now • {formatCurrency(effectivePriceMinor)}</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </>
-          )}
-        </button>
+      {/* Mobile Sticky Apple Action Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/85 backdrop-blur-xl border-t border-black/10 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+        <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
+          <div>
+            <span className="text-[11px] text-[#86868B] block truncate max-w-[130px] font-normal">
+              {product.title}
+            </span>
+            <strong className="text-base font-semibold text-[#1D1D1F]">
+              {formatCurrency(effectivePriceMinor)}
+            </strong>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleBuyNow}
+            disabled={isBuying || isAdding || !product.inStock}
+            className="flex-1 h-11 rounded-xl bg-[#E53935] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#D32F2F] active:scale-95 transition-all flex items-center justify-center gap-1.5 shadow-md disabled:opacity-50 cursor-pointer touch-manipulation select-none"
+          >
+            {isBuying ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+                <span>Opening...</span>
+              </>
+            ) : (
+              <>
+                <Zap className="w-3.5 h-3.5 fill-current" />
+                <span>Buy Now</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

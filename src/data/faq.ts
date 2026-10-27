@@ -32,7 +32,7 @@ export const LEVITATING_LAMP_FAQS: readonly FaqItem[] = [
     id: 'faq-4',
     question: 'How does Partial Cash on Delivery (COD) payment work?',
     answer:
-      'Pay ₹249 advance via UPI at checkout to confirm your order. Pay the remaining ₹750 in cash or UPI to the courier at delivery. Total stays ₹999.',
+      'Pay ₹149 advance via UPI at checkout to confirm your order. Pay the remaining ₹850 in cash or UPI to the courier at delivery. Total stays ₹999.',
   },
   {
     id: 'faq-5',
@@ -53,7 +53,7 @@ export const GENERAL_STORE_FAQS: readonly FaqItem[] = [
     id: 'store-faq-2',
     question: 'What payment methods do you accept?',
     answer:
-      'We accept instant UPI (Google Pay, PhonePe, Paytm, CRED), NetBanking, cards via Razorpay, and Partial COD (₹249 advance via UPI, remaining ₹750 at delivery).',
+      'We accept instant UPI (Google Pay, PhonePe, Paytm, CRED), NetBanking, cards via Razorpay, and Partial COD (₹149 advance via UPI, remaining ₹850 at delivery).',
   },
   {
     id: 'store-faq-3',

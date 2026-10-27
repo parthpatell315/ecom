@@ -34,13 +34,13 @@ export function getMerchantUpiConfig(): UpiPaymentConfig {
   const upiId = (
     process.env.NEXT_PUBLIC_MERCHANT_UPI_ID ||
     process.env.MERCHANT_UPI_ID ||
-    'iloothub@upi'
+    'flirtanetwork@upi'
   ).trim();
 
   const payeeName = (
     process.env.NEXT_PUBLIC_MERCHANT_UPI_NAME ||
     process.env.MERCHANT_UPI_NAME ||
-    'iloot Hub'
+    'Flirta Studio'
   ).trim();
 
   return { upiId, payeeName };

@@ -3,7 +3,8 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ProductCard } from '@/components/product/ProductCard';
-import { Search, SlidersHorizontal, Loader2, Sparkles } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 function ShopContent() {
   const searchParams = useSearchParams();
@@ -63,38 +64,38 @@ function ShopContent() {
   }, [activeCategory, search, sortBy]);
 
   return (
-    <div className="bg-[#FAF8F5] min-h-screen">
-      <div className="page-width py-8 md:py-12">
+    <div className="bg-white min-h-screen">
+      <div className="page-width py-8 md:py-14">
         {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-2 text-xs text-[#78716C] mb-6 font-medium">
-          <a href="/" className="hover:text-[#222225] transition-colors">Home</a>
-          <span className="text-gray-300">/</span>
-          <span className="text-[#222225] font-medium">Products</span>
+        <nav className="flex items-center gap-2 text-xs text-[#86868B] mb-8 font-medium">
+          <Link href="/" className="hover:text-[#1D1D1F] transition-colors">Home</Link>
+          <span className="text-black/20">/</span>
+          <span className="text-[#1D1D1F]">Store</span>
         </nav>
 
         {/* Page Header */}
-        <div className="mb-10 text-center max-w-2xl mx-auto">
-          <span className="text-[10.5px] uppercase tracking-widest text-[#B45309] font-medium block mb-1">
-            flirta.network Studio
+        <div className="mb-12 text-center max-w-2xl mx-auto">
+          <span className="text-xs uppercase tracking-widest text-[#86868B] font-medium block mb-2">
+            The Studio Catalog
           </span>
-          <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight text-[#222225]">
-            Products
+          <h1 className="text-3xl sm:text-5xl font-semibold tracking-tight text-[#1D1D1F]">
+            Store.
           </h1>
-          <p className="text-xs sm:text-sm text-[#5C554B] mt-2.5 leading-relaxed">
-            Discover precision 3D-crafted aesthetic home decor, ambient LED lamps, and modular desk architecture engineered for modern living.
+          <p className="text-sm sm:text-base text-[#6E6E73] mt-3 leading-relaxed">
+            The best way to buy the ambient lights, kinetic desk sculptures, and sanctuary architecture pieces you love.
           </p>
         </div>
 
         {/* Filter and Search Bar */}
-        <div className="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-3 sm:p-4 rounded-2xl border border-[#E8E2D5] shadow-2xs">
+        <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between bg-[#F5F5F7] p-3 sm:p-4 rounded-2xl border border-black/[0.04]">
           {/* Category Tabs */}
           <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
             <button
               onClick={() => setActiveCategory('all')}
-              className={`px-4 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+              className={`px-4 py-2 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
                 activeCategory === 'all'
-                  ? 'bg-[#222225] text-white shadow-sm'
-                  : 'bg-[#FAF8F5] text-[#5C554B] hover:bg-[#F0EAE1]'
+                  ? 'bg-[#1D1D1F] text-white shadow-apple'
+                  : 'bg-white text-[#6E6E73] hover:text-[#1D1D1F] border border-black/[0.06]'
               }`}
             >
               All Pieces
@@ -103,10 +104,10 @@ function ShopContent() {
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.slug)}
-                className={`px-4 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                className={`px-4 py-2 rounded-full text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
                   activeCategory === cat.slug
-                    ? 'bg-[#222225] text-white shadow-sm'
-                    : 'bg-[#FAF8F5] text-[#5C554B] hover:bg-[#F0EAE1]'
+                    ? 'bg-[#1D1D1F] text-white shadow-apple'
+                    : 'bg-white text-[#6E6E73] hover:text-[#1D1D1F] border border-black/[0.06]'
                 }`}
               >
                 {cat.name}
@@ -122,15 +123,15 @@ function ShopContent() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search products..."
-                className="w-full pl-9 pr-4 py-2 text-xs bg-[#FAF8F5] border border-[#E8E2D5] rounded-xl focus:outline-none focus:border-[#E61E2A] text-[#222225]"
+                className="w-full pl-9 pr-4 py-2 text-xs bg-white border border-black/[0.08] rounded-full focus:outline-none focus:border-[#1D1D1F] text-[#1D1D1F] placeholder-[#86868B]"
               />
-              <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
+              <Search className="w-4 h-4 text-[#86868B] absolute left-3 top-2.5" />
             </div>
 
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="py-2 px-3 text-xs bg-[#FAF8F5] border border-[#E8E2D5] rounded-xl text-[#222225] font-medium focus:outline-none focus:border-[#E61E2A]"
+              className="py-2 px-3 text-xs bg-white border border-black/[0.08] rounded-full text-[#1D1D1F] font-medium focus:outline-none focus:border-[#1D1D1F] cursor-pointer"
             >
               <option value="featured">Featured First</option>
               <option value="price-asc">Price: Low to High</option>
@@ -141,27 +142,27 @@ function ShopContent() {
         </div>
 
         {/* Product Count Row */}
-        <div className="flex items-center justify-between mb-6 text-xs text-[#78716C] font-medium px-1">
-          <span>Showing {products.length} Products</span>
-          <span>Pan-India Dispatch within 24–48 Hours</span>
+        <div className="flex items-center justify-between mb-8 text-xs text-[#86868B] font-medium px-1">
+          <span>{products.length} {products.length === 1 ? 'Piece' : 'Pieces'} Available</span>
+          <span>Free Pan-India Delivery • Partial COD Supported</span>
         </div>
 
         {/* Product Grid State */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-24 text-gray-400">
-            <Loader2 className="w-8 h-8 animate-spin text-[#E61E2A] mb-3" />
-            <p className="text-xs uppercase tracking-wider font-semibold">Loading flirta.network Pieces...</p>
+          <div className="flex flex-col items-center justify-center py-24 text-[#86868B]">
+            <Loader2 className="w-8 h-8 animate-spin text-[#1D1D1F] mb-3" />
+            <p className="text-xs uppercase tracking-wider font-medium">Loading Catalog...</p>
           </div>
         ) : products.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-[#E8E2D5]">
-            <p className="text-base font-semibold text-[#222225]">No pieces found matching your criteria</p>
-            <p className="text-xs text-gray-500 mt-1">Try resetting your filter or searching for another term.</p>
+          <div className="text-center py-20 bg-[#F5F5F7] rounded-3xl border border-black/[0.04]">
+            <p className="text-base font-semibold text-[#1D1D1F]">No pieces found matching your criteria</p>
+            <p className="text-xs text-[#6E6E73] mt-1">Try resetting your filter or searching for another term.</p>
             <button
               onClick={() => {
                 setActiveCategory('all');
                 setSearch('');
               }}
-              className="mt-4 px-5 py-2.5 rounded-xl text-xs font-medium uppercase tracking-wider bg-[#222225] text-white hover:bg-[#E61E2A] transition-colors"
+              className="mt-4 px-6 py-2.5 rounded-full text-xs font-medium bg-[#1D1D1F] text-white hover:bg-black transition-all shadow-apple cursor-pointer"
             >
               Clear Filters
             </button>
@@ -183,7 +184,7 @@ export default function ShopPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="w-8 h-8 animate-spin text-[#E61E2A]" />
+          <Loader2 className="w-8 h-8 animate-spin text-[#1D1D1F]" />
         </div>
       }
     >

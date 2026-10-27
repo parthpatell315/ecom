@@ -434,7 +434,7 @@ export default function AdminPage() {
                           <div>{formatCurrency(ord.totalMinor)}</div>
                           {ord.isPartialCod && (
                             <span className="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-400">
-                              Partial COD (₹249 Adv + {formatCurrency(ord.codBalanceMinor)} Due)
+                              Partial COD ({ord.payments?.[0]?.amountMinor ? formatCurrency(ord.payments[0].amountMinor) : '₹149'} Adv + {formatCurrency(ord.codBalanceMinor)} Due)
                             </span>
                           )}
                         </td>
@@ -572,7 +572,7 @@ export default function AdminPage() {
                   )}
                   {editingOrder.isPartialCod && (
                     <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-900 dark:text-amber-200">
-                      <span className="font-bold">Partial COD Order:</span> ₹249.00 advance via UPI • Collect <strong className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">{formatCurrency(editingOrder.codBalanceMinor)}</strong> in Cash on Delivery from customer.
+                      <span className="font-bold">Partial COD Order:</span> {editingOrder.payments?.[0]?.amountMinor ? formatCurrency(editingOrder.payments[0].amountMinor) : '₹149.00'} advance via UPI • Collect <strong className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">{formatCurrency(editingOrder.codBalanceMinor)}</strong> in Cash on Delivery from customer.
                     </div>
                   )}
                   {editingOrder.payments[0].status === 'PENDING' && (

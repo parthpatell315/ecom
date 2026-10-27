@@ -65,10 +65,10 @@ export default function ShippingPolicyPage() {
             To combat courier fraud and fake address submissions while keeping your risk zero, we operate a <strong>Partial COD model</strong>:
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-neutral-600">
-            <li><strong>Advance Commitment Fee:</strong> You pay a small advance of <strong>₹249</strong> securely via UPI at checkout to confirm your parcel reservation.</li>
-            <li><strong>Doorstep Balance:</strong> You pay the remaining balance of <strong>₹750</strong> in cash or via courier UPI QR scan when the package arrives at your doorstep.</li>
+            <li><strong>Advance Commitment Fee:</strong> You pay a small advance of <strong>₹149</strong> securely via UPI at checkout to confirm your parcel reservation.</li>
+            <li><strong>Doorstep Balance:</strong> You pay the remaining balance of <strong>₹850</strong> in cash or via courier UPI QR scan when the package arrives at your doorstep.</li>
             <li><strong>Total Order Cost:</strong> The total order amount remains flat ₹999 with zero additional COD convenience fees.</li>
-            <li><strong>Refusal of Delivery:</strong> If an order is cancelled after courier handover or rejected at doorstep without genuine transit damage, the ₹249 advance fee is non-refundable as it offsets the two-way air courier freight.</li>
+            <li><strong>Refusal of Delivery:</strong> If an order is cancelled after courier handover or rejected at doorstep without genuine transit damage, the ₹149 advance fee is non-refundable as it offsets the two-way air courier freight.</li>
           </ul>
         </section>
 

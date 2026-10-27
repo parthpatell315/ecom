@@ -8,6 +8,7 @@ import { formatCurrency } from '@/lib/currency';
 import { CheckCircle2, Package, Truck, ArrowRight, ShieldCheck, Printer } from 'lucide-react';
 import Image from 'next/image';
 import { trackPurchaseEvent } from '@/components/analytics/MetaPixel';
+import { PARTIAL_COD_ADVANCE_RUPEES } from '@/config/shipping';
 
 function OrderSuccessContent() {
   const searchParams = useSearchParams();
@@ -45,7 +46,7 @@ function OrderSuccessContent() {
           if (!purchaseTrackedRef.current && cached.items?.length > 0) {
             purchaseTrackedRef.current = true;
             const isPartialCod = Boolean(cached.isPartialCod || gatewayParam === 'PARTIAL_COD');
-            const purchaseValue = isPartialCod ? 249 : (cached.totalMinor || 0) / 100;
+            const purchaseValue = isPartialCod ? PARTIAL_COD_ADVANCE_RUPEES : (cached.totalMinor || 0) / 100;
 
             trackPurchaseEvent({
               orderNumber: cached.orderNumber,
@@ -82,7 +83,7 @@ function OrderSuccessContent() {
               const isPartialCod = Boolean(data.order.isPartialCod || gatewayParam === 'PARTIAL_COD');
               const paymentAmount = data.order.payments?.[0]?.amountMinor
                 ? data.order.payments[0].amountMinor / 100
-                : 249;
+                : PARTIAL_COD_ADVANCE_RUPEES;
               const purchaseValue = isPartialCod ? paymentAmount : (data.order.totalMinor || 0) / 100;
 
               trackPurchaseEvent({
@@ -206,7 +207,7 @@ function OrderSuccessContent() {
                 <>
                   <div className="flex justify-between text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                     <span>Advance Paid via UPI</span>
-                    <span>₹249.00</span>
+                    <span>{order.payments?.[0]?.amountMinor ? formatCurrency(order.payments[0].amountMinor) : `₹${PARTIAL_COD_ADVANCE_RUPEES}.00`}</span>
                   </div>
                   <div className="flex justify-between text-xs font-semibold text-amber-600 dark:text-amber-400">
                     <span>Balance Due on Cash on Delivery</span>

@@ -111,7 +111,7 @@ function CheckoutContent() {
   };
 
   const discountMinor = appliedCoupon ? appliedCoupon.discountMinor : 0;
-  // Free Express Delivery for all orders (Prepaid ₹999 total, Partial COD ₹249 advance + ₹750 doorstep balance)
+  // Free Express Delivery for all orders (Prepaid ₹999 total, Partial COD ₹149 advance + ₹850 doorstep balance)
   const shippingMinor = 0;
   const finalTotalMinor = Math.max(0, subtotalMinor - discountMinor + shippingMinor);
 
@@ -127,7 +127,25 @@ function CheckoutContent() {
   }, [isLoaded, items.length, finalTotalMinor]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Instant city/state auto-fill when 6-digit Indian PIN is entered
+    if (name === 'postalCode' && /^\d{6}$/.test(value.trim())) {
+      fetch(`https://api.postalpincode.in/pincode/${value.trim()}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (data?.[0]?.Status === 'Success' && data[0].PostOffice?.[0]) {
+            const po = data[0].PostOffice[0];
+            setFormData((prev) => ({
+              ...prev,
+              city: prev.city || po.District || po.Block || '',
+              state: po.State || prev.state,
+            }));
+          }
+        })
+        .catch(() => {});
+    }
   };
 
   const handleInitiatePayment = async (e: React.FormEvent) => {
@@ -541,7 +559,7 @@ function CheckoutContent() {
                     </div>
                   </div>
 
-                  {/* Option 2: Partial COD (₹249 Advance via UPI) */}
+                  {/* Option 2: Partial COD (₹149 Advance via UPI) */}
                   <div
                     onClick={() => setPaymentMethod('PARTIAL_COD')}
                     className={`p-3.5 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
@@ -567,15 +585,15 @@ function CheckoutContent() {
                               Partial COD
                             </span>
                             <span className="text-[9.5px] uppercase font-bold tracking-wider bg-amber-600 text-white px-2 py-0.5 rounded">
-                              Pay ₹249 Advance
+                              Pay ₹149 Advance
                             </span>
                           </div>
                           <span className="text-xs sm:text-sm font-extrabold text-[#D9232D] shrink-0">
-                            ₹249 Now + {formatCurrency(Math.max(0, finalTotalMinor - 24900))} Doorstep
+                            ₹149 Now + {formatCurrency(Math.max(0, finalTotalMinor - 14900))} Doorstep
                           </span>
                         </div>
                         <p className="text-[11.5px] text-gray-600 leading-relaxed">
-                          Pay ₹249 advance now via UPI QR to reserve your piece. Pay remaining balance of {formatCurrency(Math.max(0, finalTotalMinor - 24900))} in cash or UPI when courier delivers to your hands (Total {formatCurrency(finalTotalMinor)} with zero extra fees).
+                          Pay ₹149 advance now via UPI QR to reserve your piece. Pay remaining balance of {formatCurrency(Math.max(0, finalTotalMinor - 14900))} in cash or UPI when courier delivers to your hands (Total {formatCurrency(finalTotalMinor)} with zero extra fees).
                         </p>
 
                         {/* Clean 2-Row Breakdown Box */}
@@ -584,13 +602,13 @@ function CheckoutContent() {
                             <span className="font-medium flex items-center gap-1">
                               <Zap className="w-3 h-3 text-[#D9232D]" /> Advance Reservation Fee:
                             </span>
-                            <strong className="font-bold text-[#D9232D]">₹249.00</strong>
+                            <strong className="font-bold text-[#D9232D]">₹149.00</strong>
                           </div>
                           <div className="flex items-center justify-between text-amber-900 pt-1 border-t border-amber-500/15">
                             <span className="font-medium flex items-center gap-1">
                               <Truck className="w-3 h-3 text-amber-700" /> Balance on Doorstep:
                             </span>
-                            <strong className="font-bold text-gray-900">{formatCurrency(Math.max(0, finalTotalMinor - 24900))}</strong>
+                            <strong className="font-bold text-gray-900">{formatCurrency(Math.max(0, finalTotalMinor - 14900))}</strong>
                           </div>
                         </div>
                       </div>
@@ -621,10 +639,10 @@ function CheckoutContent() {
                   <>
                     <div className="flex items-center gap-1.5 text-sm sm:text-base font-bold">
                       <Lock className="w-4 h-4 text-white/90" />
-                      <span>Pay ₹249 Advance via UPI</span>
+                      <span>Pay ₹149 Advance via UPI</span>
                     </div>
                     <span className="text-[11px] text-white/85 font-medium">
-                      Balance {formatCurrency(Math.max(0, finalTotalMinor - 24900))} on Doorstep Delivery
+                      Balance {formatCurrency(Math.max(0, finalTotalMinor - 14900))} on Doorstep Delivery
                     </span>
                   </>
                 ) : (

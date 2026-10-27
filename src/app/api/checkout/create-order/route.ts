@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 5. Calculate shipping & COD courier fee
-    // Flat ₹999 total: ₹0 shipping for both Prepaid UPI and Partial COD (₹249 advance + ₹750 doorstep balance)
+    // Flat ₹999 total: ₹0 shipping for both Prepaid UPI and Partial COD (₹149 advance + ₹850 doorstep balance)
     const shippingMinor = 0;
     const totalMinor = Math.max(0, subtotalMinor - discountMinor + shippingMinor);
 
@@ -147,16 +147,16 @@ export async function POST(req: NextRequest) {
 
     // 7. Branch by Payment Gateway
     if (paymentGateway === 'PARTIAL_COD') {
-      const advanceMinor = 24900; // Rs. 249.00 advance via UPI
+      const advanceMinor = 14900; // Rs. 149.00 advance via UPI
       const codBalanceMinor = Math.max(0, totalMinor - advanceMinor);
 
       const upiPayload = await generateUpiPayload({
         orderNumber,
         amountMinor: advanceMinor,
-        note: `Advance ₹249 for ${orderNumber}`,
+        note: `Advance ₹149 for ${orderNumber}`,
       });
 
-      const partialCodNotes = `Partial COD: ₹249 advance via UPI, ₹${(codBalanceMinor / 100).toFixed(2)} due on Cash on Delivery`;
+      const partialCodNotes = `Partial COD: ₹149 advance via UPI, ₹${(codBalanceMinor / 100).toFixed(2)} due on Cash on Delivery`;
       const combinedNotes = notes ? `${notes} | ${partialCodNotes}` : partialCodNotes;
 
       const createdOrder = await prisma.order.create({
