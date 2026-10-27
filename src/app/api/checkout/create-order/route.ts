@@ -136,10 +136,8 @@ export async function POST(req: NextRequest) {
     }
 
     // 5. Calculate shipping & COD courier fee
-    // Prepaid UPI: ₹0 shipping (Free Express Delivery on ₹999 drop)
-    // Partial COD: ₹99 courier handling surcharge (Total ₹1,098 -> ₹249 advance + ₹849 doorstep balance)
-    const isPrepaid = paymentGateway === 'UPI' || paymentGateway === 'RAZORPAY';
-    const shippingMinor = isPrepaid ? 0 : 9900;
+    // Flat ₹999 total: ₹0 shipping for both Prepaid UPI and Partial COD (₹249 advance + ₹750 doorstep balance)
+    const shippingMinor = 0;
     const totalMinor = Math.max(0, subtotalMinor - discountMinor + shippingMinor);
 
     // 6. Generate unique order number: FL-YYYY-XXXXX

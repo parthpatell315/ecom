@@ -160,7 +160,7 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
                     <span className="text-[11px] font-bold text-[#FB7185] bg-[#E61E2A]/15 px-2 py-0.5 rounded">Diwali Drop</span>
                   </div>
                   <p className="text-[11px] text-[#A1A1AA] leading-snug">
-                    <strong className="text-white">Prepaid UPI:</strong> Flat ₹999 (Free Express Delivery) • <strong className="text-white">Partial COD:</strong> ₹249 advance + ₹849 at doorstep
+                    <strong className="text-white">Prepaid UPI:</strong> Flat ₹999 (Free Express Delivery) • <strong className="text-white">Partial COD:</strong> ₹249 advance + ₹750 at doorstep
                   </p>
                 </div>
               </div>
@@ -269,7 +269,7 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
                     <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded">Diwali Drop</span>
                   </div>
                   <p className="text-[11px] text-[#A1A1AA] leading-snug">
-                    <strong className="text-white">Prepaid UPI:</strong> Flat ₹999 (Free Express Delivery) • <strong className="text-white">Partial COD:</strong> ₹249 advance + ₹849 at doorstep
+                    <strong className="text-white">Prepaid UPI:</strong> Flat ₹999 (Free Express Delivery) • <strong className="text-white">Partial COD:</strong> ₹249 advance + ₹750 at doorstep
                   </p>
                 </div>
               </div>

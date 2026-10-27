@@ -266,7 +266,7 @@ export function ProductDetailClient({
         },
         {
           q: 'How does the Partial Cash on Delivery (COD) payment work?',
-          a: 'To make your purchase completely worry-free, you pay only a ₹249 advance reservation fee online today via UPI or Card. We immediately dispatch your unit via Bluedart Express Air. You pay the remaining ₹849 balance in cash or UPI when the courier delivers it to your hands. (Tip: Choose Prepaid UPI at checkout to pay flat ₹999 with zero COD fees!)',
+          a: 'To make your purchase completely worry-free, you pay only a ₹249 advance reservation fee online today via UPI. We immediately dispatch your unit via Bluedart Express Air. You pay the remaining ₹750 balance in cash or UPI when the courier delivers it to your hands (Total ₹999 with zero extra fees).',
         },
         {
           q: 'What is your replacement policy if it is damaged during shipping?',
@@ -289,7 +289,7 @@ export function ProductDetailClient({
         },
         {
           q: 'How does Partial COD (Cash on Delivery) work?',
-          a: 'You pay only ₹249 online today as an advance studio dispatch deposit. When Bluedart / Delhivery brings the package to your address, you inspect the parcel and pay the remaining balance of ₹849 in cash or UPI. (To save the ₹99 COD fee, choose Prepaid UPI for flat ₹999).',
+          a: 'You pay only ₹249 online today as an advance studio dispatch deposit. When Bluedart / Delhivery brings the package to your address, you inspect the parcel and pay the remaining balance of ₹750 in cash or UPI upon delivery (Total ₹999 with zero extra fees).',
         },
         {
           q: 'What happens if it arrives defective or damaged during transit?',
@@ -303,7 +303,7 @@ export function ProductDetailClient({
         },
         {
           q: 'What is Partial COD?',
-          a: 'Pay a ₹249 reservation advance today to book your order, and pay the remaining ₹849 balance when the courier delivers it to your doorstep.',
+          a: 'Pay a ₹249 reservation advance today to book your order, and pay the remaining ₹750 balance when the courier delivers it to your doorstep (Total ₹999).',
         },
         {
           q: 'What is your replacement policy?',
@@ -579,7 +579,7 @@ export function ProductDetailClient({
                     </>
                   )}
                 </button>
-                {/* Payment & Delivery Options: Prepaid (₹999) vs Partial COD (₹249 + ₹849) */}
+                {/* Payment & Delivery Options: Prepaid (₹999) vs Partial COD (₹249 + ₹750) */}
                 <div className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50/60 border border-emerald-200/90 space-y-2 text-xs shadow-2xs">
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0 text-emerald-800 font-bold text-sm">
@@ -599,7 +599,7 @@ export function ProductDetailClient({
                         <strong className="text-emerald-950">⚡ Prepaid UPI (Recommended):</strong> Pay flat <strong className="text-emerald-950">₹999</strong> with zero extra fees + get priority 24h dispatch & free express air courier.
                       </p>
                       <p className="text-emerald-800 text-[11px] mt-1 leading-snug pt-1.5 border-t border-emerald-200/60">
-                        <strong>Partial COD:</strong> Pay <strong>₹249 advance</strong> now via UPI to book your piece, and pay the remaining <strong>₹849 balance</strong> upon doorstep delivery.
+                        <strong>Partial COD:</strong> Pay <strong>₹249 advance</strong> now via UPI to book your piece, and pay the remaining <strong>₹750 balance</strong> upon doorstep delivery (Total flat ₹999).
                       </p>
                     </div>
                   </div>

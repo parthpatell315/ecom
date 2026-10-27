@@ -111,8 +111,8 @@ function CheckoutContent() {
   };
 
   const discountMinor = appliedCoupon ? appliedCoupon.discountMinor : 0;
-  // Prepaid UPI is flat ₹999 with 0 shipping. Partial COD adds ₹99 courier cash handling fee (total ₹1,098).
-  const shippingMinor = paymentMethod === 'UPI' ? 0 : 9900;
+  // Free Express Delivery for all orders (Prepaid ₹999 total, Partial COD ₹249 advance + ₹750 doorstep balance)
+  const shippingMinor = 0;
   const finalTotalMinor = Math.max(0, subtotalMinor - discountMinor + shippingMinor);
 
   // Fire InitiateCheckout Meta Pixel Event
@@ -571,11 +571,11 @@ function CheckoutContent() {
                             </span>
                           </div>
                           <span className="text-xs sm:text-sm font-extrabold text-[#D9232D] shrink-0">
-                            ₹249 Now + ₹849 Doorstep
+                            ₹249 Now + {formatCurrency(Math.max(0, finalTotalMinor - 24900))} Doorstep
                           </span>
                         </div>
                         <p className="text-[11.5px] text-gray-600 leading-relaxed">
-                          Pay ₹249 advance now via UPI QR to reserve your piece. Pay remaining ₹849 in cash/UPI when courier delivers to your hands (total ₹1,098 includes ₹99 courier handling).
+                          Pay ₹249 advance now via UPI QR to reserve your piece. Pay remaining balance of {formatCurrency(Math.max(0, finalTotalMinor - 24900))} in cash or UPI when courier delivers to your hands (Total {formatCurrency(finalTotalMinor)} with zero extra fees).
                         </p>
 
                         {/* Clean 2-Row Breakdown Box */}
@@ -590,7 +590,7 @@ function CheckoutContent() {
                             <span className="font-medium flex items-center gap-1">
                               <Truck className="w-3 h-3 text-amber-700" /> Balance on Doorstep:
                             </span>
-                            <strong className="font-bold text-gray-900">₹849.00</strong>
+                            <strong className="font-bold text-gray-900">{formatCurrency(Math.max(0, finalTotalMinor - 24900))}</strong>
                           </div>
                         </div>
                       </div>
