@@ -41,9 +41,9 @@ export function WhatsAppFloat() {
           <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-300 animate-ping pointer-events-none" />
         </div>
 
-        {/* Text Pill on Desktop / Tablets */}
-        <span className="hidden sm:inline-block text-xs font-semibold tracking-wide">
-          Chat with Us
+        {/* Text Pill matching WhiteLayer */}
+        <span className="inline-block text-xs font-bold tracking-wide">
+          WhatsApp
         </span>
       </a>
     </aside>

@@ -52,17 +52,34 @@ export default async function HomePage() {
     console.warn('HomePage: Failed to fetch verified reviews from DB:', error);
   }
 
-  // Find flagship pieces from real database catalog
+  // Find WhiteLayer featured pieces from real database catalog
+  const heroBestseller =
+    products.find((p) => p.slug === 'hero-emblem-led-lamp') || products[0];
+
+  const waveStand =
+    products.find((p) => p.slug === 'wave-parametric-device-stand');
+
+  const iskremLamp =
+    products.find((p) => p.slug === 'iskrem-lamp-by-white-layer-studio');
+
   const levitatingLamp =
     products.find(
       (p) => p.slug === 'levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light'
-    ) || products[0];
+    );
+
+  const maglevF1 =
+    products.find((p) => p.slug === 'magnetic-levitation-f1-racing-car');
 
   const coreReactor =
     products.find((p) => p.slug === 'core-reactor-desk-light') || products[1];
 
   const featuredLineup = products
-    .filter((p) => p.slug !== levitatingLamp?.slug && p.slug !== coreReactor?.slug)
+    .filter(
+      (p) =>
+        p.slug !== heroBestseller?.slug &&
+        p.slug !== waveStand?.slug &&
+        p.slug !== iskremLamp?.slug
+    )
     .slice(0, 6);
 
   // Curated category collection cards
@@ -102,84 +119,197 @@ export default async function HomePage() {
   ];
 
   return (
-    <div className="flex flex-col bg-white text-[#1D1D1F]">
-      {/* 1. CINEMATIC HERO SECTION */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#F5F5F7] via-white to-white pt-12 pb-16 md:pt-20 md:pb-24 border-b border-black/[0.06]">
-        <div className="max-w-[1180px] mx-auto px-4 sm:px-6">
-          <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
-            {/* Pill Eyebrow */}
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white text-[#1D1D1F] text-xs font-semibold tracking-normal border border-black/[0.08] shadow-apple mb-5">
-              <Sparkles className="w-3.5 h-3.5 text-[#E61E2A]" />
-              <span>Futuristic Tech &amp; Ambient Architecture</span>
-            </span>
+    <div className="flex flex-col bg-[#FAFAFA] text-[#111827] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px]">
+      {/* 1. WHITELAYER 2-COLUMN HERO SECTION */}
+      <section className="relative overflow-hidden pt-8 pb-14 md:pt-14 md:pb-20 border-b border-black/[0.06]">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+            {/* Left Column: Brand Copy & CTAs */}
+            <div className="lg:col-span-6 flex flex-col justify-center pt-2">
+              {/* Eyebrow Pill */}
+              <div className="mb-4">
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white text-[#111827] text-xs font-bold tracking-wide border border-black/10 shadow-2xs">
+                  <span className="w-2 h-2 rounded-full bg-[#E61E2A]" />
+                  <span>WHITELAYER STUDIO • 0.12MM LAYER PRECISION</span>
+                </span>
+              </div>
 
-            {/* Master Headline */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.035em] text-[#111827] leading-[1.06] mb-5">
-              Discover Products <br className="hidden sm:inline" />
-              <span className="text-[#111827]">Beyond Ordinary.</span>
-            </h1>
+              {/* Master Headline */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-[-0.03em] text-[#111827] leading-[1.08] mb-5">
+                Precision 3D Printed <br />
+                <span className="text-[#E61E2A]">Desk Sanctuaries</span>
+              </h1>
 
-            {/* Supporting Text */}
-            <p className="text-base sm:text-lg md:text-xl text-[#6E6E73] font-normal leading-relaxed max-w-2xl mb-8">
-              Unique gadgets. Futuristic designs. Products worth showing off. Engineered to transform your sanctuary.
-            </p>
+              {/* Supporting Text */}
+              <p className="text-base sm:text-lg text-[#4B5563] font-normal leading-relaxed max-w-lg mb-8">
+                Architectural ambient mood lighting, weighted controller stands, and modular desk accessories. Handcrafted in India with 0.12mm precision.
+              </p>
 
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto mb-12">
-              <Link
-                href="/shop"
-                className="w-full sm:w-auto h-12 px-8 rounded-2xl bg-[#E61E2A] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#C81420] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer select-none"
-              >
-                <span>Explore Collection</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-
-              {levitatingLamp && (
+              {/* CTAs */}
+              <div className="flex flex-wrap items-center gap-3.5 mb-10">
                 <Link
-                  href={`/product/${levitatingLamp.slug}`}
-                  className="w-full sm:w-auto h-12 px-7 rounded-2xl bg-white text-[#111827] font-extrabold text-xs uppercase tracking-wider border border-black/10 hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer select-none"
+                  href="/shop"
+                  className="h-12 px-7 rounded-xl bg-[#111827] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-black active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm"
                 >
-                  <Play className="w-3.5 h-3.5 fill-[#111827]" />
-                  <span>See Floating Display</span>
+                  <span>Explore Bestsellers</span>
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
-              )}
+
+                <Link
+                  href="/shop"
+                  className="h-12 px-7 rounded-xl bg-white text-[#111827] font-extrabold text-xs uppercase tracking-wider border border-black/15 hover:bg-neutral-50 active:scale-95 transition-all flex items-center justify-center"
+                >
+                  <span>Custom 3D Printing</span>
+                </Link>
+              </div>
+
+              {/* Trust Metrics underneath */}
+              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-black/[0.08] max-w-lg">
+                <div>
+                  <strong className="block text-sm font-extrabold text-[#111827]">Made in India</strong>
+                  <span className="block text-xs text-[#6B7280] mt-0.5">Printed in our studio</span>
+                </div>
+                <div>
+                  <strong className="block text-sm font-extrabold text-[#111827]">0.12mm</strong>
+                  <span className="block text-xs text-[#6B7280] mt-0.5">Layer precision, PLA+</span>
+                </div>
+                <div>
+                  <strong className="block text-sm font-extrabold text-[#111827]">₹999+</strong>
+                  <span className="block text-xs text-[#6B7280] mt-0.5">Free delivery on prepaid orders</span>
+                </div>
+              </div>
             </div>
 
-            {/* Flagship Hero Stage - Clickable link to product */}
-            {levitatingLamp && (
-              <Link
-                href={`/product/${levitatingLamp.slug}`}
-                className="block relative w-full max-w-4xl aspect-[16/10] sm:aspect-[16/9] rounded-3xl overflow-hidden bg-white border border-black/[0.08] shadow-apple-card group cursor-pointer"
-                aria-label={`View ${levitatingLamp.title}`}
-              >
-                <Image
-                  src={
-                    levitatingLamp.images?.[0]?.url ||
-                    'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_1588xN.8339847604_sfk4.webp?v=1789717192'
-                  }
-                  alt={levitatingLamp.title}
-                  fill
-                  priority
-                  className="object-contain p-4 sm:p-10 group-hover:scale-105 transition-transform duration-700 ease-out"
-                  sizes="(max-width: 1024px) 100vw, 1000px"
-                />
+            {/* Right Column: Hero Stage Card & Quick Showcase */}
+            <div className="lg:col-span-6 flex flex-col">
+              {/* Studio Bestseller Showcase Card */}
+              {heroBestseller && (
+                <div className="relative rounded-3xl overflow-hidden bg-white border border-black/[0.08] shadow-sm group">
+                  <Link
+                    href={`/product/${heroBestseller.slug}`}
+                    className="block relative aspect-[16/10] bg-[#0A0A0A] overflow-hidden"
+                    aria-label={`View ${heroBestseller.title}`}
+                  >
+                    <Image
+                      src={
+                        heroBestseller.images?.[0]?.url ||
+                        'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_1588xN.7800210730_enye.webp?v=1789630077'
+                      }
+                      alt={heroBestseller.title}
+                      fill
+                      priority
+                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                      sizes="(max-width: 1024px) 100vw, 650px"
+                    />
 
-                {/* Overlaid Floating Callout Bar */}
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-[#6E6E73] bg-white/90 backdrop-blur-md px-4 sm:px-6 py-2.5 rounded-2xl border border-black/[0.06] shadow-apple">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="font-semibold text-[#111827]">Magnetic Suspension System</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="hidden sm:inline text-[#86868B]">15–20mm Elevation</span>
-                    <span className="text-[#E61E2A] font-bold group-hover:underline flex items-center gap-1">
-                      <span>View Flagship</span>
-                      <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                    </span>
+                    {/* Floating top badge */}
+                    <div className="absolute top-4 left-4 z-10">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#111827] text-xs font-bold shadow-xs">
+                        <span className="w-2 h-2 rounded-full bg-[#E61E2A]" />
+                        Studio Bestseller
+                      </span>
+                    </div>
+                  </Link>
+
+                  {/* Card Details Bar matching WhiteLayer */}
+                  <div className="p-5 bg-white border-t border-black/[0.06] flex items-start justify-between gap-4">
+                    <div>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#86868B] block mb-1">
+                        ICONIC LIGHTBOX
+                      </span>
+                      <Link href={`/product/${heroBestseller.slug}`} className="block">
+                        <h3 className="text-base sm:text-lg font-bold text-[#111827] group-hover:text-[#E61E2A] transition-colors leading-snug line-clamp-1">
+                          {heroBestseller.title}
+                        </h3>
+                      </Link>
+                      <p className="text-xs text-[#6B7280] mt-1">
+                        Ambient red glow • High-definition illuminated display
+                      </p>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <span className="text-base sm:text-lg font-extrabold text-[#E61E2A] block">
+                        Rs. 849.00
+                      </span>
+                      <Link
+                        href={`/product/${heroBestseller.slug}`}
+                        className="text-xs font-semibold text-[#111827] hover:text-[#E61E2A] transition-colors inline-flex items-center gap-0.5 mt-0.5"
+                      >
+                        <span>View Piece</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </Link>
-            )}
+              )}
+
+              {/* 2 Quick Showcase Cards Below Hero */}
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                {/* Mini Card 1: Wave Parametric Stand */}
+                {waveStand && (
+                  <Link
+                    href={`/product/${waveStand.slug}`}
+                    className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-black/[0.08] shadow-xs hover:border-black/20 transition-all group"
+                  >
+                    <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
+                      <Image
+                        src={
+                          waveStand.images?.[0]?.url ||
+                          'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/66ad526b01047be4.webp?v=1788510509'
+                        }
+                        alt={waveStand.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform"
+                        sizes="56px"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[10px] font-bold text-[#86868B] uppercase tracking-wider block truncate">
+                        MINIMAL DOCK
+                      </span>
+                      <h4 className="text-xs font-bold text-[#111827] group-hover:text-[#E61E2A] transition-colors truncate">
+                        Wave • Parametric Stand
+                      </h4>
+                      <span className="text-xs font-extrabold text-[#E61E2A] block mt-0.5">
+                        Rs. 499.00
+                      </span>
+                    </div>
+                  </Link>
+                )}
+
+                {/* Mini Card 2: Iskrem Lamp */}
+                {iskremLamp && (
+                  <Link
+                    href={`/product/${iskremLamp.slug}`}
+                    className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-black/[0.08] shadow-xs hover:border-black/20 transition-all group"
+                  >
+                    <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
+                      <Image
+                        src={
+                          iskremLamp.images?.[0]?.url ||
+                          'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/2025-01-24_e3d5b1652938.webp?v=1788522980'
+                        }
+                        alt={iskremLamp.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform"
+                        sizes="56px"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[10px] font-bold text-[#86868B] uppercase tracking-wider block truncate">
+                        AMBIENT LIGHTING
+                      </span>
+                      <h4 className="text-xs font-bold text-[#111827] group-hover:text-[#E61E2A] transition-colors truncate">
+                        ISKREM LAMP by Studio
+                      </h4>
+                      <span className="text-xs font-extrabold text-[#E61E2A] block mt-0.5">
+                        Rs. 1,299.00
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -229,31 +359,31 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 2. FLAGSHIP SPOTLIGHT: CORE REACTOR DESK LIGHT */}
-      {coreReactor && (
-        <section className="py-16 md:py-24 bg-white border-b border-black/[0.06]">
-          <div className="max-w-[1140px] mx-auto px-4 sm:px-6">
+      {/* 2. FLAGSHIP SPOTLIGHT: MAGNETIC LEVITATION OR CORE REACTOR */}
+      {(maglevF1 || levitatingLamp) && (
+        <section className="py-16 md:py-20 bg-white border-b border-black/[0.06]">
+          <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
               {/* Media Showcase - Clickable link to product */}
               <div className="lg:col-span-6">
                 <Link
-                  href={`/product/${coreReactor.slug}`}
-                  className="block relative aspect-square sm:aspect-[4/3] rounded-3xl overflow-hidden bg-[#F5F5F7] border border-black/[0.06] p-6 shadow-apple group cursor-pointer"
-                  aria-label={`View ${coreReactor.title}`}
+                  href={`/product/${(maglevF1 || levitatingLamp).slug}`}
+                  className="block relative aspect-square sm:aspect-[4/3] rounded-3xl overflow-hidden bg-[#0A0A0A] border border-black/[0.06] p-6 shadow-sm group cursor-pointer"
+                  aria-label={`View ${(maglevF1 || levitatingLamp).title}`}
                 >
                   <Image
                     src={
-                      coreReactor.images?.[0]?.url ||
-                      'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_fullxfull.8281487299_9aq9.webp?v=1791795990'
+                      (maglevF1 || levitatingLamp).images?.[0]?.url ||
+                      'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/photo_5379765186618664415_x.jpg?v=1793282705'
                     }
-                    alt={coreReactor.title}
+                    alt={(maglevF1 || levitatingLamp).title}
                     fill
                     className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                     sizes="(max-width: 1024px) 100vw, 550px"
                   />
                   <div className="absolute top-4 left-4">
-                    <span className="py-1 px-3 rounded-full text-xs font-semibold bg-white/90 backdrop-blur-md text-[#111827] border border-black/[0.06] shadow-xs">
-                      Arc Lighting
+                    <span className="py-1 px-3 rounded-full text-xs font-bold bg-white/95 backdrop-blur-md text-[#111827] shadow-xs">
+                      🏎️ Real Magnetic Levitation
                     </span>
                   </div>
                 </Link>
@@ -261,39 +391,38 @@ export default async function HomePage() {
 
               {/* Product Information & Highlights */}
               <div className="lg:col-span-6 flex flex-col items-start">
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#E61E2A] mb-2 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" /> Iconic Collectible Illumination
+                <span className="text-xs font-bold uppercase tracking-wider text-[#E61E2A] mb-2 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5" /> ZERO GRAVITY DESK ART
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111827] leading-tight mb-4">
-                  {coreReactor.title}
+                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#111827] leading-tight mb-4">
+                  {(maglevF1 || levitatingLamp).title}
                 </h2>
-                <p className="text-sm sm:text-base text-[#6E6E73] leading-relaxed mb-6">
-                  {coreReactor.description ||
-                    'Engineered with a multi-ring breathing LED core, weighted sanctuary display base, and USB-C connectivity. Transforms any desk setup with hypnotic cinematic ambient glow.'}
+                <p className="text-sm sm:text-base text-[#4B5563] leading-relaxed mb-6">
+                  Experience true electromagnetic levitation. Features active sensor coils maintaining a 12–15mm invisible air cushion with continuous 360° frictionless rotation.
                 </p>
 
                 {/* Technical highlights */}
                 <div className="grid grid-cols-2 gap-3 w-full mb-8">
-                  <div className="p-3.5 rounded-2xl bg-[#F5F5F7] border border-black/[0.04]">
-                    <span className="text-xs text-[#86868B] block">Lighting Modes</span>
-                    <strong className="text-sm text-[#111827] font-semibold">Pulse &amp; Static Glow</strong>
+                  <div className="p-3.5 rounded-2xl bg-[#F9FAFB] border border-black/[0.06]">
+                    <span className="text-xs text-[#86868B] block font-medium">Levitation Gap</span>
+                    <strong className="text-sm text-[#111827] font-bold">12–15mm Floating Height</strong>
                   </div>
-                  <div className="p-3.5 rounded-2xl bg-[#F5F5F7] border border-black/[0.04]">
-                    <span className="text-xs text-[#86868B] block">Build Precision</span>
-                    <strong className="text-sm text-[#111827] font-semibold">0.12mm Laser Layering</strong>
+                  <div className="p-3.5 rounded-2xl bg-[#F9FAFB] border border-black/[0.06]">
+                    <span className="text-xs text-[#86868B] block font-medium">Base Architecture</span>
+                    <strong className="text-sm text-[#111827] font-bold">Touch Ambient LED Ring</strong>
                   </div>
                 </div>
 
                 {/* Price and CTA */}
                 <div className="flex items-center gap-4 flex-wrap">
                   <Link
-                    href={`/product/${coreReactor.slug}`}
-                    className="h-12 px-7 rounded-2xl bg-[#111827] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#E61E2A] active:scale-95 transition-all flex items-center gap-2 shadow-sm cursor-pointer select-none"
+                    href={`/product/${(maglevF1 || levitatingLamp).slug}`}
+                    className="h-12 px-7 rounded-xl bg-[#111827] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#E61E2A] active:scale-95 transition-all flex items-center gap-2 shadow-sm cursor-pointer select-none"
                   >
-                    <span>View Product • {formatCurrency(coreReactor.priceMinor)}</span>
+                    <span>View Flagship • {formatCurrency((maglevF1 || levitatingLamp).priceMinor)}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
-                  <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                  <span className="text-xs text-emerald-600 font-bold flex items-center gap-1">
                     <Check className="w-3.5 h-3.5" /> In Stock &amp; Ready for Air Dispatch
                   </span>
                 </div>
@@ -304,21 +433,21 @@ export default async function HomePage() {
       )}
 
       {/* 3. CURATED FEATURED LINEUP */}
-      <section className="py-16 md:py-24 bg-[#F5F5F7] border-b border-black/[0.06]">
-        <div className="max-w-[1140px] mx-auto px-4 sm:px-6">
+      <section className="py-16 md:py-24 bg-[#FAFAFA] border-b border-black/[0.06]">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#86868B] block mb-1">
-                Curated Architecture
+              <span className="text-xs font-bold uppercase tracking-wider text-[#E61E2A] block mb-1">
+                Studio Bestsellers
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111827]">
-                Featured Flagship Pieces
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#111827]">
+                Featured Architecture &amp; Ambient Lighting
               </h2>
             </div>
 
             <Link
               href="/shop"
-              className="text-xs font-semibold text-[#0071E3] hover:underline flex items-center gap-1 self-start sm:self-end"
+              className="text-xs font-bold text-[#E61E2A] hover:underline flex items-center gap-1 self-start sm:self-end"
             >
               <span>Explore All Products ({products.length})</span>
               <ArrowRight className="w-3.5 h-3.5" />

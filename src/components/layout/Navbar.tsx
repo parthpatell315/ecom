@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useAuth } from '@/context/AuthContext';
@@ -11,6 +11,7 @@ import { SALE_CONFIG, isSaleActive } from '@/config/sale';
 import { LiveSearchModal } from '@/components/layout/LiveSearchModal';
 
 export function Navbar() {
+  const router = useRouter();
   const pathname = usePathname();
   const { totalItems, openCart } = useCart();
   const { totalWishlist, openWishlist } = useWishlist();
@@ -18,7 +19,15 @@ export function Navbar() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [headerSearch, setHeaderSearch] = useState('');
   const [timeLeft, setTimeLeft] = useState<{ hours: number; minutes: number; seconds: number } | null>(null);
+
+  const handleHeaderSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (headerSearch.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(headerSearch.trim())}`);
+    }
+  };
 
   // Countdown timer if SALE_END_DATE is active
   useEffect(() => {
@@ -68,153 +77,126 @@ export function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-50 w-full select-none">
-        {/* Top Announcement Strip */}
-        <div className="bg-[#111827] text-white text-[11.5px] font-semibold tracking-wide py-2 px-4 text-center border-b border-white/10">
-          <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
-            {saleActive ? (
-              <Clock className="w-3.5 h-3.5 text-[#E61E2A] animate-pulse" />
-            ) : (
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            )}
-            <span>{announcementText}</span>
+        {/* Top Running Marquee Strip matching WhiteLayer */}
+        <div className="bg-[#111827] text-white text-[11px] font-bold tracking-wider py-2 overflow-hidden border-b border-white/10 uppercase select-none">
+          <div className="animate-marquee whitespace-nowrap flex items-center gap-6">
+            <span>CASH ON DELIVERY AVAILABLE</span>
+            <span className="text-white/40">•</span>
+            <span>MADE IN INDIA</span>
+            <span className="text-white/40">•</span>
+            <span>FREE DELIVERY ON ORDERS ₹999+</span>
+            <span className="text-white/40">•</span>
+            <span>7-DAY REPLACEMENT IF DAMAGED</span>
+            <span className="text-white/40">•</span>
+            <span>CASH ON DELIVERY AVAILABLE</span>
+            <span className="text-white/40">•</span>
+            <span>MADE IN INDIA</span>
+            <span className="text-white/40">•</span>
+            <span>FREE DELIVERY ON ORDERS ₹999+</span>
+            <span className="text-white/40">•</span>
+            <span>7-DAY REPLACEMENT IF DAMAGED</span>
+            <span className="text-white/40">•</span>
+            <span>CASH ON DELIVERY AVAILABLE</span>
+            <span className="text-white/40">•</span>
+            <span>MADE IN INDIA</span>
+            <span className="text-white/40">•</span>
+            <span>FREE DELIVERY ON ORDERS ₹999+</span>
+            <span className="text-white/40">•</span>
+            <span>7-DAY REPLACEMENT IF DAMAGED</span>
           </div>
         </div>
 
-        {/* Frosted Glass Header */}
-        <div className="bg-white/90 backdrop-blur-xl border-b border-black/[0.06] transition-all">
-          <div className="max-w-[1240px] mx-auto px-4 sm:px-6 h-[62px] flex items-center justify-between gap-4">
+        {/* WhiteLayer Modern Header */}
+        <div className="bg-white/95 backdrop-blur-xl border-b border-black/[0.06] transition-all">
+          <div className="max-w-[1240px] mx-auto px-4 sm:px-6 h-[66px] flex items-center justify-between gap-4">
             {/* Left: Mobile Toggle & Brand Logo */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-1.5 -ml-1.5 text-[#1D1D1F] hover:opacity-70 transition-opacity cursor-pointer"
+                className="md:hidden p-1.5 -ml-1.5 text-[#111827] hover:opacity-70 transition-opacity cursor-pointer"
                 aria-label="Toggle navigation menu"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
 
-              <Link href="/" className="flex items-center gap-2.5 group" aria-label="flirta.network">
-                <span className="w-8 h-8 rounded-xl bg-[#111827] text-white flex items-center justify-center text-[13px] font-black tracking-tight shadow-xs group-hover:bg-[#E61E2A] transition-colors">
-                  fn
+              <Link href="/" className="flex items-center gap-2.5 group" aria-label="White Layer">
+                <span className="w-8 h-8 rounded-full border border-black/70 flex items-center justify-center text-[12px] font-black tracking-tight text-[#111827]">
+                  WL
                 </span>
-                <span className="text-[19px] font-bold tracking-tight text-[#111827]">
-                  flirta<span className="text-[#E61E2A]">.network</span>
+                <span className="text-[17px] font-black tracking-wider text-[#111827] uppercase">
+                  WHITE LAYER
                 </span>
               </Link>
             </div>
 
-            {/* Center: WhiteLayer Minimal Horizontal Navigation */}
-            <nav className="hidden md:flex items-center gap-6 text-[13px] font-semibold tracking-tight">
-              <Link
-                href="/shop"
-                className={`transition-colors hover:text-[#E61E2A] ${
-                  pathname === '/shop' ? 'text-[#E61E2A] font-bold' : 'text-[#1D1D1F]'
-                }`}
-              >
-                Store
-              </Link>
-              <Link
-                href="/shop?category=lamps"
-                className={`transition-colors hover:text-[#E61E2A] ${
-                  pathname.includes('lamps') ? 'text-[#E61E2A] font-bold' : 'text-[#6E6E73]'
-                }`}
-              >
-                Lamps
-              </Link>
-              <Link
-                href="/shop?category=stands"
-                className={`transition-colors hover:text-[#E61E2A] ${
-                  pathname.includes('stands') ? 'text-[#E61E2A] font-bold' : 'text-[#6E6E73]'
-                }`}
-              >
-                Stands
-              </Link>
-              <Link
-                href="/shop?category=clocks"
-                className={`transition-colors hover:text-[#E61E2A] ${
-                  pathname.includes('clocks') ? 'text-[#E61E2A] font-bold' : 'text-[#6E6E73]'
-                }`}
-              >
-                Clocks
-              </Link>
-              <Link
-                href="/about"
-                className={`transition-colors hover:text-[#E61E2A] ${
-                  pathname === '/about' ? 'text-[#E61E2A] font-bold' : 'text-[#6E6E73]'
-                }`}
-              >
-                About
-              </Link>
-              <Link
-                href="/contact"
-                className={`transition-colors hover:text-[#E61E2A] ${
-                  pathname === '/contact' ? 'text-[#E61E2A] font-bold' : 'text-[#6E6E73]'
-                }`}
-              >
-                Support
-              </Link>
-              <Link
-                href="/tracking"
-                className={`transition-colors hover:text-[#E61E2A] ${
-                  pathname === '/tracking' ? 'text-[#E61E2A] font-bold' : 'text-[#6E6E73]'
-                }`}
-              >
-                Track Order
-              </Link>
-            </nav>
-
-            {/* Right: Search, Wishlist, Account & Shopping Bag */}
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              {/* Search Trigger */}
-              <button
-                type="button"
-                onClick={() => setSearchOpen(true)}
-                className="w-9 h-9 rounded-full text-[#1D1D1F] hover:bg-black/[0.04] transition-all flex items-center justify-center cursor-pointer"
-                aria-label="Search catalog"
-                title="Search (Press /)"
-              >
-                <Search className="w-4 h-4" />
+            {/* Center: Search input bar matching WhiteLayer */}
+            <form onSubmit={handleHeaderSearch} className="hidden md:flex flex-1 max-w-sm mx-4 relative">
+              <input
+                type="text"
+                value={headerSearch}
+                onChange={(e) => setHeaderSearch(e.target.value)}
+                placeholder="Search products..."
+                className="w-full h-9 pl-4 pr-9 text-xs bg-white border border-black/15 rounded-full text-[#111827] placeholder-neutral-400 focus:outline-none focus:border-black/50 transition-colors"
+              />
+              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-[#111827] cursor-pointer" aria-label="Search">
+                <Search className="w-3.5 h-3.5" />
               </button>
+            </form>
 
-              {/* Wishlist Trigger */}
-              <button
-                type="button"
-                onClick={openWishlist}
-                className="relative w-9 h-9 rounded-full text-[#1D1D1F] hover:bg-black/[0.04] transition-all flex items-center justify-center cursor-pointer"
-                aria-label="View saved wishlist"
-                title="Wishlist"
-              >
-                <Heart className="w-4 h-4" />
-                {totalWishlist > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#E61E2A] text-white text-[10px] font-bold flex items-center justify-center pointer-events-none shadow-xs">
-                    {totalWishlist}
-                  </span>
-                )}
-              </button>
+            {/* Right: WhiteLayer Navigation links & Cart Bag */}
+            <div className="flex items-center gap-6">
+              <nav className="hidden md:flex items-center gap-6 text-[13px] font-semibold tracking-tight">
+                <Link
+                  href="/"
+                  className={`transition-colors ${
+                    pathname === '/' ? 'text-[#E61E2A] font-bold' : 'text-[#111827] hover:text-[#E61E2A]'
+                  }`}
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/shop"
+                  className={`transition-colors ${
+                    pathname === '/shop' ? 'text-[#E61E2A] font-bold' : 'text-[#111827] hover:text-[#E61E2A]'
+                  }`}
+                >
+                  Shop
+                </Link>
+                <Link
+                  href="/contact"
+                  className={`transition-colors ${
+                    pathname === '/contact' ? 'text-[#E61E2A] font-bold' : 'text-[#111827] hover:text-[#E61E2A]'
+                  }`}
+                >
+                  Contact
+                </Link>
+                <Link
+                  href="/about"
+                  className={`transition-colors ${
+                    pathname === '/about' ? 'text-[#E61E2A] font-bold' : 'text-[#111827] hover:text-[#E61E2A]'
+                  }`}
+                >
+                  About Us
+                </Link>
+              </nav>
 
-              {/* Account / User Trigger */}
-              <Link
-                href="/account"
-                className="w-9 h-9 rounded-full text-[#1D1D1F] hover:bg-black/[0.04] transition-all flex items-center justify-center cursor-pointer"
-                aria-label="Account"
-                title={user ? user.name : 'Account'}
-              >
-                <User className="w-4 h-4" />
-              </Link>
-
-              {/* Shopping Bag Trigger */}
+              {/* Shopping Bag Trigger Button matching WhiteLayer rounded circle */}
               <button
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
                   openCart();
                 }}
-                className="relative h-9 px-3 rounded-full bg-[#111827] text-white hover:bg-black active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer touch-manipulation shadow-xs"
+                className="relative w-9 h-9 rounded-full border border-black/15 hover:border-black/40 flex items-center justify-center text-[#111827] transition-all cursor-pointer select-none"
                 aria-label="View shopping bag"
               >
-                <ShoppingBag className="w-3.5 h-3.5 stroke-[2]" />
-                <span className="text-xs font-bold">{totalItems}</span>
+                <ShoppingBag className="w-4 h-4 stroke-[1.8]" />
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#E61E2A] text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
+                    {totalItems}
+                  </span>
+                )}
               </button>
             </div>
           </div>
