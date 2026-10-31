@@ -24,6 +24,13 @@ export interface GeneratedUpiPayload {
     paytm: string;
     generic: string;
     cred?: string;
+    ios?: {
+      gpay: string;
+      phonepe: string;
+      paytm: string;
+      cred: string;
+      generic: string;
+    };
   };
 }
 
@@ -100,6 +107,14 @@ export async function generateUpiPayload(params: UpiOrderParams): Promise<Genera
       phonepe: `intent://pay?${upiQuery}#Intent;scheme=upi;package=com.phonepe.app;end`,
       paytm: `intent://pay?${upiQuery}#Intent;scheme=upi;package=net.one97.paytm;end`,
       cred: `intent://pay?${upiQuery}#Intent;scheme=upi;package=com.dreamplug.androidapp;end`,
+      // iOS specific deep links (avoids iOS defaulting generic upi:// to WhatsApp Pay)
+      ios: {
+        gpay: `gpay://upi/pay?${upiQuery}`,
+        phonepe: `phonepe://upi/pay?${upiQuery}`,
+        paytm: `paytmmp://pay?${upiQuery}`,
+        cred: `credpay://upi/pay?${upiQuery}`,
+        generic: upiUrl,
+      },
     },
   };
 }

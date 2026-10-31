@@ -74,10 +74,21 @@ export function ProductDetailClient({
   const { isInWishlist, toggleWishlist } = useWishlist();
   const isWishlisted = isInWishlist(product.id);
 
+  const isF1MagLev =
+    product.slug === 'magnetic-levitation-f1-racing-car' ||
+    product.title.toLowerCase().includes('magnetic levitation f1') ||
+    product.title.toLowerCase().includes('formula 1');
+
+  // Find the iconic Side View photo (photo_5379765186618664388) as requested
+  const f1SidePhoto = product.images?.find((img: any) =>
+    img.url.includes('photo_5379765186618664388')
+  )?.url;
+
   const [selectedVariant, setSelectedVariant] = useState<any>(
     product.variants && product.variants.length > 0 ? product.variants[0] : null
   );
   const [selectedImage, setSelectedImage] = useState<string>(
+    (isF1MagLev && f1SidePhoto) ||
     (product.variants && product.variants.length > 0 && product.variants[0].image) ||
     (product.images && product.images.length > 0 && product.images[0].url) ||
     ''
@@ -164,10 +175,6 @@ export function ProductDetailClient({
   const doorstepBalanceMinor = Math.max(0, totalPriceMinor - PARTIAL_COD_ADVANCE_MINOR);
 
   // Special Flagship Pricing: Magnetic Levitation F1 Racing Car ₹2,199 COD / ₹1,899 Prepaid
-  const isF1MagLev =
-    product.slug === 'magnetic-levitation-f1-racing-car' ||
-    product.title.toLowerCase().includes('magnetic levitation f1') ||
-    product.title.toLowerCase().includes('formula 1');
   const prepaidDiscountPerUnitMinor = isF1MagLev ? 30000 : 0; // ₹300 off per piece on Prepaid
   const prepaidPricePerUnitMinor = effectivePriceMinor - prepaidDiscountPerUnitMinor;
   const prepaidTotalPriceMinor = prepaidPricePerUnitMinor * quantity;
@@ -334,60 +341,13 @@ export function ProductDetailClient({
         </nav>
 
         {/* Main Product Showcase Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-          {/* Left: Gallery (7 Cols) */}
-          <div className="lg:col-span-7 flex flex-col-reverse md:flex-row gap-4">
-            {/* Thumbnails */}
-            {hasMultipleMedia && (
-              <div className="flex md:flex-col gap-2.5 overflow-x-auto md:overflow-y-auto max-h-[560px] pb-2 md:pb-0 scrollbar-none shrink-0">
-                {product.images && product.images.map((img: any, idx: number) => (
-                  <button
-                    key={img.id || idx}
-                    type="button"
-                    onClick={() => {
-                      setSelectedImage(img.url);
-                      setActiveMediaTab('image');
-                    }}
-                    className={`shrink-0 relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border transition-all cursor-pointer bg-[#F5F5F7] ${
-                      activeMediaTab === 'image' && selectedImage === img.url
-                        ? 'border-[#1D1D1F] ring-1 ring-[#1D1D1F]'
-                        : 'border-black/[0.08] opacity-75 hover:opacity-100'
-                    }`}
-                    aria-label={`View image ${idx + 1}`}
-                  >
-                    <Image
-                      src={img.url}
-                      alt={`${product.title} view ${idx + 1}`}
-                      fill
-                      className="object-contain p-1"
-                      sizes="80px"
-                    />
-                  </button>
-                ))}
-
-                {/* Video Slot Thumbnail */}
-                {hasVideo && (
-                  <button
-                    type="button"
-                    onClick={() => setActiveMediaTab('video')}
-                    className={`shrink-0 relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border transition-all cursor-pointer bg-[#1D1D1F] flex flex-col items-center justify-center text-white ${
-                      activeMediaTab === 'video'
-                        ? 'border-[#1D1D1F] ring-1 ring-[#1D1D1F]'
-                        : 'border-black/[0.08] opacity-80 hover:opacity-100'
-                    }`}
-                    aria-label="Watch video demonstration"
-                  >
-                    <Play className="w-5 h-5 fill-white" />
-                    <span className="text-[9.5px] font-semibold uppercase mt-1 tracking-wider">Video</span>
-                  </button>
-                )}
-              </div>
-            )}
-
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* Left: Gallery (7 Cols) matching WhiteLayer */}
+          <div className="lg:col-span-7 flex flex-col gap-3.5 sticky top-24">
             {/* Primary View Frame */}
-            <div className="relative flex-1 w-full aspect-square rounded-3xl overflow-hidden bg-[#F5F5F7] border border-black/[0.06] flex items-center justify-center shadow-apple">
+            <div className="relative w-full aspect-square sm:aspect-[4/3] lg:aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-[#F9FAFB] border border-black/[0.08] flex items-center justify-center shadow-xs group">
               {activeMediaTab === 'video' ? (
-                <div className="w-full h-full relative bg-black flex items-center justify-center rounded-3xl overflow-hidden">
+                <div className="w-full h-full relative bg-black flex items-center justify-center rounded-2xl sm:rounded-3xl overflow-hidden">
                   <video
                     src={videoSource}
                     poster={videoPoster}
@@ -405,7 +365,7 @@ export function ProductDetailClient({
                   <button
                     type="button"
                     onClick={() => setActiveMediaTab('image')}
-                    className="absolute top-4 right-4 bg-white/95 hover:bg-white text-[#1D1D1F] text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-apple transition-colors cursor-pointer z-10"
+                    className="absolute top-4 right-4 bg-white/95 hover:bg-white text-[#1D1D1F] text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer z-10"
                     aria-label="Back to photo"
                   >
                     View Photo
@@ -414,7 +374,7 @@ export function ProductDetailClient({
               ) : selectedImage ? (
                 <div
                   onClick={() => setIsLightboxOpen(true)}
-                  className="w-full h-full relative cursor-zoom-in flex items-center justify-center group"
+                  className="w-full h-full relative cursor-zoom-in group select-none"
                   role="button"
                   tabIndex={0}
                   aria-label="Click to open image in full view"
@@ -429,43 +389,139 @@ export function ProductDetailClient({
                     alt={product.title}
                     fill
                     priority
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-contain p-4 sm:p-8 transition-transform duration-500 ease-out group-hover:scale-105"
+                    sizes="(max-width: 1024px) 100vw, 650px"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                   />
 
+                  {/* Navigation Arrows (Prev / Next slide matching WhiteLayer) */}
+                  {productImagesList.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const prevIdx = (currentImageIndex - 1 + productImagesList.length) % productImagesList.length;
+                          setSelectedImage(productImagesList[prevIdx]);
+                          setActiveMediaTab('image');
+                        }}
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white border border-black/10 text-[#111827] flex items-center justify-center shadow-sm opacity-90 hover:opacity-100 hover:scale-110 active:scale-95 transition-all cursor-pointer z-10"
+                        aria-label="Previous image"
+                      >
+                        <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const nextIdx = (currentImageIndex + 1) % productImagesList.length;
+                          setSelectedImage(productImagesList[nextIdx]);
+                          setActiveMediaTab('image');
+                        }}
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 hover:bg-white border border-black/10 text-[#111827] flex items-center justify-center shadow-sm opacity-90 hover:opacity-100 hover:scale-110 active:scale-95 transition-all cursor-pointer z-10"
+                        aria-label="Next image"
+                      >
+                        <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+                      </button>
+                    </>
+                  )}
+
+                  {/* Smooth Progress Line at bottom */}
+                  {productImagesList.length > 1 && (
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/10 z-10">
+                      <div
+                        className="h-full bg-[#E61E2A] transition-all duration-300"
+                        style={{
+                          width: `${((currentImageIndex + 1) / productImagesList.length) * 100}%`,
+                        }}
+                      />
+                    </div>
+                  )}
+
                   {/* Tap to expand affordance */}
-                  <div className="absolute top-4 right-4 bg-white/90 hover:bg-white backdrop-blur-md text-[#1D1D1F] text-[11px] font-semibold px-2.5 py-1.5 rounded-full flex items-center gap-1.5 border border-black/[0.06] shadow-xs opacity-90 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    <ZoomIn className="w-3.5 h-3.5 text-[#1D1D1F]" />
+                  <div className="absolute top-4 right-4 bg-white/90 hover:bg-white backdrop-blur-md text-[#111827] text-[11px] font-semibold px-2.5 py-1.5 rounded-full flex items-center gap-1.5 border border-black/10 shadow-2xs opacity-90 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    <ZoomIn className="w-3.5 h-3.5 text-[#111827]" />
                     <span className="hidden sm:inline">Tap to expand</span>
                   </div>
-
-                  {hasVideo && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveMediaTab('video');
-                      }}
-                      className="absolute bottom-3.5 right-3.5 bg-black/80 hover:bg-black text-white text-xs font-semibold px-3.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-apple active:scale-95 transition-all cursor-pointer z-10"
-                    >
-                      <Play className="w-3 h-3 fill-white" />
-                      <span>Watch video</span>
-                    </button>
-                  )}
                 </div>
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-[#86868B] text-sm">
                   No Image Available
                 </div>
               )}
+            </div>
 
-              {product.badge && !product.badge.includes('12H') && activeMediaTab !== 'video' && (
-                <div className="absolute top-4 left-4 z-10">
-                  <span className="py-1 px-3 rounded-full text-xs font-semibold bg-white/90 backdrop-blur-md text-[#1D1D1F] border border-black/[0.06] shadow-xs">
-                    {product.badge}
-                  </span>
+            {/* Single-Row Horizontal Sliding Media Previews matching WhiteLayer (Screenshot 2) */}
+            {hasMultipleMedia && (
+              <div className="flex items-center gap-3 overflow-x-auto pb-1 scrollbar-none">
+                {product.images &&
+                  product.images.map((img: any, idx: number) => {
+                    const isSelected = activeMediaTab === 'image' && selectedImage === img.url;
+                    return (
+                      <button
+                        key={img.id || idx}
+                        type="button"
+                        onClick={() => {
+                          setSelectedImage(img.url);
+                          setActiveMediaTab('image');
+                        }}
+                        className={`shrink-0 relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all cursor-pointer bg-neutral-100 ${
+                          isSelected
+                            ? 'border-[#E61E2A] scale-[1.02] shadow-xs ring-1 ring-[#E61E2A]/20'
+                            : 'border-transparent opacity-70 hover:opacity-100 hover:border-black/20'
+                        }`}
+                        aria-label={`View image ${idx + 1}`}
+                      >
+                        <Image
+                          src={img.url}
+                          alt={`${product.title} view ${idx + 1}`}
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      </button>
+                    );
+                  })}
+
+                {/* Video Slot Thumbnail */}
+                {hasVideo && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveMediaTab('video')}
+                    className={`shrink-0 relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all cursor-pointer bg-[#111827] flex flex-col items-center justify-center text-white ${
+                      activeMediaTab === 'video'
+                        ? 'border-[#E61E2A] scale-[1.02] shadow-xs ring-1 ring-[#E61E2A]/20'
+                        : 'border-transparent opacity-75 hover:opacity-100 hover:border-black/20'
+                    }`}
+                    aria-label="Watch video demonstration"
+                  >
+                    <Play className="w-5 h-5 fill-white" />
+                    <span className="text-[9.5px] font-bold uppercase mt-1 tracking-wider">Video</span>
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Desktop Studio Trust & Craftsmanship Strip matching WhiteLayer (Screenshot 2) */}
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <div className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-black/[0.08] shadow-2xs">
+                <div className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center text-[#E61E2A] shrink-0">
+                  <Layers className="w-4 h-4 text-[#E61E2A]" />
                 </div>
-              )}
+                <div>
+                  <strong className="block text-xs font-bold text-[#111827]">0.12mm Precision</strong>
+                  <span className="block text-[11px] text-[#6E6E73]">Studio Grade 3D Finish</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-black/[0.08] shadow-2xs">
+                <div className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center text-[#E61E2A] shrink-0">
+                  <ShieldCheck className="w-4 h-4 text-[#E61E2A]" />
+                </div>
+                <div>
+                  <strong className="block text-xs font-bold text-[#111827]">Reinforced Core</strong>
+                  <span className="block text-[11px] text-[#6E6E73]">Weighted Anti-Tip Base</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -554,85 +610,50 @@ export function ProductDetailClient({
                 {product.subtitle || product.tagline}
               </p>
 
-              {/* 4. Price Card (WhiteLayer style) */}
-              <div className="mt-4 p-4 sm:p-5 rounded-2xl bg-white sm:bg-[#FAFAFA] border border-black/[0.08] shadow-xs space-y-2">
+              {/* 4. Price Card (WhiteLayer style matching Screenshot 5) */}
+              <div className="mt-4 space-y-2">
                 <div className="flex items-baseline gap-3 flex-wrap">
-                  <span className="text-3xl font-extrabold text-[#111827] tracking-tight">
-                    {formatCurrency(effectivePriceMinor)}
+                  <span className="text-2xl sm:text-3xl font-extrabold text-[#E61E2A] tracking-tight">
+                    Rs. {Math.round(effectivePriceMinor / 100).toLocaleString('en-IN')}.00
                   </span>
                   {hasCompareAt && (
                     <span className="text-sm sm:text-base text-[#9CA3AF] line-through font-medium">
-                      MRP {formatCurrency(product.originalPriceMinor!)}
+                      Rs. {Math.round(product.originalPriceMinor! / 100).toLocaleString('en-IN')}.00
                     </span>
                   )}
                   {hasCompareAt && discountPercent > 0 && (
-                    <span className="inline-flex items-center gap-1 py-0.5 px-2.5 rounded-full bg-[#111827] text-white text-xs font-bold shadow-xs">
-                      <Tag className="w-3 h-3 fill-current" />
+                    <span className="inline-flex items-center gap-1 py-0.5 px-2 rounded-full bg-[#111827] text-white text-[11px] font-bold">
                       <span>{discountPercent}% OFF</span>
                     </span>
                   )}
                 </div>
 
-                <div className="flex flex-col gap-1.5 text-xs pt-1">
-                  <span className="text-[#6E6E73] text-[11px] font-normal">(Incl. of all taxes)</span>
-                  <div className="inline-flex items-center gap-1.5 text-amber-800 font-semibold bg-amber-50 border border-amber-200/70 px-2.5 py-1 rounded-lg w-fit text-[11.5px]">
-                    <span className="animate-bounce">🔥</span>
-                    <span><strong>Launch Offer:</strong> Price will be higher after 2 days!</span>
-                  </div>
+                <span className="text-[#6E6E73] text-[11px] font-normal block">(Incl. of all taxes)</span>
+
+                {/* Urgency Alert matching WhiteLayer */}
+                <div className="p-2.5 rounded-xl bg-[#FEF2F2] border border-[#FECACA] flex items-center gap-2 text-xs text-[#991B1B] font-medium">
+                  <span>🔥</span>
+                  <span><strong>Special Launch Price:</strong> Price will be higher after 2 days!</span>
                 </div>
               </div>
 
-              {/* Special Prepaid Offer Card for F1 MagLev */}
-              {isF1MagLev && (
-                <div className="mt-3.5 p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-300 shadow-xs">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-base shrink-0 shadow-xs">
-                        ⚡
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs uppercase font-extrabold tracking-wider text-emerald-950">
-                            Prepaid / UPI Instant Offer
-                          </span>
-                          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-600 text-white uppercase">
-                            Save ₹300
-                          </span>
-                        </div>
-                        <p className="text-xs sm:text-[13px] text-emerald-950 font-bold mt-0.5">
-                          Pay only <strong className="text-emerald-700 font-extrabold text-base">{formatCurrency(prepaidTotalPriceMinor)}</strong> via UPI / Prepaid ({formatCurrency(prepaidPricePerUnitMinor)}/piece)
-                        </p>
-                        <span className="text-[11px] text-emerald-800 font-medium block">
-                          Instant ₹300 discount automatically applied at checkout when paying via UPI
-                        </span>
-                      </div>
-                    </div>
-                    <div className="hidden sm:block text-right shrink-0">
-                      <span className="text-xs font-black text-emerald-800 bg-white px-3 py-1.5 rounded-lg border border-emerald-300 shadow-2xs">
-                        ₹1,899 Only
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* 5. Fast Dispatch Urgency Card */}
-              <div className="mt-3.5 p-3.5 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] space-y-1.5 text-xs text-[#065F46]">
+              {/* 5. Fast Dispatch Urgency Card matching WhiteLayer */}
+              <div className="mt-3 p-3.5 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] space-y-1 text-xs text-[#14532D]">
                 <div className="flex items-center gap-2 font-bold text-xs sm:text-[12.5px]">
-                  <Zap className="w-4 h-4 fill-emerald-600 text-emerald-600 shrink-0" />
+                  <Clock className="w-4 h-4 text-emerald-700 shrink-0" />
                   <span>If you order prepaid, your order will be dispatched within 24 hours!</span>
                 </div>
-                <p className="text-[11px] text-[#047857] pl-6 font-medium">
+                <p className="text-[11px] text-[#15803D] pl-6 font-medium">
                   ✓ Priority BlueDart / Delhivery Air Dispatch • 7-Day Replacement Guarantee
                 </p>
               </div>
 
               {/* 6. Key Buying Perks */}
               {buyPerks && buyPerks.length > 0 && (
-                <div className="mt-4 space-y-2 py-3 border-y border-black/[0.06]">
+                <div className="mt-3 space-y-2 py-3 border-y border-black/[0.06]">
                   {buyPerks.map((perk, i) => (
                     <div key={i} className="flex items-center gap-2.5 text-xs sm:text-[12.5px] text-[#374151]">
-                      <Check className="w-4 h-4 shrink-0" style={{ color: perk.color }} strokeWidth={2.5} />
+                      <Check className="w-4 h-4 shrink-0 text-emerald-600" strokeWidth={2.5} />
                       <span className="font-medium">{perk.text}</span>
                     </div>
                   ))}
@@ -698,56 +719,55 @@ export function ProductDetailClient({
                 <span className="font-semibold text-[#16A34A]">{stockText} • Ready for Air Dispatch</span>
               </div>
 
-              {/* 8. Dynamic Delivery Badge (WhiteLayer style) */}
-              <div className="mt-4 p-3.5 rounded-2xl bg-[#F5F5F7] border border-black/[0.04] flex items-start gap-3 text-xs">
-                <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-xs text-[#E61E2A]">
-                  <Truck className="w-5 h-5 text-[#E61E2A]" />
+              {/* 8. Dynamic Delivery Badge (WhiteLayer style matching Screenshot 5) */}
+              <div className="mt-3 p-3.5 rounded-xl bg-[#F9FAFB] border border-black/[0.06] flex items-start gap-3 text-xs">
+                <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0 border border-black/5 text-[#E61E2A] shadow-2xs">
+                  <Truck className="w-4 h-4 text-[#E61E2A]" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="font-bold text-[#111827] block text-xs sm:text-sm">
+                  <span className="font-bold text-[#111827] block text-xs">
                     Free delivery on this piece
                   </span>
                   <span className="text-[11px] text-[#6E6E73] leading-relaxed block mt-0.5">
-                    Processed in 1-2 business days, then usually up to 7 business days in transit. Dates are estimates.
+                    Processed in 1-2 business days, then usually up to 7 business days in transit. Dates are estimates. <Link href="/shipping-policy" className="underline decoration-black/20 hover:text-black">Shipping policy</Link>
                   </span>
                 </div>
               </div>
 
-              {/* 9. Quantity Selector & Action Buttons */}
-              <div className="mt-6 space-y-3">
-                <div className="flex gap-3">
-                  {/* Quantity Stepper */}
-                  <div className="flex items-center border border-black/10 rounded-full px-2 bg-[#F5F5F7] shrink-0">
+              {/* 9. Action Buttons matching WhiteLayer (Screenshot 5) */}
+              <div className="mt-4 space-y-2.5">
+                {/* Quantity Stepper & Add to Cart (WhiteLayer Bold Red Button) */}
+                <div className="flex gap-2.5">
+                  <div className="flex items-center border border-black/10 rounded-xl px-2 bg-[#F9FAFB] shrink-0">
                     <button
                       type="button"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       disabled={quantity <= 1 || !product.inStock}
-                      className="p-2 text-[#111827] hover:opacity-70 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-opacity"
+                      className="p-2 text-[#111827] hover:opacity-70 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-opacity font-bold"
                       aria-label="Decrease quantity"
                     >
                       -
                     </button>
-                    <span className="px-3 text-xs font-bold text-[#111827] min-w-[20px] text-center select-none">
+                    <span className="px-2 text-xs font-bold text-[#111827] min-w-[18px] text-center select-none">
                       {quantity}
                     </span>
                     <button
                       type="button"
                       onClick={() => setQuantity(quantity + 1)}
                       disabled={!product.inStock || (stockCount > 0 && quantity >= stockCount)}
-                      className="p-2 text-[#111827] hover:opacity-70 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-opacity"
+                      className="p-2 text-[#111827] hover:opacity-70 disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-opacity font-bold"
                       aria-label="Increase quantity"
                     >
                       +
                     </button>
                   </div>
 
-                  {/* Add to Cart (WhiteLayer Bold Red Button) */}
                   <button
                     id="MainAddToCartBtn"
                     type="button"
                     onClick={handleAddToCart}
                     disabled={isCartLoading || isAdding || !product.inStock}
-                    className="flex-1 h-12 rounded-xl bg-[#E61E2A] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider hover:bg-[#C81420] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md disabled:opacity-50 cursor-pointer select-none"
+                    className="flex-1 h-12 rounded-xl bg-[#E61E2A] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider hover:bg-[#C81420] active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer select-none"
                   >
                     {isAdding ? (
                       <>
@@ -762,12 +782,11 @@ export function ProductDetailClient({
                     ) : (
                       <>
                         <ShoppingBag className="w-4 h-4" />
-                        <span>Add to Cart</span>
+                        <span>ADD TO CART</span>
                       </>
                     )}
                   </button>
 
-                  {/* Wishlist Toggle Button */}
                   <button
                     type="button"
                     onClick={() =>
@@ -779,52 +798,59 @@ export function ProductDetailClient({
                         image: selectedImage || (product.images && product.images[0]?.url) || '',
                       })
                     }
-                    className="w-12 h-12 rounded-xl border border-black/10 bg-[#F5F5F7] hover:bg-[#EBEBEF] text-[#111827] flex items-center justify-center shrink-0 transition-colors cursor-pointer"
+                    className="w-12 h-12 rounded-xl border border-black/10 bg-[#F9FAFB] hover:bg-neutral-100 text-[#111827] flex items-center justify-center shrink-0 transition-colors cursor-pointer"
                     aria-label={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
-                    title={isWishlisted ? 'Saved in Wishlist' : 'Add to Wishlist'}
                   >
                     <Heart
-                      className={`w-5 h-5 transition-colors ${
+                      className={`w-4 h-4 transition-colors ${
                         isWishlisted ? 'fill-[#E61E2A] text-[#E61E2A]' : 'stroke-current text-slate-500'
                       }`}
                     />
                   </button>
                 </div>
 
-                {/* Instant Buy Now Button */}
-                <button
-                  type="button"
-                  onClick={handleBuyNow}
-                  disabled={isBuying || isAdding || !product.inStock}
-                  className="w-full h-12 rounded-xl bg-[#111827] hover:bg-black text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer disabled:opacity-50 shadow-sm select-none"
-                >
-                  {isBuying ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin text-white" />
-                      <span>Opening Checkout...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-4 h-4 text-amber-400 fill-current" />
-                      <span>Buy Now • Fast Checkout</span>
-                    </>
-                  )}
-                </button>
+                {/* Instant Buy Now Button with Payment Badges & Shiprocket (Screenshot 5) */}
+                <div className="space-y-1">
+                  <button
+                    type="button"
+                    onClick={handleBuyNow}
+                    disabled={isBuying || isAdding || !product.inStock}
+                    className="w-full h-12 rounded-xl bg-[#111827] hover:bg-black text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2.5 active:scale-[0.99] cursor-pointer disabled:opacity-50 shadow-sm select-none"
+                  >
+                    {isBuying ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <span>Opening Checkout...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>BUY NOW</span>
+                        <div className="flex items-center gap-1.5 ml-1 bg-white/10 px-2 py-0.5 rounded-md">
+                          <span className="text-[10px] font-black text-white tracking-tight">GPay</span>
+                          <span className="text-white/40">|</span>
+                          <span className="text-[10px] font-black text-[#00BAF2] tracking-tight">Paytm</span>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-white/80" />
+                      </>
+                    )}
+                  </button>
+                  <div className="text-right">
+                    <span className="text-[9.5px] text-neutral-400 font-medium">Powered by Shiprocket</span>
+                  </div>
+                </div>
 
-                {/* 10. High-Trust Bar (WhiteLayer style) */}
-                <div className="py-2.5 px-4 rounded-xl bg-[#F5F5F7] border border-black/[0.04] flex items-center justify-around text-[11px] sm:text-xs font-semibold text-[#111827] flex-wrap gap-2">
-                  <div className="flex items-center gap-1.5 text-emerald-700">
-                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                {/* 10. High-Trust Bar matching WhiteLayer Screenshot 5 */}
+                <div className="py-2 px-3 rounded-xl bg-transparent flex items-center justify-center text-[11px] font-medium text-[#4B5563] flex-wrap gap-4">
+                  <div className="flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-neutral-500" />
                     <span>256-Bit SSL Encryption</span>
                   </div>
-                  <span className="text-gray-300">•</span>
-                  <div className="flex items-center gap-1.5 text-emerald-700">
-                    <Check className="w-4 h-4 text-emerald-600" strokeWidth={2.5} />
+                  <div className="flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 text-neutral-500" strokeWidth={2.5} />
                     <span>7-Day Replacement</span>
                   </div>
-                  <span className="text-gray-300">•</span>
-                  <div className="flex items-center gap-1.5 text-emerald-700">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-neutral-500" />
                     <span>Made in India</span>
                   </div>
                 </div>
