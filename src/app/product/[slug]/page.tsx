@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getCachedProductBySlug, getCachedRelatedProducts } from '@/lib/catalog';
 import { ProductDetailClient } from '@/components/product/ProductDetailClient';
-import { LEVITATING_LAMP_FAQS, GENERAL_STORE_FAQS } from '@/data/faq';
+import { getProductFaqs } from '@/data/product-details';
 import { SALE_CONFIG, isSaleActive } from '@/config/sale';
 import reviewsData from '@/data/reviews.json';
 import type { Metadata } from 'next';
@@ -95,8 +95,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
     const canonicalUrl = `https://www.flirta.network/product/${slug}`;
     const imagesList = product.images?.map((img: any) => img.url) || [];
-    const isLevitatingLamp = product.slug?.includes('levitat');
-    const faqList = isLevitatingLamp ? LEVITATING_LAMP_FAQS : GENERAL_STORE_FAQS;
+    const faqList = getProductFaqs(product);
 
     // Real reviews check for aggregateRating schema
     const rawReviews = Array.isArray(product.reviews) && product.reviews.length > 0

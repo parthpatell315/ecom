@@ -40,7 +40,7 @@ import {
   PARTIAL_COD_ADVANCE_RUPEES,
 } from '@/config/shipping';
 import { MEDIA_CONFIG, checkImageRights } from '@/config/media';
-import { LEVITATING_LAMP_FAQS, GENERAL_STORE_FAQS } from '@/data/faq';
+import { getProductFaqs, getProductBoxContents, getProductStoryMeta } from '@/data/product-details';
 import reviewsData from '@/data/reviews.json';
 
 interface ProductDetailClientProps {
@@ -182,29 +182,11 @@ export function ProductDetailClient({
       : [];
   const showReviews = rawReviews.length > 0;
 
-  // What's in the box: Clean hardware contents
-  const adapterText = LEGAL_CONFIG.BIS_REG_NO
-    ? `BIS registered: ${LEGAL_CONFIG.BIS_REG_NO}`
-    : '12V 2A power adapter';
+  // What's in the box: Tailored specifically per product
+  const whatsInTheBox = getProductBoxContents(product);
 
-  const whatsInTheBox = isLevitatingLamp
-    ? [
-        { item: 'Electromagnetic Levitation Base', desc: 'Active sensor coils with ambient RGB halo illumination' },
-        { item: 'Floating Money Capsule', desc: 'Zero-gravity mid-air suspension (15–20mm elevation)' },
-        { item: 'Magnetic Centering Guide', desc: 'Effortless alignment tool for balanced floating' },
-        { item: adapterText, desc: 'Indian standard 2-pin wall plug with power cord' },
-        { item: 'Operating & Setup Guide', desc: 'Full step-by-step instructions and safety specifications' },
-        { item: 'Shockproof Acoustic EVA Box', desc: 'Custom laser-cut protective packaging for safe transit' },
-      ]
-    : [
-        { item: product.title, desc: 'Individually calibrated and tested studio piece' },
-        { item: 'Shockproof Acoustic EVA Box', desc: 'Custom laser-cut protective packaging for safe transit' },
-        { item: 'Studio Authenticity Card', desc: 'Serialized verification card with batch inspection' },
-        { item: 'Care & Maintenance Guide', desc: 'Instructions for optimal performance & finish preservation' },
-      ];
-
-  // Frequently Asked Questions
-  const faqs = isLevitatingLamp ? LEVITATING_LAMP_FAQS : GENERAL_STORE_FAQS;
+  // Frequently Asked Questions: Tailored specifically per product category & features
+  const faqs = getProductFaqs(product);
 
   // Stock inventory text
   const stockCount = selectedVariant?.stockCount ?? product.stockCount ?? 10;
@@ -218,11 +200,14 @@ export function ProductDetailClient({
   // Variant selector: only display option group if more than 1 option exists
   const hasMultipleVariants = Array.isArray(product.variants) && product.variants.length > 1;
 
-  // Video path
-  const hasVideo = Boolean(product.videoUrl || isLevitatingLamp);
-  const videoSource = product.videoUrl || MEDIA_CONFIG.DEFAULT_FLOATING_VIDEO;
+  // Video path - only enabled if real video exists or levitating lamp demo
+  const hasVideo = Boolean(product.videoUrl || (isLevitatingLamp && MEDIA_CONFIG.DEFAULT_FLOATING_VIDEO));
+  const videoSource = product.videoUrl || (isLevitatingLamp ? MEDIA_CONFIG.DEFAULT_FLOATING_VIDEO : '');
   const videoPoster = product.images?.[0]?.url || MEDIA_CONFIG.DEFAULT_VIDEO_POSTER;
   const hasMultipleMedia = (product.images && product.images.length > 1) || hasVideo;
+
+  // Tailored Architecture & Craft Story
+  const productStoryMeta = getProductStoryMeta(product);
 
   return (
     <div className="bg-white min-h-screen text-[#1D1D1F]">
@@ -665,14 +650,34 @@ export function ProductDetailClient({
         <div className="mt-20 pt-12 border-t border-black/[0.06] grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-7 space-y-4">
             <span className="text-xs uppercase tracking-wider text-[#86868B] font-semibold">
-              Design Architecture
+              {productStoryMeta.badge}
             </span>
             <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1D1D1F]">
-              Crafted for Your Workstation
+              {productStoryMeta.heading}
             </h2>
             <p className="text-sm text-[#6E6E73] leading-relaxed whitespace-pre-line">
               {product.description}
             </p>
+
+            {/* Product Key Highlights */}
+            {productStoryMeta.highlights && productStoryMeta.highlights.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3">
+                {productStoryMeta.highlights.map((hl, i) => (
+                  <div
+                    key={i}
+                    className="p-4 rounded-2xl bg-[#F5F5F7] border border-black/[0.04] flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="w-6 h-6 rounded-full bg-white text-[#0071E3] flex items-center justify-center font-bold text-xs shadow-xs mb-2">
+                        <Sparkles className="w-3.5 h-3.5" />
+                      </div>
+                      <h3 className="text-xs font-semibold text-[#1D1D1F]">{hl.title}</h3>
+                      <p className="text-[11px] text-[#6E6E73] mt-1 leading-snug">{hl.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="lg:col-span-5">
@@ -717,16 +722,22 @@ export function ProductDetailClient({
                     </span>
                   </div>
                 )}
-                {specs.powerInput && (
+                {(specs.powerInput || specs.powerSupply) && (
                   <div className="pt-2 flex justify-between items-center">
                     <span className="text-[#86868B]">Power Input</span>
-                    <span className="font-semibold text-[#1D1D1F]">{specs.powerInput}</span>
+                    <span className="font-semibold text-[#1D1D1F] text-right max-w-[200px]">{specs.powerInput || specs.powerSupply}</span>
                   </div>
                 )}
-                {specs.levitationHeight && (
+                {(specs.levitationHeight || specs.levitationGap) && (
                   <div className="pt-2 flex justify-between items-center">
                     <span className="text-[#86868B]">Levitation Height</span>
-                    <span className="font-semibold text-[#1D1D1F]">{specs.levitationHeight}</span>
+                    <span className="font-semibold text-[#1D1D1F]">{specs.levitationHeight || specs.levitationGap}</span>
+                  </div>
+                )}
+                {specs.infillDensity && (
+                  <div className="pt-2 flex justify-between items-center">
+                    <span className="text-[#86868B]">Internal Geometry</span>
+                    <span className="font-semibold text-[#1D1D1F]">{specs.infillDensity}</span>
                   </div>
                 )}
                 <div className="pt-2 flex justify-between items-center">
