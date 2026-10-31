@@ -53,8 +53,11 @@ export default async function HomePage() {
   }
 
   // Find WhiteLayer featured pieces from real database catalog
-  const heroBestseller =
-    products.find((p) => p.slug === 'hero-emblem-led-lamp') || products[0];
+  const maglevF1 =
+    products.find((p) => p.slug === 'magnetic-levitation-f1-racing-car') || products[0];
+
+  const heroEmblem =
+    products.find((p) => p.slug === 'hero-emblem-led-lamp');
 
   const waveStand =
     products.find((p) => p.slug === 'wave-parametric-device-stand');
@@ -67,18 +70,15 @@ export default async function HomePage() {
       (p) => p.slug === 'levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light'
     );
 
-  const maglevF1 =
-    products.find((p) => p.slug === 'magnetic-levitation-f1-racing-car');
-
   const coreReactor =
     products.find((p) => p.slug === 'core-reactor-desk-light') || products[1];
 
   const featuredLineup = products
     .filter(
       (p) =>
-        p.slug !== heroBestseller?.slug &&
-        p.slug !== waveStand?.slug &&
-        p.slug !== iskremLamp?.slug
+        p.slug !== maglevF1?.slug &&
+        p.slug !== heroEmblem?.slug &&
+        p.slug !== waveStand?.slug
     )
     .slice(0, 6);
 
@@ -129,8 +129,8 @@ export default async function HomePage() {
               {/* Eyebrow Pill */}
               <div className="mb-4">
                 <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white text-[#111827] text-xs font-bold tracking-wide border border-black/10 shadow-2xs">
-                  <span className="w-2 h-2 rounded-full bg-[#E61E2A]" />
-                  <span>WHITELAYER STUDIO • 0.12MM LAYER PRECISION</span>
+                  <span className="w-2 h-2 rounded-full bg-[#E61E2A] animate-pulse" />
+                  <span>WHITELAYER STUDIO • ZERO-GRAVITY FLAGSHIP SERIES</span>
                 </span>
               </div>
 
@@ -142,24 +142,24 @@ export default async function HomePage() {
 
               {/* Supporting Text */}
               <p className="text-base sm:text-lg text-[#4B5563] font-normal leading-relaxed max-w-lg mb-8">
-                Architectural ambient mood lighting, weighted controller stands, and modular desk accessories. Handcrafted in India with 0.12mm precision.
+                Featuring the 360° Magnetic Levitation F1 Racing Car, architectural ambient lightboxes, and weighted workstation docks. Handcrafted in India with 0.12mm precision.
               </p>
 
               {/* CTAs */}
               <div className="flex flex-wrap items-center gap-3.5 mb-10">
                 <Link
-                  href="/shop"
+                  href="/product/magnetic-levitation-f1-racing-car"
                   className="h-12 px-7 rounded-xl bg-[#111827] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-black active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm"
                 >
-                  <span>Explore Bestsellers</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span>Order F1 MagLev • ₹1,899</span>
+                  <ArrowRight className="w-4 h-4 text-[#E61E2A]" />
                 </Link>
 
                 <Link
                   href="/shop"
                   className="h-12 px-7 rounded-xl bg-white text-[#111827] font-extrabold text-xs uppercase tracking-wider border border-black/15 hover:bg-neutral-50 active:scale-95 transition-all flex items-center justify-center"
                 >
-                  <span>Custom 3D Printing</span>
+                  <span>Explore Collection</span>
                 </Link>
               </div>
 
@@ -182,20 +182,20 @@ export default async function HomePage() {
 
             {/* Right Column: Hero Stage Card & Quick Showcase */}
             <div className="lg:col-span-6 flex flex-col">
-              {/* Studio Bestseller Showcase Card */}
-              {heroBestseller && (
+              {/* Studio Flagship Showcase Card: Magnetic Levitation F1 Racing Car */}
+              {maglevF1 && (
                 <div className="relative rounded-3xl overflow-hidden bg-white border border-black/[0.08] shadow-sm group">
                   <Link
-                    href={`/product/${heroBestseller.slug}`}
+                    href={`/product/${maglevF1.slug}`}
                     className="block relative aspect-[16/10] bg-[#0A0A0A] overflow-hidden"
-                    aria-label={`View ${heroBestseller.title}`}
+                    aria-label={`View ${maglevF1.title}`}
                   >
                     <Image
                       src={
-                        heroBestseller.images?.[0]?.url ||
-                        'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_1588xN.7800210730_enye.webp?v=1789630077'
+                        maglevF1.images?.[0]?.url ||
+                        'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/photo_5379765186618664415_x.jpg?v=1793282705'
                       }
-                      alt={heroBestseller.title}
+                      alt={maglevF1.title}
                       fill
                       priority
                       className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -205,8 +205,16 @@ export default async function HomePage() {
                     {/* Floating top badge */}
                     <div className="absolute top-4 left-4 z-10">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md text-[#111827] text-xs font-bold shadow-xs">
-                        <span className="w-2 h-2 rounded-full bg-[#E61E2A]" />
-                        Studio Bestseller
+                        <span className="w-2 h-2 rounded-full bg-[#E61E2A] animate-pulse" />
+                        🏎️ Studio Flagship • 360° Floating
+                      </span>
+                    </div>
+
+                    {/* Floating Prepaid Discount Pill */}
+                    <div className="absolute top-4 right-4 z-10">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-black uppercase tracking-wider shadow-sm">
+                        <Zap className="w-3 h-3 fill-current" />
+                        Prepaid ₹1,899
                       </span>
                     </div>
                   </Link>
@@ -215,27 +223,33 @@ export default async function HomePage() {
                   <div className="p-5 bg-white border-t border-black/[0.06] flex items-start justify-between gap-4">
                     <div>
                       <span className="text-[11px] font-bold uppercase tracking-wider text-[#86868B] block mb-1">
-                        ICONIC LIGHTBOX
+                        ELECTROMAGNETIC LEVITATION
                       </span>
-                      <Link href={`/product/${heroBestseller.slug}`} className="block">
+                      <Link href={`/product/${maglevF1.slug}`} className="block">
                         <h3 className="text-base sm:text-lg font-bold text-[#111827] group-hover:text-[#E61E2A] transition-colors leading-snug line-clamp-1">
-                          {heroBestseller.title}
+                          {maglevF1.title}
                         </h3>
                       </Link>
                       <p className="text-xs text-[#6B7280] mt-1">
-                        Ambient red glow • High-definition illuminated display
+                        15mm electromagnetic suspension • 360° perpetual spin • Cyan touch LED halo
                       </p>
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="text-base sm:text-lg font-extrabold text-[#E61E2A] block">
-                        Rs. 849.00
+                      <div className="flex items-baseline gap-1.5 justify-end">
+                        <span className="text-base sm:text-lg font-extrabold text-[#E61E2A]">
+                          Rs. 2,199.00
+                        </span>
+                        <span className="text-[11px] text-neutral-400 line-through">Rs. 8,999.00</span>
+                      </div>
+                      <span className="inline-block px-1.5 py-0.5 rounded bg-emerald-50 text-[10px] font-bold text-emerald-700 border border-emerald-200 mt-0.5">
+                        Rs. 1,899 on Prepaid
                       </span>
                       <Link
-                        href={`/product/${heroBestseller.slug}`}
-                        className="text-xs font-semibold text-[#111827] hover:text-[#E61E2A] transition-colors inline-flex items-center gap-0.5 mt-0.5"
+                        href={`/product/${maglevF1.slug}`}
+                        className="text-xs font-semibold text-[#111827] hover:text-[#E61E2A] transition-colors inline-flex items-center gap-0.5 mt-1 block"
                       >
-                        <span>View Piece</span>
+                        <span>View Flagship</span>
                         <ArrowRight className="w-3 h-3" />
                       </Link>
                     </div>
@@ -245,7 +259,39 @@ export default async function HomePage() {
 
               {/* 2 Quick Showcase Cards Below Hero */}
               <div className="grid grid-cols-2 gap-4 mt-4">
-                {/* Mini Card 1: Wave Parametric Stand */}
+                {/* Mini Card 1: Hero Emblem LED Lightbox */}
+                {heroEmblem && (
+                  <Link
+                    href={`/product/${heroEmblem.slug}`}
+                    className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-black/[0.08] shadow-xs hover:border-black/20 transition-all group"
+                  >
+                    <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-neutral-900 shrink-0">
+                      <Image
+                        src={
+                          heroEmblem.images?.[0]?.url ||
+                          'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_1588xN.7800210730_enye.webp?v=1789630077'
+                        }
+                        alt={heroEmblem.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform"
+                        sizes="56px"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[10px] font-bold text-[#86868B] uppercase tracking-wider block truncate">
+                        ICONIC LIGHTBOX
+                      </span>
+                      <h4 className="text-xs font-bold text-[#111827] group-hover:text-[#E61E2A] transition-colors truncate">
+                        {heroEmblem.title}
+                      </h4>
+                      <span className="text-xs font-extrabold text-[#E61E2A] block mt-0.5">
+                        Rs. {Math.round(heroEmblem.priceMinor / 100).toLocaleString('en-IN')}.00
+                      </span>
+                    </div>
+                  </Link>
+                )}
+
+                {/* Mini Card 2: Wave Parametric Stand */}
                 {waveStand && (
                   <Link
                     href={`/product/${waveStand.slug}`}
@@ -272,38 +318,6 @@ export default async function HomePage() {
                       </h4>
                       <span className="text-xs font-extrabold text-[#E61E2A] block mt-0.5">
                         Rs. 499.00
-                      </span>
-                    </div>
-                  </Link>
-                )}
-
-                {/* Mini Card 2: Iskrem Lamp */}
-                {iskremLamp && (
-                  <Link
-                    href={`/product/${iskremLamp.slug}`}
-                    className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-black/[0.08] shadow-xs hover:border-black/20 transition-all group"
-                  >
-                    <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
-                      <Image
-                        src={
-                          iskremLamp.images?.[0]?.url ||
-                          'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/2025-01-24_e3d5b1652938.webp?v=1788522980'
-                        }
-                        alt={iskremLamp.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform"
-                        sizes="56px"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="text-[10px] font-bold text-[#86868B] uppercase tracking-wider block truncate">
-                        AMBIENT LIGHTING
-                      </span>
-                      <h4 className="text-xs font-bold text-[#111827] group-hover:text-[#E61E2A] transition-colors truncate">
-                        ISKREM LAMP by Studio
-                      </h4>
-                      <span className="text-xs font-extrabold text-[#E61E2A] block mt-0.5">
-                        Rs. 1,299.00
                       </span>
                     </div>
                   </Link>
@@ -419,7 +433,7 @@ export default async function HomePage() {
                     href={`/product/${(maglevF1 || levitatingLamp).slug}`}
                     className="h-12 px-7 rounded-xl bg-[#111827] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#E61E2A] active:scale-95 transition-all flex items-center gap-2 shadow-sm cursor-pointer select-none"
                   >
-                    <span>View Flagship • {formatCurrency((maglevF1 || levitatingLamp).priceMinor)}</span>
+                    <span>Order Flagship • ₹2,199 (₹1,899 Prepaid)</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                   <span className="text-xs text-emerald-600 font-bold flex items-center gap-1">

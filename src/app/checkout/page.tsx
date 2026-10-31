@@ -110,10 +110,25 @@ function CheckoutContent() {
     }
   };
 
+  // Check if cart contains Magnetic Levitation F1 Racing Car
+  const f1Quantity = items.reduce((acc, it) => {
+    if (
+      it.productId === 'cmvw1h8bg0001rtetesjwuy6d' ||
+      it.title.toLowerCase().includes('magnetic levitation f1') ||
+      it.title.toLowerCase().includes('formula 1')
+    ) {
+      return acc + it.quantity;
+    }
+    return acc;
+  }, 0);
+
+  // Special Flagship Offer: Instant ₹300 OFF per F1 car if paying Prepaid UPI (₹2,199 -> ₹1,899)
+  const prepaidDiscountMinor = paymentMethod === 'UPI' && f1Quantity > 0 ? 30000 * f1Quantity : 0;
+
   const discountMinor = appliedCoupon ? appliedCoupon.discountMinor : 0;
   // Free Express Delivery for all orders (Prepaid ₹999 total, Partial COD ₹149 advance + ₹850 doorstep balance)
   const shippingMinor = 0;
-  const finalTotalMinor = Math.max(0, subtotalMinor - discountMinor + shippingMinor);
+  const finalTotalMinor = Math.max(0, subtotalMinor - discountMinor - prepaidDiscountMinor + shippingMinor);
 
   // Fire InitiateCheckout Meta Pixel Event
   useEffect(() => {
@@ -549,7 +564,7 @@ function CheckoutContent() {
                           </span>
                         </div>
                         <p className="text-[11.5px] text-gray-600 leading-relaxed">
-                          Pay flat <strong>{formatCurrency(finalTotalMinor)}</strong> via dynamic UPI QR code. <strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
+                          Pay flat <strong>{formatCurrency(finalTotalMinor)}</strong> via dynamic UPI QR code. {prepaidDiscountMinor > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹300 instant prepaid discount on F1 MagLev! </strong>}<strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
                         </p>
                         <div className="mt-2 text-[10.5px] text-emerald-700 font-semibold flex items-center gap-1.5 flex-wrap">
                           <Smartphone className="w-3 h-3 text-emerald-600 shrink-0" />
@@ -733,8 +748,17 @@ function CheckoutContent() {
                   </div>
                   {appliedCoupon && (
                     <div className="flex justify-between text-emerald-700 font-bold">
-                      <span>Promotional Discount</span>
+                      <span>Promotional Discount ({appliedCoupon.code})</span>
                       <span>-{formatCurrency(discountMinor)}</span>
+                    </div>
+                  )}
+                  {prepaidDiscountMinor > 0 && (
+                    <div className="flex justify-between text-emerald-700 font-bold bg-emerald-50/80 p-1.5 rounded-lg border border-emerald-200">
+                      <span className="flex items-center gap-1">
+                        <Zap className="w-3.5 h-3.5 fill-current text-emerald-600" />
+                        F1 MagLev Prepaid Instant Discount
+                      </span>
+                      <span>-{formatCurrency(prepaidDiscountMinor)}</span>
                     </div>
                   )}
                   <div className="flex justify-between">

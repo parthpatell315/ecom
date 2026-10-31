@@ -121,7 +121,7 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
 
         <div className="mt-4 pt-3 border-t border-black/[0.06]">
           {/* Price Row */}
-          <div className="flex items-baseline justify-between gap-2 mb-3">
+          <div className="flex items-baseline justify-between gap-2 mb-2">
             <div className="flex items-baseline gap-2">
               <span className="text-[18px] sm:text-[20px] font-extrabold text-[#111827] tracking-tight">
                 {formatCurrency(product.priceMinor)}
@@ -136,6 +136,16 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
               Free Delivery
             </span>
           </div>
+
+          {/* Prepaid Discount Callout for Flagship F1 */}
+          {(product.slug === 'magnetic-levitation-f1-racing-car' || product.title.toLowerCase().includes('magnetic levitation f1')) && (
+            <div className="mb-2.5">
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                <Zap className="w-3 h-3 fill-current text-emerald-600" />
+                Prepaid UPI: ₹1,899 (Save ₹300)
+              </span>
+            </div>
+          )}
 
           {/* Action Button: WhiteLayer Signature Button */}
           {hasMultipleVariants ? (

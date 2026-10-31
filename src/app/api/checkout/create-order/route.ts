@@ -135,10 +135,25 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Special Prepaid Offer: Flat ₹300 (30000 paise) off per Magnetic Levitation F1 Racing Car on Prepaid UPI
+    let prepaidDiscountMinor = 0;
+    if (paymentGateway === 'UPI') {
+      for (const item of orderItemsData) {
+        if (
+          item.product?.slug === 'magnetic-levitation-f1-racing-car' ||
+          item.product?.title?.toLowerCase().includes('magnetic levitation f1') ||
+          item.product?.title?.toLowerCase().includes('formula 1')
+        ) {
+          prepaidDiscountMinor += 30000 * item.quantity;
+        }
+      }
+    }
+
     // 5. Calculate shipping & COD courier fee
     // Flat ₹999 total: ₹0 shipping for both Prepaid UPI and Partial COD (₹149 advance + ₹850 doorstep balance)
     const shippingMinor = 0;
-    const totalMinor = Math.max(0, subtotalMinor - discountMinor + shippingMinor);
+    const totalMinor = Math.max(0, subtotalMinor - discountMinor - prepaidDiscountMinor + shippingMinor);
+    const effectiveDiscountMinor = discountMinor + prepaidDiscountMinor;
 
     // 6. Generate unique order number: FL-YYYY-XXXXX
     const year = new Date().getFullYear();
@@ -168,7 +183,7 @@ export async function POST(req: NextRequest) {
           guestName: name,
           status: 'PENDING',
           subtotalMinor,
-          discountMinor,
+          discountMinor: effectiveDiscountMinor,
           shippingMinor,
           taxMinor: 0,
           totalMinor,
@@ -242,7 +257,7 @@ export async function POST(req: NextRequest) {
           guestName: name,
           status: 'PENDING',
           subtotalMinor,
-          discountMinor,
+          discountMinor: effectiveDiscountMinor,
           shippingMinor,
           taxMinor: 0,
           totalMinor,

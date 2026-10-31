@@ -162,6 +162,15 @@ export function ProductDetailClient({
   const totalPriceMinor = effectivePriceMinor * quantity;
   const doorstepBalanceMinor = Math.max(0, totalPriceMinor - PARTIAL_COD_ADVANCE_MINOR);
 
+  // Special Flagship Pricing: Magnetic Levitation F1 Racing Car ₹2,199 COD / ₹1,899 Prepaid
+  const isF1MagLev =
+    product.slug === 'magnetic-levitation-f1-racing-car' ||
+    product.title.toLowerCase().includes('magnetic levitation f1') ||
+    product.title.toLowerCase().includes('formula 1');
+  const prepaidDiscountPerUnitMinor = isF1MagLev ? 30000 : 0; // ₹300 off per piece on Prepaid
+  const prepaidPricePerUnitMinor = effectivePriceMinor - prepaidDiscountPerUnitMinor;
+  const prepaidTotalPriceMinor = prepaidPricePerUnitMinor * quantity;
+
   // Dev warning for marketplace stock image naming patterns
   useEffect(() => {
     if (selectedImage) {
@@ -572,6 +581,40 @@ export function ProductDetailClient({
                 </div>
               </div>
 
+              {/* Special Prepaid Offer Card for F1 MagLev */}
+              {isF1MagLev && (
+                <div className="mt-3.5 p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-300 shadow-xs">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-base shrink-0 shadow-xs">
+                        ⚡
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs uppercase font-extrabold tracking-wider text-emerald-950">
+                            Prepaid / UPI Instant Offer
+                          </span>
+                          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-600 text-white uppercase">
+                            Save ₹300
+                          </span>
+                        </div>
+                        <p className="text-xs sm:text-[13px] text-emerald-950 font-bold mt-0.5">
+                          Pay only <strong className="text-emerald-700 font-extrabold text-base">{formatCurrency(prepaidTotalPriceMinor)}</strong> via UPI / Prepaid ({formatCurrency(prepaidPricePerUnitMinor)}/piece)
+                        </p>
+                        <span className="text-[11px] text-emerald-800 font-medium block">
+                          Instant ₹300 discount automatically applied at checkout when paying via UPI
+                        </span>
+                      </div>
+                    </div>
+                    <div className="hidden sm:block text-right shrink-0">
+                      <span className="text-xs font-black text-emerald-800 bg-white px-3 py-1.5 rounded-lg border border-emerald-300 shadow-2xs">
+                        ₹1,899 Only
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* 5. Fast Dispatch Urgency Card */}
               <div className="mt-3.5 p-3.5 rounded-2xl bg-[#ECFDF5] border border-[#A7F3D0] space-y-1.5 text-xs text-[#065F46]">
                 <div className="flex items-center gap-2 font-bold text-xs sm:text-[12.5px]">
@@ -798,11 +841,12 @@ export function ProductDetailClient({
                   </div>
                   <div className="text-[#6E6E73] text-[11.5px] leading-relaxed pt-1 space-y-1.5">
                     <p className="flex items-center justify-between">
-                      <span><strong className="text-[#111827]">Prepaid UPI:</strong> Full online payment</span>
-                      <strong className="text-[#111827] font-semibold">{formatCurrency(totalPriceMinor)}</strong>
+                      <span><strong className="text-[#111827]">Prepaid UPI:</strong> Full online payment {isF1MagLev ? '(Includes ₹300 instant discount)' : ''}</span>
+                      <strong className="text-emerald-700 font-bold">{formatCurrency(isF1MagLev ? prepaidTotalPriceMinor : totalPriceMinor)}</strong>
                     </p>
-                    <p className="pt-1.5 border-t border-black/[0.04]">
-                      <strong className="text-[#111827]">Partial COD:</strong> Pay <strong>₹{PARTIAL_COD_ADVANCE_RUPEES} advance</strong> now via UPI, pay remaining <strong>{formatCurrency(doorstepBalanceMinor)}</strong> upon courier delivery to your hands.
+                    <p className="pt-1.5 border-t border-black/[0.04] flex items-center justify-between">
+                      <span><strong className="text-[#111827]">Partial COD:</strong> Pay <strong>₹{PARTIAL_COD_ADVANCE_RUPEES} advance</strong> now via UPI, pay balance at doorstep.</span>
+                      <strong className="text-[#111827] font-semibold">{formatCurrency(doorstepBalanceMinor)}</strong>
                     </p>
                   </div>
                 </div>
@@ -1182,9 +1226,16 @@ export function ProductDetailClient({
             <span className="text-[11px] text-[#86868B] block truncate max-w-[130px] font-normal">
               {product.title}
             </span>
-            <strong className="text-base font-semibold text-[#1D1D1F]">
-              {formatCurrency(totalPriceMinor)}
-            </strong>
+            <div className="flex items-baseline gap-1.5">
+              <strong className="text-base font-bold text-[#111827]">
+                {formatCurrency(totalPriceMinor)}
+              </strong>
+              {isF1MagLev && (
+                <span className="text-[11px] font-extrabold text-emerald-600">
+                  (₹1,899 Prepaid)
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-2 flex-1 justify-end">
