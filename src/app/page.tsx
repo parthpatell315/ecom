@@ -145,9 +145,13 @@ export default async function HomePage() {
               )}
             </div>
 
-            {/* Flagship Hero Stage */}
+            {/* Flagship Hero Stage - Clickable link to product */}
             {levitatingLamp && (
-              <div className="relative w-full max-w-4xl aspect-[16/10] sm:aspect-[16/9] rounded-3xl overflow-hidden bg-white border border-black/[0.08] shadow-apple-card group">
+              <Link
+                href={`/product/${levitatingLamp.slug}`}
+                className="block relative w-full max-w-4xl aspect-[16/10] sm:aspect-[16/9] rounded-3xl overflow-hidden bg-white border border-black/[0.08] shadow-apple-card group cursor-pointer"
+                aria-label={`View ${levitatingLamp.title}`}
+              >
                 <Image
                   src={
                     levitatingLamp.images?.[0]?.url ||
@@ -168,16 +172,13 @@ export default async function HomePage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="hidden sm:inline text-[#86868B]">15–20mm Elevation</span>
-                    <Link
-                      href={`/product/${levitatingLamp.slug}`}
-                      className="text-[#E53935] font-bold hover:underline flex items-center gap-1"
-                    >
+                    <span className="text-[#E53935] font-bold group-hover:underline flex items-center gap-1">
                       <span>View Flagship</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </Link>
+                      <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             )}
           </div>
         </div>
@@ -188,9 +189,13 @@ export default async function HomePage() {
         <section className="py-16 md:py-24 bg-white border-b border-black/[0.06]">
           <div className="max-w-[1140px] mx-auto px-4 sm:px-6">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-              {/* Media Showcase */}
+              {/* Media Showcase - Clickable link to product */}
               <div className="lg:col-span-6">
-                <div className="relative aspect-square sm:aspect-[4/3] rounded-3xl overflow-hidden bg-[#F5F5F7] border border-black/[0.06] p-6 shadow-apple">
+                <Link
+                  href={`/product/${coreReactor.slug}`}
+                  className="block relative aspect-square sm:aspect-[4/3] rounded-3xl overflow-hidden bg-[#F5F5F7] border border-black/[0.06] p-6 shadow-apple group cursor-pointer"
+                  aria-label={`View ${coreReactor.title}`}
+                >
                   <Image
                     src={
                       coreReactor.images?.[0]?.url ||
@@ -198,7 +203,7 @@ export default async function HomePage() {
                     }
                     alt={coreReactor.title}
                     fill
-                    className="object-contain p-4 hover:scale-105 transition-transform duration-500"
+                    className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
                     sizes="(max-width: 1024px) 100vw, 550px"
                   />
                   <div className="absolute top-4 left-4">
@@ -206,7 +211,7 @@ export default async function HomePage() {
                       Arc Lighting
                     </span>
                   </div>
-                </div>
+                </Link>
               </div>
 
               {/* Product Information & Highlights */}

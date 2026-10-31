@@ -17,6 +17,11 @@ export interface ProductStoryMeta {
   highlights: ProductHighlight[];
 }
 
+export interface BuyPerk {
+  text: string;
+  color: string;
+}
+
 export const LIGHTING_FAQS: readonly FaqItem[] = [
   {
     id: 'light-1',
@@ -654,4 +659,110 @@ export function getProductStoryMeta(product: any): ProductStoryMeta {
       },
     ],
   };
+}
+
+/**
+ * Top category & flagship badges (e.g. F1 Speed Edition, Real Levitation) matching WhiteLayer
+ */
+export function getProductTopBadges(product: any): string[] {
+  const slug = (product.slug || '').toLowerCase();
+  if (slug.includes('f1') || slug.includes('racing') || slug.includes('car')) {
+    return ['🏎️ F1 SPEED EDITION', 'REAL ELECTROMAGNETIC LEVITATION', '⚡ VIRAL DESK PIECE'];
+  }
+  if (slug.includes('levitat')) {
+    return ['🧲 ZERO-GRAVITY SUSPENSION', 'AMBIENT RGB HALO BASE', '⚡ VIRAL DESK PIECE'];
+  }
+  if (slug.includes('reactor')) {
+    return ['💡 ARC LIGHTING', 'BREATHING PULSE CORE', '⚡ 5V USB-C'];
+  }
+  if (slug.includes('lumi')) {
+    return ['ORGANIC BIOMIMICRY', 'GOLDEN-RATIO LIGHT', '38H STUDIO PRINT'];
+  }
+  if (slug.includes('clockdock')) {
+    return ['IOS STANDBY DOCK', '45° VIEWING ANGLE', 'CABLE PASSTHROUGH'];
+  }
+  if (slug.includes('chess')) {
+    return ['TACTILE KINETIC PRECISION', '32 WEIGHTED PIECES', 'MAGNETIC HINGE'];
+  }
+  if (slug.includes('controller') || (slug.includes('stand') && !slug.includes('laptop'))) {
+    return ['SCULPTURAL DESK REST', 'UNIVERSAL CRADLE', 'ANTI-TIP BASE'];
+  }
+  if (slug.includes('laptop') || slug.includes('aerostand')) {
+    return ['ERGONOMIC RISER', '25% BETTER AIRFLOW', 'FOLD-FLAT DESIGN'];
+  }
+  if (slug.includes('vandal') || slug.includes('prop')) {
+    return ['1:1 COLLECTIBLE PROP', 'MAGNETIC RELOAD MAG', 'STUDIO DISPLAY STAND'];
+  }
+  if (product.category?.name) {
+    return [product.category.name.toUpperCase(), 'STUDIO CRAFT', '0.12MM PRECISION'];
+  }
+  return ['PRECISION 3D PRINT', 'MADE IN INDIA', 'BENCH TESTED'];
+}
+
+/**
+ * Key 3 buying perks with colored checkmarks matching WhiteLayer
+ */
+export function getProductBuyPerks(product: any): BuyPerk[] {
+  const slug = (product.slug || '').toLowerCase();
+  if (slug.includes('f1') || slug.includes('racing') || slug.includes('car')) {
+    return [
+      { text: 'Genuine 12–15mm Electromagnetic Air Gap (Zero Strings / Zero Props)', color: '#059669' },
+      { text: 'Touch-Sensitive Cyan Ambient LED Halo Base', color: '#0284C7' },
+      { text: 'Standard Indian 2-Pin 220V Power Adapter Included', color: '#D97706' },
+    ];
+  }
+  if (slug.includes('levitat')) {
+    return [
+      { text: 'Genuine 15–20mm Electromagnetic Air Gap Suspension', color: '#059669' },
+      { text: 'Active Sensor Coils with Ambient Multi-Color Halo Glow', color: '#0284C7' },
+      { text: 'BIS-Certified Indian 2-Pin 12V 2A Power Adapter Included', color: '#D97706' },
+    ];
+  }
+  if (slug.includes('reactor')) {
+    return [
+      { text: 'Multi-Ring Breathing Pulse & Continuous Glow Modes', color: '#059669' },
+      { text: 'Cool-to-Touch Low-Voltage 5V USB-C Power (Safe 24/7)', color: '#0284C7' },
+      { text: 'Weighted Desktop Sanctuary Stand with Non-Slip Feet', color: '#D97706' },
+    ];
+  }
+  if (slug.includes('lumi') || slug.includes('iskrem') || slug.includes('lamp') || slug.includes('lightbox')) {
+    return [
+      { text: 'Uniform Optical Light Diffusion for Eye-Safe Ambient Glow', color: '#059669' },
+      { text: 'Energy-Saving 5V USB Power with In-Line Switch', color: '#0284C7' },
+      { text: 'Integrated Freestanding Desktop Base & Wall-Mount Slots', color: '#D97706' },
+    ];
+  }
+  if (slug.includes('clockdock')) {
+    return [
+      { text: 'Positions iPhone Horizontally at 45° to Trigger iOS StandBy', color: '#059669' },
+      { text: 'Concealed Cable Channel for MagSafe & Braided Cords', color: '#0284C7' },
+      { text: 'Weighted Anti-Skid Silicone Ring for One-Handed Docking', color: '#D97706' },
+    ];
+  }
+  if (slug.includes('chess')) {
+    return [
+      { text: 'Dual-Tone Seamless Folding Board with Internal Magnetic Lock', color: '#059669' },
+      { text: '32 Individually Balanced Pieces with Acoustic Felt Bases', color: '#0284C7' },
+      { text: 'Includes Velvet Travel Pouch and Molded Foam Interior', color: '#D97706' },
+    ];
+  }
+  if (slug.includes('controller') || slug.includes('claw-hero') || slug.includes('anti-hero')) {
+    return [
+      { text: 'Universal Contoured Cradle for PS5, Xbox, Switch & Headsets', color: '#059669' },
+      { text: 'Low Center of Gravity Engineered for Wobble-Free Stability', color: '#0284C7' },
+      { text: 'Protective Scratch-Proof Silicone Pads for Gear & Desk', color: '#D97706' },
+    ];
+  }
+  if (slug.includes('laptop') || slug.includes('aerostand')) {
+    return [
+      { text: 'Elevates Chassis 15° for Superior Passive Thermal Cooling', color: '#059669' },
+      { text: 'Ultra-Slim Fold-Flat Portability Fits in Any Laptop Sleeve', color: '#0284C7' },
+      { text: 'Improves Screen Height to Reduce Neck and Spine Fatigue', color: '#D97706' },
+    ];
+  }
+  return [
+    { text: '0.12mm Micro-Layer Precision in Carbon-Neutral Biopolymer', color: '#059669' },
+    { text: 'Individually Bench-Tested and Calibrated Prior to Packing', color: '#0284C7' },
+    { text: 'Laser-Cut Acoustic EVA Protective Transit Packaging', color: '#D97706' },
+  ];
 }
