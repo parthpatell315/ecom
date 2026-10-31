@@ -141,7 +141,7 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
 
           {/* Partial COD hint */}
           <p className="text-[11px] text-[#6B7280] text-center mt-2 font-medium">
-            or <strong className="text-[#111827]">₹149 Advance</strong> + ₹850 on Delivery
+            or <strong className="text-[#111827]">₹149 Advance</strong> + {formatCurrency(Math.max(0, product.priceMinor - 14900))} on Delivery
           </p>
         </div>
       </div>
