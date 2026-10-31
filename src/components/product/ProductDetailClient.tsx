@@ -41,6 +41,7 @@ import {
 
 import { useWishlist } from '@/context/WishlistContext';
 import { PincodeChecker } from '@/components/product/PincodeChecker';
+import { F1Showcase } from '@/components/product/F1Showcase';
 import { trackPixelEvent } from '@/components/analytics/MetaPixel';
 import { LEGAL_CONFIG } from '@/config/legal';
 import { SALE_CONFIG, isSaleActive } from '@/config/sale';
@@ -742,6 +743,7 @@ export function ProductDetailClient({
 
                   {/* Add to Cart (WhiteLayer Bold Red Button) */}
                   <button
+                    id="MainAddToCartBtn"
                     type="button"
                     onClick={handleAddToCart}
                     disabled={isCartLoading || isAdding || !product.inStock}
@@ -855,8 +857,13 @@ export function ProductDetailClient({
           </div>
         </div>
 
-        {/* 4 Accordions Section (WhiteLayer style: Description, Box, Specs, FAQs) */}
-        <div className="mt-16 pt-8 border-t border-black/[0.06] max-w-4xl mx-auto space-y-4">
+        {/* If Magnetic Levitation F1 Racing Car, render the complete WhiteLayer 10-Section Flagship Showcase */}
+        {isF1MagLev ? (
+          <F1Showcase />
+        ) : (
+          <>
+            {/* 4 Accordions Section (WhiteLayer style: Description, Box, Specs, FAQs) */}
+            <div className="mt-16 pt-8 border-t border-black/[0.06] max-w-4xl mx-auto space-y-4">
           {/* Accordion 1: Description & Details */}
           <div className="border border-black/[0.08] rounded-2xl bg-[#FAFAFA] overflow-hidden transition-all duration-200">
             <button
@@ -1175,6 +1182,8 @@ export function ProductDetailClient({
             </div>
           </div>
         )}
+      </>
+    )}
 
         {/* Related Products Showcase */}
         {relatedProducts.length > 0 && (
