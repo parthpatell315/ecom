@@ -342,8 +342,8 @@ export function ProductDetailClient({
 
         {/* Main Product Showcase Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* Left: Gallery (7 Cols) matching WhiteLayer */}
-          <div className="lg:col-span-7 flex flex-col gap-3.5 sticky top-24">
+          {/* Left: Gallery (7 Cols) matching WhiteLayer (sticky only on desktop lg) */}
+          <div className="lg:col-span-7 flex flex-col gap-3.5 lg:sticky lg:top-24">
             {/* Primary View Frame */}
             <div className="relative w-full aspect-square sm:aspect-[4/3] lg:aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-[#F9FAFB] border border-black/[0.08] flex items-center justify-center shadow-xs group">
               {activeMediaTab === 'video' ? (

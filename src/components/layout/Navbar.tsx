@@ -76,38 +76,39 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full select-none">
-        {/* Top Running Marquee Strip matching WhiteLayer */}
-        <div className="bg-[#111827] text-white text-[11px] font-bold tracking-wider py-2 overflow-hidden border-b border-white/10 uppercase select-none">
-          <div className="animate-marquee whitespace-nowrap flex items-center gap-6">
-            <span className="text-[#E61E2A]">🏎️ FLAGSHIP: F1 MAGLEV CAR ₹2,199 (PREPAID ₹1,899)</span>
-            <span className="text-white/40">•</span>
-            <span>CASH ON DELIVERY AVAILABLE</span>
-            <span className="text-white/40">•</span>
-            <span>MADE IN INDIA</span>
-            <span className="text-white/40">•</span>
-            <span>FREE DELIVERY ON ORDERS ₹999+</span>
-            <span className="text-white/40">•</span>
-            <span>7-DAY REPLACEMENT IF DAMAGED</span>
-            <span className="text-white/40">•</span>
-            <span className="text-[#E61E2A]">🏎️ FLAGSHIP: F1 MAGLEV CAR ₹2,199 (PREPAID ₹1,899)</span>
-            <span className="text-white/40">•</span>
-            <span>CASH ON DELIVERY AVAILABLE</span>
-            <span className="text-white/40">•</span>
-            <span>MADE IN INDIA</span>
-            <span className="text-white/40">•</span>
-            <span>FREE DELIVERY ON ORDERS ₹999+</span>
-            <span className="text-white/40">•</span>
-            <span>7-DAY REPLACEMENT IF DAMAGED</span>
-            <span className="text-white/40">•</span>
-            <span>MADE IN INDIA</span>
-            <span className="text-white/40">•</span>
-            <span>FREE DELIVERY ON ORDERS ₹999+</span>
-            <span className="text-white/40">•</span>
-            <span>7-DAY REPLACEMENT IF DAMAGED</span>
-          </div>
+      {/* Top Running Marquee Strip matching WhiteLayer - scrolls away with natural document flow */}
+      <div className="bg-[#111827] text-white text-[11px] font-bold tracking-wider py-2 overflow-hidden border-b border-white/10 uppercase select-none">
+        <div className="animate-marquee whitespace-nowrap flex items-center gap-6">
+          <span className="text-[#E61E2A]">🏎️ FLAGSHIP: F1 MAGLEV CAR ₹2,199 (PREPAID ₹1,899)</span>
+          <span className="text-white/40">•</span>
+          <span>CASH ON DELIVERY AVAILABLE</span>
+          <span className="text-white/40">•</span>
+          <span>MADE IN INDIA</span>
+          <span className="text-white/40">•</span>
+          <span>FREE DELIVERY ON ORDERS ₹999+</span>
+          <span className="text-white/40">•</span>
+          <span>7-DAY REPLACEMENT IF DAMAGED</span>
+          <span className="text-white/40">•</span>
+          <span className="text-[#E61E2A]">🏎️ FLAGSHIP: F1 MAGLEV CAR ₹2,199 (PREPAID ₹1,899)</span>
+          <span className="text-white/40">•</span>
+          <span>CASH ON DELIVERY AVAILABLE</span>
+          <span className="text-white/40">•</span>
+          <span>MADE IN INDIA</span>
+          <span className="text-white/40">•</span>
+          <span>FREE DELIVERY ON ORDERS ₹999+</span>
+          <span className="text-white/40">•</span>
+          <span>7-DAY REPLACEMENT IF DAMAGED</span>
+          <span className="text-white/40">•</span>
+          <span>MADE IN INDIA</span>
+          <span className="text-white/40">•</span>
+          <span>FREE DELIVERY ON ORDERS ₹999+</span>
+          <span className="text-white/40">•</span>
+          <span>7-DAY REPLACEMENT IF DAMAGED</span>
         </div>
+      </div>
 
+      {/* Sticky Navigation Header */}
+      <header className="sticky top-0 z-50 w-full select-none">
         {/* WhiteLayer Modern Header */}
         <div className="bg-white/95 backdrop-blur-xl border-b border-black/[0.06] transition-all">
           <div className="max-w-[1240px] mx-auto px-4 sm:px-6 h-[66px] flex items-center justify-between gap-4">
