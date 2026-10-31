@@ -123,12 +123,12 @@ export function Navbar() {
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
 
-              <Link href="/" className="flex items-center gap-2.5 group" aria-label="White Layer">
-                <span className="w-8 h-8 rounded-full border border-black/70 flex items-center justify-center text-[12px] font-black tracking-tight text-[#111827]">
+              <Link href="/" className="flex items-center gap-2.5 group shrink-0" aria-label="Flirta by WhiteLayer">
+                <span className="w-8 h-8 rounded-full border border-black/70 flex items-center justify-center text-[12px] font-black tracking-tight text-[#111827] shrink-0">
                   WL
                 </span>
-                <span className="text-[17px] font-black tracking-wider text-[#111827] uppercase">
-                  WHITE LAYER
+                <span className="text-[14px] sm:text-[16px] font-black tracking-wider text-[#111827] uppercase whitespace-nowrap">
+                  FLIRTA BY WHITELAYER
                 </span>
               </Link>
             </div>

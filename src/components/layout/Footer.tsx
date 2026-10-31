@@ -23,9 +23,14 @@ export function Footer() {
         <div className="py-10 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 text-xs">
           {/* Brand & Mission */}
           <div className="col-span-2 md:col-span-2 lg:col-span-1 space-y-3">
-            <span className="font-semibold text-sm tracking-tight text-[#1D1D1F] block">
-              flirta.network
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full border border-black/60 flex items-center justify-center text-[10px] font-black text-[#111827]">
+                WL
+              </span>
+              <span className="font-extrabold text-sm tracking-wide text-[#111827] uppercase">
+                FLIRTA BY WHITELAYER
+              </span>
+            </div>
             <p className="text-[#6E6E73] leading-relaxed text-[11px]">
               Precision engineered lifestyle illumination and desk architecture pieces. Designed for ambient sanctuary workspaces across India.
             </p>

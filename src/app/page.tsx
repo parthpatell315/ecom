@@ -130,7 +130,7 @@ export default async function HomePage() {
               <div className="mb-4">
                 <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white text-[#111827] text-xs font-bold tracking-wide border border-black/10 shadow-2xs">
                   <span className="w-2 h-2 rounded-full bg-[#E61E2A] animate-pulse" />
-                  <span>WHITELAYER STUDIO • ZERO-GRAVITY FLAGSHIP SERIES</span>
+                  <span>FLIRTA BY WHITELAYER • ZERO-GRAVITY FLAGSHIP SERIES</span>
                 </span>
               </div>
 

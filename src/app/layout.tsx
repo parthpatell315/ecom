@@ -22,25 +22,25 @@ const poppins = Poppins({
 
 // Title <= 60 chars, description 140-160 chars, no emoji, no meta keywords
 export const metadata: Metadata = {
-  title: 'flirta.network — Precision Desk Sanctuaries',
+  title: 'FLIRTA BY WHITELAYER — Precision Desk Sanctuaries',
   description:
     'Architectural ambient mood lighting, weighted controller stands, and modular desk accessories. Handcrafted in India with free insured air delivery nationwide.',
-  authors: [{ name: 'flirta.network Studio' }],
+  authors: [{ name: 'FLIRTA BY WHITELAYER' }],
   metadataBase: new URL('https://www.flirta.network'),
   alternates: {
     canonical: 'https://www.flirta.network',
   },
   openGraph: {
-    title: 'flirta.network — Precision Desk Sanctuaries',
+    title: 'FLIRTA BY WHITELAYER — Precision Desk Sanctuaries',
     description:
       'Architectural ambient mood lighting, weighted controller stands, and modular desk accessories. Handcrafted in India with free insured air delivery nationwide.',
-    siteName: 'flirta.network',
+    siteName: 'FLIRTA BY WHITELAYER',
     locale: 'en_IN',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'flirta.network — Precision Desk Sanctuaries',
+    title: 'FLIRTA BY WHITELAYER — Precision Desk Sanctuaries',
     description:
       'Architectural ambient mood lighting, weighted controller stands, and modular desk accessories. Handcrafted in India with free insured air delivery nationwide.',
   },
