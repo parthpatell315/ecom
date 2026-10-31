@@ -4,9 +4,11 @@ import { Poppins } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
+import { WishlistProvider } from '@/context/WishlistContext';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/cart/CartDrawer';
+import { WishlistDrawer } from '@/components/wishlist/WishlistDrawer';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { MetaPixel } from '@/components/analytics/MetaPixel';
 
@@ -84,12 +86,15 @@ export default function RootLayout({
         />
         <AuthProvider>
           <CartProvider>
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <CartDrawer />
-            <AuthModal />
-            <MetaPixel />
+            <WishlistProvider>
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <CartDrawer />
+              <WishlistDrawer />
+              <AuthModal />
+              <MetaPixel />
+            </WishlistProvider>
           </CartProvider>
         </AuthProvider>
       </body>

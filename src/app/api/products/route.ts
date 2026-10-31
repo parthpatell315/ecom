@@ -8,6 +8,9 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get('search');
     const sort = searchParams.get('sort'); // 'price-asc' | 'price-desc' | 'rating' | 'featured'
     const featured = searchParams.get('featured');
+    const inStockOnly = searchParams.get('inStock') === 'true';
+    const minPrice = searchParams.get('minPrice') ? parseInt(searchParams.get('minPrice')!, 10) : null;
+    const maxPrice = searchParams.get('maxPrice') ? parseInt(searchParams.get('maxPrice')!, 10) : null;
 
     const allProducts = await getCachedProducts();
     let filtered: CachedProduct[] = [...allProducts];
@@ -18,6 +21,18 @@ export async function GET(req: NextRequest) {
 
     if (featured === 'true') {
       filtered = filtered.filter((p) => p.isFeatured);
+    }
+
+    if (inStockOnly) {
+      filtered = filtered.filter((p) => p.inStock);
+    }
+
+    if (minPrice !== null && !isNaN(minPrice)) {
+      filtered = filtered.filter((p) => p.priceMinor >= minPrice);
+    }
+
+    if (maxPrice !== null && !isNaN(maxPrice)) {
+      filtered = filtered.filter((p) => p.priceMinor <= maxPrice);
     }
 
     if (search && search.trim() !== '') {
@@ -60,4 +75,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-

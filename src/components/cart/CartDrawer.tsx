@@ -272,7 +272,7 @@ export function CartDrawer() {
 
             {/* Partial COD Notice (Avian Trust Highlight) */}
             <div className="p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-xs text-amber-900 leading-snug">
-              <strong className="font-bold text-amber-950">Partial COD Available:</strong> Pay ₹149 advance via UPI now to reserve courier; balance ₹850 payable at delivery.
+              <strong className="font-bold text-amber-950">Partial COD Available:</strong> Pay ₹149 advance via UPI now to reserve courier; balance {formatCurrency(Math.max(0, finalTotalMinor - 14900))} payable at delivery.
             </div>
 
             {/* Checkout Action Button (Avian Red High-Converting CTA) */}

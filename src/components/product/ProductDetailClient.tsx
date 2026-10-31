@@ -26,8 +26,11 @@ import {
   Play,
   Video,
   MessageCircle,
+  Heart,
 } from 'lucide-react';
 
+import { useWishlist } from '@/context/WishlistContext';
+import { PincodeChecker } from '@/components/product/PincodeChecker';
 import { trackPixelEvent } from '@/components/analytics/MetaPixel';
 import { LEGAL_CONFIG } from '@/config/legal';
 import { SALE_CONFIG, isSaleActive } from '@/config/sale';
@@ -51,6 +54,8 @@ export function ProductDetailClient({
 }: ProductDetailClientProps) {
   const router = useRouter();
   const { addItem, isLoading: isCartLoading } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const isWishlisted = isInWishlist(product.id);
 
   const [selectedVariant, setSelectedVariant] = useState<any>(
     product.variants && product.variants.length > 0 ? product.variants[0] : null
@@ -548,6 +553,29 @@ export function ProductDetailClient({
                       </>
                     )}
                   </button>
+
+                  {/* Wishlist Toggle Button */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      toggleWishlist({
+                        id: product.id,
+                        slug: product.slug,
+                        title: product.title,
+                        priceMinor: effectivePriceMinor,
+                        image: selectedImage || (product.images && product.images[0]?.url) || '',
+                      })
+                    }
+                    className="w-12 h-12 rounded-xl border border-black/10 bg-[#F5F5F7] hover:bg-[#EBEBEF] text-[#1D1D1F] flex items-center justify-center shrink-0 transition-colors cursor-pointer"
+                    aria-label={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
+                    title={isWishlisted ? 'Saved in Wishlist' : 'Add to Wishlist'}
+                  >
+                    <Heart
+                      className={`w-5 h-5 transition-colors ${
+                        isWishlisted ? 'fill-[#E53935] text-[#E53935]' : 'stroke-current text-slate-500'
+                      }`}
+                    />
+                  </button>
                 </div>
 
                 {/* Instant Buy Now (Avian Dark Action Button) */}
@@ -569,6 +597,9 @@ export function ProductDetailClient({
                     </>
                   )}
                 </button>
+
+                {/* Real Pincode Delivery Estimator */}
+                <PincodeChecker />
 
                 {/* Payment & Partial COD Breakdown Card */}
                 <div className="p-4 rounded-2xl bg-[#F5F5F7] border border-black/[0.06] space-y-2 text-xs">
@@ -923,6 +954,27 @@ export function ProductDetailClient({
           </div>
 
           <div className="flex items-center gap-2 flex-1 justify-end">
+            <button
+              type="button"
+              onClick={() =>
+                toggleWishlist({
+                  id: product.id,
+                  slug: product.slug,
+                  title: product.title,
+                  priceMinor: effectivePriceMinor,
+                  image: selectedImage || (product.images && product.images[0]?.url) || '',
+                })
+              }
+              className="h-11 w-11 rounded-xl border border-black/10 bg-[#F5F5F7] text-[#1D1D1F] flex items-center justify-center shrink-0 active:scale-95 transition-all cursor-pointer touch-manipulation"
+              aria-label={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
+            >
+              <Heart
+                className={`w-4 h-4 ${
+                  isWishlisted ? 'fill-[#E53935] text-[#E53935]' : 'stroke-current text-slate-500'
+                }`}
+              />
+            </button>
+
             <button
               type="button"
               onClick={handleAddToCart}

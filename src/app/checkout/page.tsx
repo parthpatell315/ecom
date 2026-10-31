@@ -549,7 +549,7 @@ function CheckoutContent() {
                           </span>
                         </div>
                         <p className="text-[11.5px] text-gray-600 leading-relaxed">
-                          Pay flat <strong>₹999</strong> via dynamic UPI QR code. <strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
+                          Pay flat <strong>{formatCurrency(finalTotalMinor)}</strong> via dynamic UPI QR code. <strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
                         </p>
                         <div className="mt-2 text-[10.5px] text-emerald-700 font-semibold flex items-center gap-1.5 flex-wrap">
                           <Smartphone className="w-3 h-3 text-emerald-600 shrink-0" />
