@@ -70,7 +70,7 @@ export default function AccountPage() {
       {/* Account Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 border-b border-black/[0.06] dark:border-white/[0.08] mb-10">
         <div>
-          <span className="text-xs uppercase tracking-widest text-[#c5a059] font-medium">Customer Sanctuary</span>
+          <span className="text-xs uppercase tracking-widest text-[#E61E2A] font-medium">Customer Sanctuary</span>
           <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white mt-1">
             {profileData?.name || user.name}
           </h1>
@@ -215,7 +215,7 @@ export default function AccountPage() {
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-semibold text-neutral-900 dark:text-neutral-100">{addr.fullName}</span>
                     {addr.isDefault && (
-                      <span className="text-[10px] font-semibold text-[#c5a059] uppercase tracking-wider">
+                      <span className="text-[10px] font-semibold text-[#E61E2A] uppercase tracking-wider">
                         Default
                       </span>
                     )}

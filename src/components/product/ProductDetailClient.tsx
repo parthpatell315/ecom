@@ -1204,7 +1204,7 @@ export function ProductDetailClient({
             >
               <Heart
                 className={`w-4 h-4 ${
-                  isWishlisted ? 'fill-[#E53935] text-[#E53935]' : 'stroke-current text-slate-500'
+                  isWishlisted ? 'fill-[#E61E2A] text-[#E61E2A]' : 'stroke-current text-slate-500'
                 }`}
               />
             </button>

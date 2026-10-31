@@ -65,27 +65,32 @@ export function Footer() {
           {/* Shop Column */}
           <div className="space-y-3">
             <h3 className="font-semibold text-xs text-[#1D1D1F] tracking-tight">
-              Shop
+              Collections
             </h3>
             <ul className="space-y-2 text-[#6E6E73]">
               <li>
-                <Link href="/shop" className="hover:text-[#1D1D1F] transition-colors">
+                <Link href="/shop" className="hover:text-[#E61E2A] transition-colors">
                   All Products
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=lamps" className="hover:text-[#1D1D1F] transition-colors">
+                <Link href="/shop?category=lamps" className="hover:text-[#E61E2A] transition-colors">
                   Ambient Lamps
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=stands" className="hover:text-[#1D1D1F] transition-colors">
+                <Link href="/shop?category=stands" className="hover:text-[#E61E2A] transition-colors">
                   Stands &amp; Docks
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=clocks" className="hover:text-[#1D1D1F] transition-colors">
+                <Link href="/shop?category=clocks" className="hover:text-[#E61E2A] transition-colors">
                   Desk Clocks
+                </Link>
+              </li>
+              <li>
+                <Link href="/shop?category=games" className="hover:text-[#E61E2A] transition-colors">
+                  Board Games &amp; Collectibles
                 </Link>
               </li>
             </ul>
@@ -94,22 +99,27 @@ export function Footer() {
           {/* Account & Orders */}
           <div className="space-y-3">
             <h3 className="font-semibold text-xs text-[#1D1D1F] tracking-tight">
-              Account
+              Customer Support
             </h3>
             <ul className="space-y-2 text-[#6E6E73]">
               <li>
-                <Link href="/tracking" className="hover:text-[#1D1D1F] transition-colors">
+                <Link href="/tracking" className="hover:text-[#E61E2A] transition-colors font-medium text-[#111827]">
                   Track Your Order
                 </Link>
               </li>
               <li>
-                <Link href="/checkout" className="hover:text-[#1D1D1F] transition-colors">
-                  Instant Checkout
+                <Link href="/faq" className="hover:text-[#E61E2A] transition-colors">
+                  Help &amp; FAQs
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="hover:text-[#1D1D1F] transition-colors">
-                  Help &amp; FAQs
+                <Link href="/contact" className="hover:text-[#E61E2A] transition-colors">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="hover:text-[#E61E2A] transition-colors">
+                  About Our Studio
                 </Link>
               </li>
             </ul>
@@ -122,27 +132,27 @@ export function Footer() {
             </h3>
             <ul className="space-y-2 text-[#6E6E73]">
               <li>
-                <Link href="/shipping-policy" className="hover:text-[#1D1D1F] transition-colors">
+                <Link href="/shipping-policy" className="hover:text-[#E61E2A] transition-colors">
                   Shipping &amp; Delivery
                 </Link>
               </li>
               <li>
-                <Link href="/refund-policy" className="hover:text-[#1D1D1F] transition-colors">
-                  Refunds &amp; Returns
+                <Link href="/refund-policy" className="hover:text-[#E61E2A] transition-colors">
+                  7-Day Replacement Policy
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="hover:text-[#1D1D1F] transition-colors">
+                <Link href="/privacy-policy" className="hover:text-[#E61E2A] transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-[#1D1D1F] transition-colors">
+                <Link href="/terms" className="hover:text-[#E61E2A] transition-colors">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/grievance" className="hover:text-[#1D1D1F] transition-colors">
+                <Link href="/grievance" className="hover:text-[#E61E2A] transition-colors">
                   Grievance Officer
                 </Link>
               </li>
@@ -152,7 +162,7 @@ export function Footer() {
           {/* Customer Care */}
           <div className="col-span-2 sm:col-span-1 space-y-3">
             <h3 className="font-semibold text-xs text-[#1D1D1F] tracking-tight">
-              Customer Support
+              Studio Helpdesk
             </h3>
             <div className="space-y-2 text-[#6E6E73] text-[11px]">
               <div>
@@ -161,7 +171,7 @@ export function Footer() {
                   href={SOCIALS.whatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-medium text-[#1D1D1F] hover:text-emerald-700 transition-colors"
+                  className="font-medium text-[#1D1D1F] hover:text-[#E61E2A] transition-colors"
                 >
                   {LEGAL_CONFIG.CARE_PHONE}
                 </a>
@@ -170,13 +180,13 @@ export function Footer() {
                 <span className="block text-[#86868B]">Care Email</span>
                 <a
                   href={`mailto:${LEGAL_CONFIG.CARE_EMAIL}`}
-                  className="font-medium text-[#1D1D1F] hover:underline"
+                  className="font-medium text-[#1D1D1F] hover:text-[#E61E2A] transition-colors"
                 >
                   {LEGAL_CONFIG.CARE_EMAIL}
                 </a>
               </div>
               <div>
-                <span className="block text-[#86868B]">Business Hours</span>
+                <span className="block text-[#86868B]">Support Hours</span>
                 <span className="text-[#1D1D1F]">{LEGAL_CONFIG.CARE_HOURS}</span>
               </div>
             </div>

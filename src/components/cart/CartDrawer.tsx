@@ -77,7 +77,7 @@ export function CartDrawer() {
             <h2 className="text-lg font-bold text-[#111827] tracking-tight">
               My Cart
             </h2>
-            <span className="text-xs font-bold text-white bg-[#E53935] px-2.5 py-0.5 rounded-full shadow-xs">
+            <span className="text-xs font-bold text-white bg-[#E61E2A] px-2.5 py-0.5 rounded-full shadow-xs">
               {totalItems} {totalItems === 1 ? 'item' : 'items'}
             </span>
           </div>
@@ -100,14 +100,14 @@ export function CartDrawer() {
                   <Sparkles className="w-4 h-4 text-emerald-600" /> Free Pan-India Delivery Unlocked!
                 </span>
               ) : (
-                <>Add <strong className="text-[#E53935] font-bold">{formatCurrency(amountToFreeShipping)}</strong> more for Free Shipping</>
+                <>Add <strong className="text-[#E61E2A] font-bold">{formatCurrency(amountToFreeShipping)}</strong> more for Free Shipping</>
               )}
             </span>
-            <span className="text-xs font-bold text-[#E53935]">{freeShippingProgress}%</span>
+            <span className="text-xs font-bold text-[#E61E2A]">{freeShippingProgress}%</span>
           </div>
           <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#E53935] to-[#EF4444] transition-all duration-300 rounded-full"
+              className="h-full bg-[#E61E2A] transition-all duration-300 rounded-full"
               style={{ width: `${freeShippingProgress}%` }}
             />
           </div>
@@ -126,7 +126,7 @@ export function CartDrawer() {
               </p>
               <button
                 onClick={closeCart}
-                className="h-11 px-8 text-xs font-bold uppercase tracking-wider rounded-xl bg-[#E53935] text-white hover:bg-[#D32F2F] transition-all shadow-md active:scale-95 cursor-pointer"
+                className="h-11 px-8 text-xs font-bold uppercase tracking-wider rounded-xl bg-[#E61E2A] text-white hover:bg-[#C81420] transition-all shadow-md active:scale-95 cursor-pointer"
               >
                 Start Shopping
               </button>
@@ -161,7 +161,7 @@ export function CartDrawer() {
                       </h4>
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="text-gray-400 hover:text-[#E53935] transition-colors p-1"
+                        className="text-gray-400 hover:text-[#E61E2A] transition-colors p-1"
                         aria-label="Remove item"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -232,19 +232,19 @@ export function CartDrawer() {
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                     placeholder="Coupon code (e.g. LAUNCH10)"
-                    className="flex-1 px-3.5 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-[#E53935]"
+                    className="flex-1 px-3.5 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-[#E61E2A]"
                   />
                   <button
                     type="submit"
                     disabled={isValidatingCoupon || !couponInput.trim()}
-                    className="px-4 py-2 bg-[#111827] text-white rounded-xl text-xs font-bold hover:bg-[#E53935] transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-[#111827] text-white rounded-xl text-xs font-bold hover:bg-[#E61E2A] transition-colors disabled:opacity-50"
                   >
                     Apply
                   </button>
                 </form>
               )}
               {couponError && (
-                <p className="text-[11px] text-[#E53935] mt-1 font-semibold">{couponError}</p>
+                <p className="text-[11px] text-[#E61E2A] mt-1 font-semibold">{couponError}</p>
               )}
             </div>
 
@@ -270,16 +270,16 @@ export function CartDrawer() {
               </div>
             </div>
 
-            {/* Partial COD Notice (Avian Trust Highlight) */}
+            {/* Partial COD Notice (WhiteLayer Highlight) */}
             <div className="p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-xs text-amber-900 leading-snug">
               <strong className="font-bold text-amber-950">Partial COD Available:</strong> Pay ₹149 advance via UPI now to reserve courier; balance {formatCurrency(Math.max(0, finalTotalMinor - 14900))} payable at delivery.
             </div>
 
-            {/* Checkout Action Button (Avian Red High-Converting CTA) */}
+            {/* Checkout Action Button (WhiteLayer Red CTA) */}
             <Link
               href="/checkout"
               onClick={closeCart}
-              className="w-full h-12 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider bg-[#E53935] hover:bg-[#D32F2F] text-white transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
+              className="w-full h-12 rounded-xl text-xs sm:text-sm font-extrabold uppercase tracking-wider bg-[#E61E2A] hover:bg-[#C81420] text-white transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
             >
               <span>Proceed to Checkout</span>
               <ArrowRight className="w-4 h-4" />

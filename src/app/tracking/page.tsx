@@ -74,17 +74,17 @@ function TrackingContent() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
       <div className="text-center max-w-xl mx-auto mb-10">
-        <span className="text-xs uppercase tracking-widest text-[#c5a059] font-medium">Studio Dispatch</span>
-        <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white mt-1">
-          Track Your Commission
+        <span className="text-xs uppercase tracking-widest text-[#E61E2A] font-bold">Studio Dispatch</span>
+        <h1 className="text-3xl font-bold tracking-tight text-[#111827] mt-1">
+          Track Your Order
         </h1>
-        <p className="text-xs sm:text-sm text-neutral-500 mt-2">
-          Enter your order reference number (e.g. FL-2026-8MZHM) to trace calibration and transit.
+        <p className="text-xs sm:text-sm text-[#6E6E73] mt-2">
+          Enter your order reference number (e.g. FL-2026-8MZHM) to trace courier air dispatch and delivery.
         </p>
       </div>
 
       {/* Search Input Card */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-[#121212] border border-black/[0.06] dark:border-white/[0.08] shadow-xs mb-10">
+      <div className="p-6 rounded-2xl bg-white border border-black/[0.08] shadow-xs mb-10">
         <form onSubmit={handleTrack} className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
             <label className="block text-[11px] font-medium text-neutral-500 mb-1">Order Reference *</label>
@@ -94,18 +94,18 @@ function TrackingContent() {
               placeholder="e.g. FL-2026-8MZHM"
               value={orderNumber}
               onChange={(e) => setOrderNumber(e.target.value.toUpperCase())}
-              className="w-full px-3.5 py-2 text-sm font-mono uppercase tracking-wider rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none"
+              className="w-full px-3.5 py-2.5 text-sm font-mono uppercase tracking-wider rounded-xl bg-neutral-50 border border-neutral-200 text-[#111827] focus:outline-none focus:border-[#E61E2A] focus:ring-1 focus:ring-[#E61E2A]"
             />
           </div>
 
           <div className="flex-1">
-            <label className="block text-[11px] font-medium text-neutral-500 mb-1">Customer Email (Optional for full details)</label>
+            <label className="block text-[11px] font-medium text-neutral-500 mb-1">Customer Email (Optional)</label>
             <input
               type="email"
               placeholder="you@domain.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3.5 py-2 text-sm rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-100 focus:outline-none"
+              className="w-full px-3.5 py-2.5 text-sm rounded-xl bg-neutral-50 border border-neutral-200 text-[#111827] focus:outline-none focus:border-[#E61E2A] focus:ring-1 focus:ring-[#E61E2A]"
             />
           </div>
 
@@ -113,10 +113,10 @@ function TrackingContent() {
             <button
               type="submit"
               disabled={loading || !orderNumber.trim()}
-              className="w-full sm:w-auto py-2.5 px-6 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium hover:bg-black dark:hover:bg-neutral-100 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full sm:w-auto h-11 px-6 rounded-xl bg-[#E61E2A] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#C81420] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-              Track Piece
+              <span>Track Order</span>
             </button>
           </div>
         </form>
@@ -176,7 +176,7 @@ function TrackingContent() {
                         <h4
                           className={`text-xs font-medium ${
                             isCurrent
-                              ? 'text-[#c5a059] font-semibold'
+                              ? 'text-[#E61E2A] font-semibold'
                               : isDone
                               ? 'text-neutral-900 dark:text-neutral-100'
                               : 'text-neutral-400'

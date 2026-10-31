@@ -286,7 +286,7 @@ function CheckoutContent() {
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-[#FAFBFD] flex flex-col items-center justify-center p-4">
-        <Loader2 className="w-8 h-8 animate-spin text-[#D9232D] mb-3" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#E61E2A] mb-3" />
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
           Loading your bag...
         </p>
@@ -301,7 +301,7 @@ function CheckoutContent() {
         <p className="text-xs text-gray-500 mb-6">Add architectural pieces to your cart before proceeding to checkout.</p>
         <Link
           href="/shop"
-          className="py-2.5 px-6 rounded-full bg-[#D9232D] text-white text-xs font-bold"
+          className="py-2.5 px-6 rounded-full bg-[#E61E2A] text-white text-xs font-bold"
         >
           Explore Collection
         </Link>
@@ -314,7 +314,7 @@ function CheckoutContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
         {/* Checkout Header */}
         <div className="mb-10 text-center max-w-xl mx-auto">
-          <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#D9232D] uppercase tracking-wider mb-2">
+          <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#E61E2A] uppercase tracking-wider mb-2">
             <Lock className="w-3.5 h-3.5" />
             <span>256-Bit SSL Encrypted Studio Checkout</span>
           </div>
@@ -357,7 +357,7 @@ function CheckoutContent() {
                       value={formData.fullName}
                       onChange={handleInputChange}
                       placeholder="Arjun Mehta"
-                      className="w-full px-3.5 py-2 text-sm rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#D9232D] focus:border-[#D9232D]"
+                      className="w-full px-3.5 py-2 text-sm rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#E61E2A] focus:border-[#E61E2A]"
                     />
                   </div>
 
@@ -372,7 +372,7 @@ function CheckoutContent() {
                       value={formData.email}
                       onChange={handleInputChange}
                       placeholder="arjun@studio.com"
-                      className="w-full px-3.5 py-2 text-sm rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#D9232D] focus:border-[#D9232D]"
+                      className="w-full px-3.5 py-2 text-sm rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#E61E2A] focus:border-[#E61E2A]"
                     />
                   </div>
 
@@ -387,7 +387,7 @@ function CheckoutContent() {
                       value={formData.phone}
                       onChange={handleInputChange}
                       placeholder="+91 98200 12345"
-                      className="w-full px-3.5 py-2 text-sm rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#D9232D] focus:border-[#D9232D]"
+                      className="w-full px-3.5 py-2 text-sm rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#E61E2A] focus:border-[#E61E2A]"
                     />
                   </div>
                 </div>
@@ -411,7 +411,7 @@ function CheckoutContent() {
                       value={formData.addressLine1}
                       onChange={handleInputChange}
                       placeholder="402, Lotus Grandeur, 100 Feet Road"
-                      className="w-full px-3.5 py-2 text-sm rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#D9232D] focus:border-[#D9232D]"
+                      className="w-full px-3.5 py-2 text-sm rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#E61E2A] focus:border-[#E61E2A]"
                     />
                   </div>
 
@@ -425,7 +425,7 @@ function CheckoutContent() {
                       value={formData.addressLine2}
                       onChange={handleInputChange}
                       placeholder="Indiranagar, Near Metro"
-                      className="w-full px-3.5 py-2 text-sm rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#D9232D]"
+                      className="w-full px-3.5 py-2 text-sm rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-1 focus:ring-[#E61E2A]"
                     />
                   </div>
 
@@ -490,7 +490,7 @@ function CheckoutContent() {
                       value={formData.notes}
                       onChange={handleInputChange}
                       placeholder="Leave with concierge or ring studio bell."
-                      className="w-full px-3.5 py-2 text-sm rounded-lg bg-gray-50 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#D9232D]"
+                      className="w-full px-3.5 py-2 text-sm rounded-lg bg-gray-50 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#E61E2A]"
                     />
                   </div>
                 </div>
@@ -519,18 +519,18 @@ function CheckoutContent() {
                     onClick={() => setPaymentMethod('UPI')}
                     className={`p-3.5 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
                       paymentMethod === 'UPI'
-                        ? 'border-[#D9232D] bg-[#FFF8F8]/60 shadow-xs ring-1 ring-[#D9232D]/10'
+                        ? 'border-[#E61E2A] bg-[#FFF8F8]/60 shadow-xs ring-1 ring-[#E61E2A]/10'
                         : 'border-gray-200 bg-white hover:border-gray-300'
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div
                         className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${
-                          paymentMethod === 'UPI' ? 'border-[#D9232D]' : 'border-gray-300'
+                          paymentMethod === 'UPI' ? 'border-[#E61E2A]' : 'border-gray-300'
                         }`}
                       >
                         {paymentMethod === 'UPI' && (
-                          <div className="w-2 h-2 rounded-full bg-[#D9232D]" />
+                          <div className="w-2 h-2 rounded-full bg-[#E61E2A]" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -544,7 +544,7 @@ function CheckoutContent() {
                               Save ₹99 COD Fee
                             </span>
                           </div>
-                          <span className="text-xs sm:text-sm font-extrabold text-[#D9232D] shrink-0">
+                          <span className="text-xs sm:text-sm font-extrabold text-[#E61E2A] shrink-0">
                             {formatCurrency(finalTotalMinor)}
                           </span>
                         </div>
@@ -564,18 +564,18 @@ function CheckoutContent() {
                     onClick={() => setPaymentMethod('PARTIAL_COD')}
                     className={`p-3.5 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
                       paymentMethod === 'PARTIAL_COD'
-                        ? 'border-[#D9232D] bg-[#FFF8F8]/60 shadow-xs ring-1 ring-[#D9232D]/10'
+                        ? 'border-[#E61E2A] bg-[#FFF8F8]/60 shadow-xs ring-1 ring-[#E61E2A]/10'
                         : 'border-gray-200 bg-white hover:border-gray-300'
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div
                         className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${
-                          paymentMethod === 'PARTIAL_COD' ? 'border-[#D9232D]' : 'border-gray-300'
+                          paymentMethod === 'PARTIAL_COD' ? 'border-[#E61E2A]' : 'border-gray-300'
                         }`}
                       >
                         {paymentMethod === 'PARTIAL_COD' && (
-                          <div className="w-2 h-2 rounded-full bg-[#D9232D]" />
+                          <div className="w-2 h-2 rounded-full bg-[#E61E2A]" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -588,7 +588,7 @@ function CheckoutContent() {
                               Pay ₹149 Advance
                             </span>
                           </div>
-                          <span className="text-xs sm:text-sm font-extrabold text-[#D9232D] shrink-0">
+                          <span className="text-xs sm:text-sm font-extrabold text-[#E61E2A] shrink-0">
                             ₹149 Now + {formatCurrency(Math.max(0, finalTotalMinor - 14900))} Doorstep
                           </span>
                         </div>
@@ -600,9 +600,9 @@ function CheckoutContent() {
                         <div className="mt-2.5 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] space-y-1">
                           <div className="flex items-center justify-between text-amber-900">
                             <span className="font-medium flex items-center gap-1">
-                              <Zap className="w-3 h-3 text-[#D9232D]" /> Advance Reservation Fee:
+                              <Zap className="w-3 h-3 text-[#E61E2A]" /> Advance Reservation Fee:
                             </span>
-                            <strong className="font-bold text-[#D9232D]">₹149.00</strong>
+                            <strong className="font-bold text-[#E61E2A]">₹149.00</strong>
                           </div>
                           <div className="flex items-center justify-between text-amber-900 pt-1 border-t border-amber-500/15">
                             <span className="font-medium flex items-center gap-1">
@@ -628,7 +628,7 @@ function CheckoutContent() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3.5 sm:py-4 px-5 rounded-2xl bg-[#D9232D] hover:bg-[#b91c1c] active:scale-[0.98] transition-all text-white shadow-lg shadow-[#D9232D]/20 disabled:opacity-50 cursor-pointer flex flex-col items-center justify-center gap-0.5 select-none touch-manipulation"
+                className="w-full py-3.5 sm:py-4 px-5 rounded-2xl bg-[#E61E2A] hover:bg-[#C81420] active:scale-[0.98] transition-all text-white shadow-lg shadow-[#E61E2A]/20 disabled:opacity-50 cursor-pointer flex flex-col items-center justify-center gap-0.5 select-none touch-manipulation"
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-2 text-sm font-semibold">
@@ -693,13 +693,13 @@ function CheckoutContent() {
                       placeholder="Coupon (e.g. LAUNCH10)"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                      className="flex-1 py-2 px-3 text-xs uppercase tracking-wider rounded-lg bg-gray-50 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#D9232D]"
+                      className="flex-1 py-2 px-3 text-xs uppercase tracking-wider rounded-lg bg-gray-50 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#E61E2A]"
                     />
                     <button
                       type="button"
                       onClick={() => validateCoupon(couponCode)}
                       disabled={isValidatingCoupon || !couponCode.trim()}
-                      className="py-2 px-4 rounded-lg bg-[#D9232D] text-white text-xs font-bold hover:bg-[#b91c1c] disabled:opacity-50 transition-colors"
+                      className="py-2 px-4 rounded-lg bg-[#E61E2A] text-white text-xs font-bold hover:bg-[#C81420] disabled:opacity-50 transition-colors"
                     >
                       {isValidatingCoupon ? '...' : 'Apply'}
                     </button>
@@ -743,19 +743,19 @@ function CheckoutContent() {
                   </div>
                   <div className="flex justify-between text-sm font-bold text-gray-900 pt-3 border-t border-gray-200">
                     <span>Payable Total</span>
-                    <span className="text-base text-[#D9232D]">{formatCurrency(finalTotalMinor)}</span>
+                    <span className="text-base text-[#E61E2A]">{formatCurrency(finalTotalMinor)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Trust Assurances */}
-              <div className="p-4 rounded-2xl bg-[#FFF5F6] border border-[#D9232D]/15 space-y-2 text-xs text-gray-600">
+              <div className="p-4 rounded-2xl bg-[#FFF5F6] border border-[#E61E2A]/15 space-y-2 text-xs text-gray-600">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#D9232D] flex-shrink-0" />
+                  <ShieldCheck className="w-4 h-4 text-[#E61E2A] flex-shrink-0" />
                   <span>0% Fee Direct UPI • 256-bit Bank Grade Security</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Truck className="w-4 h-4 text-[#D9232D] flex-shrink-0" />
+                  <Truck className="w-4 h-4 text-[#E61E2A] flex-shrink-0" />
                   <span>Express courier tracking dispatched within 24 hours</span>
                 </div>
               </div>

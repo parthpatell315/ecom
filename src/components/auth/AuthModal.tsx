@@ -65,7 +65,7 @@ export function AuthModal() {
         </button>
 
         <div className="text-center mb-6">
-          <span className="text-xs uppercase tracking-widest text-[#c5a059] font-medium">flirta.network Studio</span>
+          <span className="text-xs uppercase tracking-widest text-[#E61E2A] font-medium">flirta.network Studio</span>
           <h2 className="text-2xl font-medium tracking-tight mt-1 text-neutral-900 dark:text-neutral-100">
             {isRegistering ? 'Create your Account' : 'Welcome Back'}
           </h2>
@@ -150,7 +150,7 @@ export function AuthModal() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-2.5 px-4 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium hover:bg-black dark:hover:bg-neutral-100 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full mt-2 h-11 px-4 rounded-xl bg-[#E61E2A] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#C81420] transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-xs cursor-pointer"
           >
             {loading ? 'Processing...' : isRegistering ? 'Create Account' : 'Sign In'}
             <ArrowRight className="w-4 h-4" />

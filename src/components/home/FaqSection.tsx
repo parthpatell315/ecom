@@ -16,14 +16,15 @@ export function FaqSection() {
       <div className="max-w-[800px] mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#86868B] block mb-1">
-            Questions &amp; Answers
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEF2F2] text-[#E61E2A] text-xs font-bold uppercase tracking-wider mb-3">
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>Questions &amp; Answers</span>
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#1D1D1F]">
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#111827]">
             Frequently Asked Questions
           </h2>
           <p className="text-sm text-[#6E6E73] mt-2">
-            Everything you need to know about our ambient illumination pieces, shipping, and guarantees.
+            Everything you need to know about our levitation tech, 3D printing craft, shipping, and guarantees.
           </p>
         </div>
 

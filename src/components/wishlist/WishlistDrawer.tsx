@@ -30,9 +30,9 @@ export function WishlistDrawer() {
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white">
           <div className="flex items-center gap-2.5">
-            <Heart className="w-5 h-5 text-[#E53935] fill-[#E53935]" />
+            <Heart className="w-5 h-5 text-[#E61E2A] fill-[#E61E2A]" />
             <h2 className="text-lg font-bold text-[#111827] tracking-tight">Saved Items</h2>
-            <span className="text-xs font-bold text-white bg-[#E53935] px-2.5 py-0.5 rounded-full shadow-xs">
+            <span className="text-xs font-bold text-white bg-[#E61E2A] px-2.5 py-0.5 rounded-full shadow-xs">
               {items.length}
             </span>
           </div>
@@ -88,7 +88,7 @@ export function WishlistDrawer() {
                       <Link
                         href={`/product/${item.slug}`}
                         onClick={closeWishlist}
-                        className="text-xs font-bold text-[#111827] hover:text-[#E53935] transition-colors line-clamp-1"
+                        className="text-xs font-bold text-[#111827] hover:text-[#E61E2A] transition-colors line-clamp-1"
                       >
                         {item.title}
                       </Link>
@@ -119,7 +119,7 @@ export function WishlistDrawer() {
                         closeWishlist();
                         openCart();
                       }}
-                      className="flex-1 h-8 rounded-lg bg-[#E53935] hover:bg-[#D32F2F] text-white text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors"
+                      className="flex-1 h-8 rounded-lg bg-[#E61E2A] hover:bg-[#C81420] text-white text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors"
                     >
                       <ShoppingBag className="w-3 h-3" />
                       <span>Move to Bag</span>

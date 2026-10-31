@@ -28,7 +28,7 @@ function OrderSuccessContent() {
         particleCount: 80,
         spread: 60,
         origin: { y: 0.6 },
-        colors: ['#c5a059', '#1d1d1f', '#d4af37'],
+        colors: ['#E61E2A', '#1d1d1f', '#d4af37'],
       });
     } catch {
       // ignore
@@ -115,7 +115,7 @@ function OrderSuccessContent() {
         <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
           <CheckCircle2 className="w-8 h-8" />
         </div>
-        <span className="text-xs uppercase tracking-widest text-[#c5a059] font-medium">
+        <span className="text-xs uppercase tracking-widest text-[#E61E2A] font-medium">
           {order?.status === 'CONFIRMED' ? 'Order Confirmed & Verified' : 'Order Placed • Payment Submitted'}
         </span>
         <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white mt-1">
@@ -129,7 +129,7 @@ function OrderSuccessContent() {
           {orderNumber && (
             <div className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-neutral-100 dark:bg-neutral-900 text-xs font-mono font-medium text-neutral-800 dark:text-neutral-200 border border-black/5 dark:border-white/5">
               <span>Order Reference:</span>
-              <span className="text-[#c5a059] font-bold">{orderNumber}</span>
+              <span className="text-[#E61E2A] font-bold">{orderNumber}</span>
             </div>
           )}
           {utrParam && (
@@ -259,7 +259,7 @@ function OrderSuccessContent() {
                   <span className="font-mono text-neutral-900 dark:text-neutral-100 font-medium">{order.trackingNumber}</span>
                 </div>
               ) : (
-                <p className="text-[11px] text-[#c5a059] mt-3">
+                <p className="text-[11px] text-[#E61E2A] mt-3">
                   Tracking number will be sent via SMS / WhatsApp once dispatched.
                 </p>
               )}
@@ -269,19 +269,19 @@ function OrderSuccessContent() {
       )}
 
       {/* Action Buttons */}
-      <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 text-xs font-medium">
+      <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 text-xs">
         <Link
           href={`/tracking?orderNumber=${orderNumber || ''}`}
-          className="w-full sm:w-auto py-2.5 px-6 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 flex items-center justify-center gap-2 hover:bg-black dark:hover:bg-neutral-100 transition-colors"
+          className="w-full sm:w-auto h-11 px-6 rounded-xl bg-[#E61E2A] text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#C81420] transition-colors shadow-xs"
         >
           <span>Track Live Progress</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
         <Link
           href="/shop"
-          className="w-full sm:w-auto py-2.5 px-6 rounded-full border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-900 flex items-center justify-center gap-2 transition-colors"
+          className="w-full sm:w-auto h-11 px-6 rounded-xl border border-black/10 bg-white text-[#111827] font-extrabold text-xs uppercase tracking-wider hover:bg-neutral-50 flex items-center justify-center gap-2 transition-colors shadow-2xs"
         >
-          Explore More Pieces
+          <span>Explore More Pieces</span>
         </Link>
       </div>
     </div>

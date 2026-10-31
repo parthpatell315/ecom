@@ -180,7 +180,7 @@ export default function AdminPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 border-b border-black/[0.06] dark:border-white/[0.08] mb-10">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs uppercase tracking-widest text-[#c5a059] font-medium">flirta.network Command Center</span>
+            <span className="text-xs uppercase tracking-widest text-[#E61E2A] font-medium">flirta.network Command Center</span>
             <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
               OPERATIONS ACTIVE
             </span>

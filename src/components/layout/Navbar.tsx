@@ -72,7 +72,7 @@ export function Navbar() {
         <div className="bg-[#111827] text-white text-[11.5px] font-semibold tracking-wide py-2 px-4 text-center border-b border-white/10">
           <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
             {saleActive ? (
-              <Clock className="w-3.5 h-3.5 text-[#E53935] animate-pulse" />
+              <Clock className="w-3.5 h-3.5 text-[#E61E2A] animate-pulse" />
             ) : (
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             )}
@@ -95,64 +95,72 @@ export function Navbar() {
               </button>
 
               <Link href="/" className="flex items-center gap-2.5 group" aria-label="flirta.network">
-                <span className="w-8 h-8 rounded-xl bg-[#111827] text-white flex items-center justify-center text-[13px] font-black tracking-tight shadow-xs group-hover:bg-[#E53935] transition-colors">
+                <span className="w-8 h-8 rounded-xl bg-[#111827] text-white flex items-center justify-center text-[13px] font-black tracking-tight shadow-xs group-hover:bg-[#E61E2A] transition-colors">
                   fn
                 </span>
                 <span className="text-[19px] font-bold tracking-tight text-[#111827]">
-                  flirta<span className="text-[#E53935]">.network</span>
+                  flirta<span className="text-[#E61E2A]">.network</span>
                 </span>
               </Link>
             </div>
 
-            {/* Center: Apple-style Minimal Horizontal Navigation */}
-            <nav className="hidden md:flex items-center gap-7 text-[13px] font-medium tracking-tight">
+            {/* Center: WhiteLayer Minimal Horizontal Navigation */}
+            <nav className="hidden md:flex items-center gap-6 text-[13px] font-semibold tracking-tight">
               <Link
                 href="/shop"
-                className={`transition-colors hover:text-[#E53935] ${
-                  pathname === '/shop' ? 'text-[#E53935] font-bold' : 'text-[#1D1D1F]'
+                className={`transition-colors hover:text-[#E61E2A] ${
+                  pathname === '/shop' ? 'text-[#E61E2A] font-bold' : 'text-[#1D1D1F]'
                 }`}
               >
                 Store
               </Link>
               <Link
                 href="/shop?category=lamps"
-                className={`transition-colors hover:text-[#E53935] ${
-                  pathname.includes('lamps') ? 'text-[#E53935] font-bold' : 'text-[#6E6E73]'
+                className={`transition-colors hover:text-[#E61E2A] ${
+                  pathname.includes('lamps') ? 'text-[#E61E2A] font-bold' : 'text-[#6E6E73]'
                 }`}
               >
-                Lamps &amp; Illumination
+                Lamps
               </Link>
               <Link
                 href="/shop?category=stands"
-                className={`transition-colors hover:text-[#E53935] ${
-                  pathname.includes('stands') ? 'text-[#E53935] font-bold' : 'text-[#6E6E73]'
+                className={`transition-colors hover:text-[#E61E2A] ${
+                  pathname.includes('stands') ? 'text-[#E61E2A] font-bold' : 'text-[#6E6E73]'
                 }`}
               >
-                Stands &amp; Docks
+                Stands
               </Link>
               <Link
                 href="/shop?category=clocks"
-                className={`transition-colors hover:text-[#E53935] ${
-                  pathname.includes('clocks') ? 'text-[#E53935] font-bold' : 'text-[#6E6E73]'
+                className={`transition-colors hover:text-[#E61E2A] ${
+                  pathname.includes('clocks') ? 'text-[#E61E2A] font-bold' : 'text-[#6E6E73]'
                 }`}
               >
                 Clocks
               </Link>
               <Link
                 href="/about"
-                className={`transition-colors hover:text-[#E53935] ${
-                  pathname === '/about' ? 'text-[#E53935] font-bold' : 'text-[#6E6E73]'
+                className={`transition-colors hover:text-[#E61E2A] ${
+                  pathname === '/about' ? 'text-[#E61E2A] font-bold' : 'text-[#6E6E73]'
                 }`}
               >
                 About
               </Link>
               <Link
                 href="/contact"
-                className={`transition-colors hover:text-[#E53935] ${
-                  pathname === '/contact' ? 'text-[#E53935] font-bold' : 'text-[#6E6E73]'
+                className={`transition-colors hover:text-[#E61E2A] ${
+                  pathname === '/contact' ? 'text-[#E61E2A] font-bold' : 'text-[#6E6E73]'
                 }`}
               >
                 Support
+              </Link>
+              <Link
+                href="/tracking"
+                className={`transition-colors hover:text-[#E61E2A] ${
+                  pathname === '/tracking' ? 'text-[#E61E2A] font-bold' : 'text-[#6E6E73]'
+                }`}
+              >
+                Track Order
               </Link>
             </nav>
 
@@ -179,7 +187,7 @@ export function Navbar() {
               >
                 <Heart className="w-4 h-4" />
                 {totalWishlist > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#E53935] text-white text-[10px] font-bold flex items-center justify-center pointer-events-none shadow-xs">
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#E61E2A] text-white text-[10px] font-bold flex items-center justify-center pointer-events-none shadow-xs">
                     {totalWishlist}
                   </span>
                 )}
@@ -263,6 +271,13 @@ export function Navbar() {
               >
                 Collectibles &amp; Games
               </Link>
+              <Link
+                href="/tracking"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2.5 text-sm font-semibold text-[#E61E2A] hover:underline"
+              >
+                Track Your Order
+              </Link>
 
               <div className="pt-3 flex gap-2">
                 <button
@@ -273,7 +288,7 @@ export function Navbar() {
                   }}
                   className="flex-1 h-10 rounded-xl bg-[#F5F5F7] text-xs font-semibold text-[#111827] flex items-center justify-center gap-1.5"
                 >
-                  <Heart className="w-3.5 h-3.5 text-[#E53935]" />
+                  <Heart className="w-3.5 h-3.5 text-[#E61E2A]" />
                   <span>Wishlist ({totalWishlist})</span>
                 </button>
                 <Link

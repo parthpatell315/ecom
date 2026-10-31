@@ -16,12 +16,12 @@
   --surface-secondary: #F8FAFC;
   --border: rgba(0, 0, 0, 0.08);
   --border-subtle: #E2E8F0;
-  --avian-red: #E53935;
-  --avian-red-hover: #D32F2F;
+  --avian-red: #E61E2A;
+  --avian-red-hover: #C81420;
   --avian-green: #16A34A;
   --avian-green-bg: #DCFCE7;
-  --brand-accent: #E53935;
-  --brand-accent-hover: #D32F2F;
+  --brand-accent: #E61E2A;
+  --brand-accent-hover: #C81420;
 }
 
 /* Modern Geometric Typography Stack (Avian Experiences Inspired) */

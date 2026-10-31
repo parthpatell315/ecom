@@ -109,7 +109,7 @@ export default async function HomePage() {
           <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
             {/* Pill Eyebrow */}
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white text-[#1D1D1F] text-xs font-semibold tracking-normal border border-black/[0.08] shadow-apple mb-5">
-              <Sparkles className="w-3.5 h-3.5 text-[#E53935]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#E61E2A]" />
               <span>Futuristic Tech &amp; Ambient Architecture</span>
             </span>
 
@@ -128,7 +128,7 @@ export default async function HomePage() {
             <div className="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto mb-12">
               <Link
                 href="/shop"
-                className="w-full sm:w-auto h-12 px-8 rounded-2xl bg-[#E53935] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#D32F2F] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer select-none"
+                className="w-full sm:w-auto h-12 px-8 rounded-2xl bg-[#E61E2A] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#C81420] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer select-none"
               >
                 <span>Explore Collection</span>
                 <ArrowRight className="w-4 h-4" />
@@ -137,7 +137,7 @@ export default async function HomePage() {
               {levitatingLamp && (
                 <Link
                   href={`/product/${levitatingLamp.slug}`}
-                  className="w-full sm:w-auto h-12 px-7 rounded-2xl bg-white text-[#111827] font-bold text-xs uppercase tracking-wider border border-black/10 hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer select-none"
+                  className="w-full sm:w-auto h-12 px-7 rounded-2xl bg-white text-[#111827] font-extrabold text-xs uppercase tracking-wider border border-black/10 hover:bg-slate-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer select-none"
                 >
                   <Play className="w-3.5 h-3.5 fill-[#111827]" />
                   <span>See Floating Display</span>
@@ -172,7 +172,7 @@ export default async function HomePage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="hidden sm:inline text-[#86868B]">15–20mm Elevation</span>
-                    <span className="text-[#E53935] font-bold group-hover:underline flex items-center gap-1">
+                    <span className="text-[#E61E2A] font-bold group-hover:underline flex items-center gap-1">
                       <span>View Flagship</span>
                       <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                     </span>
@@ -180,6 +180,51 @@ export default async function HomePage() {
                 </div>
               </Link>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* WhiteLayer 4 Trust Pillars */}
+      <section className="border-b border-black/[0.06] bg-[#FAFAFA] py-6" aria-label="Brand Guarantees">
+        <div className="max-w-[1180px] mx-auto px-4 sm:px-6 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-black/[0.04] shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-[#FEF2F2] flex items-center justify-center text-[#E61E2A] shrink-0">
+              <Truck className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-[#111827]">Free Pan-India Delivery</h4>
+              <p className="text-[11px] text-[#6E6E73] mt-0.5">Air courier on all prepaid orders</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-black/[0.04] shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-[#FEF2F2] flex items-center justify-center text-[#E61E2A] shrink-0">
+              <Layers className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-[#111827]">0.12mm Micro Precision</h4>
+              <p className="text-[11px] text-[#6E6E73] mt-0.5">Printed in renewable biopolymer</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-black/[0.04] shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-[#FEF2F2] flex items-center justify-center text-[#E61E2A] shrink-0">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-[#111827]">7-Day Studio Replacement</h4>
+              <p className="text-[11px] text-[#6E6E73] mt-0.5">100% transit damage guarantee</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-black/[0.04] shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-[#FEF2F2] flex items-center justify-center text-[#E61E2A] shrink-0">
+              <Zap className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-[#111827]">Partial COD Supported</h4>
+              <p className="text-[11px] text-[#6E6E73] mt-0.5">Pay ₹149 advance, balance at door</p>
+            </div>
           </div>
         </div>
       </section>
@@ -216,7 +261,7 @@ export default async function HomePage() {
 
               {/* Product Information & Highlights */}
               <div className="lg:col-span-6 flex flex-col items-start">
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#E53935] mb-2 flex items-center gap-1.5">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#E61E2A] mb-2 flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5" /> Iconic Collectible Illumination
                 </span>
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111827] leading-tight mb-4">
@@ -243,7 +288,7 @@ export default async function HomePage() {
                 <div className="flex items-center gap-4 flex-wrap">
                   <Link
                     href={`/product/${coreReactor.slug}`}
-                    className="h-12 px-7 rounded-2xl bg-[#111827] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#E53935] active:scale-95 transition-all flex items-center gap-2 shadow-sm cursor-pointer select-none"
+                    className="h-12 px-7 rounded-2xl bg-[#111827] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#E61E2A] active:scale-95 transition-all flex items-center gap-2 shadow-sm cursor-pointer select-none"
                   >
                     <span>View Product • {formatCurrency(coreReactor.priceMinor)}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -320,9 +365,9 @@ export default async function HomePage() {
                   />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#111827] group-hover:text-[#E53935] transition-colors flex items-center justify-between">
+                  <h3 className="text-base font-bold text-[#111827] group-hover:text-[#E61E2A] transition-colors flex items-center justify-between">
                     <span>{cat.title}</span>
-                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#E53935] transition-colors" />
+                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#E61E2A] transition-colors" />
                   </h3>
                   <p className="text-xs text-[#6E6E73] mt-1 leading-snug">{cat.subtitle}</p>
                 </div>

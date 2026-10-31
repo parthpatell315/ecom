@@ -144,7 +144,7 @@ export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
                     onClick={() => setQuery(term)}
                     className="px-3.5 py-1.5 rounded-full bg-[#F5F5F7] hover:bg-[#EAEAEF] text-xs font-medium text-[#111827] transition-colors flex items-center gap-1.5"
                   >
-                    <Sparkles className="w-3 h-3 text-[#E53935]" />
+                    <Sparkles className="w-3 h-3 text-[#E61E2A]" />
                     <span>{term}</span>
                   </button>
                 ))}
@@ -157,7 +157,7 @@ export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  className="text-[#E53935] hover:underline flex items-center gap-1 font-semibold"
+                  className="text-[#E61E2A] hover:underline flex items-center gap-1 font-semibold"
                 >
                   <span>View all in Store</span>
                   <ArrowRight className="w-3 h-3" />
@@ -189,7 +189,7 @@ export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
                         <div className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">
                           {product.category?.name || 'Studio Piece'}
                         </div>
-                        <h4 className="text-sm font-semibold text-[#111827] group-hover:text-[#E53935] transition-colors truncate">
+                        <h4 className="text-sm font-semibold text-[#111827] group-hover:text-[#E61E2A] transition-colors truncate">
                           {product.title}
                         </h4>
                       </div>

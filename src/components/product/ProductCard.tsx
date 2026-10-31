@@ -66,23 +66,23 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
       : 0;
 
   return (
-    <div className="group flex flex-col bg-white rounded-2xl border border-slate-100 shadow-avian hover:shadow-avian-hover transition-all duration-300 overflow-hidden relative">
-      {/* Clickable Image & Stage */}
-      <Link href={`/product/${product.slug}`} prefetch={true} className="block relative overflow-hidden bg-[#F8FAFC]">
-        <div className="relative aspect-[4/3] w-full overflow-hidden p-3 flex items-center justify-center">
+    <div className="group flex flex-col bg-white rounded-2xl border border-black/[0.08] shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden relative">
+      {/* Clickable Image & Stage - WhiteLayer aspect-square */}
+      <Link href={`/product/${product.slug}`} prefetch={true} className="block relative overflow-hidden bg-[#F9FAFB]">
+        <div className="relative aspect-square w-full overflow-hidden p-4 flex items-center justify-center">
           <Image
             src={primaryImage}
             alt={product.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+            className="object-contain p-2 group-hover:scale-105 transition-transform duration-500 ease-out"
           />
 
-          {/* Discount Pill */}
+          {/* WhiteLayer Dark Discount Badge */}
           {discountPercent > 0 && (
             <div className="absolute top-3 left-3 z-10">
-              <span className="inline-flex items-center gap-1 py-1 px-2.5 rounded-full bg-[#DCFCE7] text-[#16A34A] text-xs font-bold border border-emerald-300/40 shadow-xs">
-                Save {discountPercent}%
+              <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-[#111827] text-white text-[11px] font-black tracking-wider uppercase shadow-xs">
+                {discountPercent}% OFF
               </span>
             </div>
           )}
@@ -91,12 +91,12 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
           <button
             type="button"
             onClick={handleWishlistToggle}
-            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md border border-slate-200/60 shadow-xs flex items-center justify-center text-slate-400 hover:text-[#E53935] hover:scale-110 active:scale-95 transition-all cursor-pointer"
+            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/95 backdrop-blur-md border border-black/10 shadow-xs flex items-center justify-center text-slate-400 hover:text-[#E61E2A] hover:scale-110 active:scale-95 transition-all cursor-pointer"
             aria-label={wishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
           >
             <Heart
               className={`w-4 h-4 transition-colors ${
-                wishlisted ? 'fill-[#E53935] text-[#E53935]' : 'stroke-current'
+                wishlisted ? 'fill-[#E61E2A] text-[#E61E2A]' : 'stroke-current'
               }`}
             />
           </button>
@@ -107,19 +107,19 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
       <div className="p-4 sm:p-5 flex flex-col flex-1 justify-between bg-white">
         <div>
           {product.tagline && (
-            <span className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wider block mb-1">
+            <span className="text-[11px] font-semibold text-[#86868B] uppercase tracking-wider block mb-1">
               {product.tagline}
             </span>
           )}
 
           <Link href={`/product/${product.slug}`} prefetch={true} className="block">
-            <h3 className="text-[15px] sm:text-[16px] font-bold text-[#111827] group-hover:text-[#E53935] transition-colors line-clamp-2 leading-snug">
+            <h3 className="text-[15px] sm:text-[16px] font-bold text-[#111827] group-hover:text-[#E61E2A] transition-colors line-clamp-2 leading-snug">
               {product.title}
             </h3>
           </Link>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-slate-100">
+        <div className="mt-4 pt-3 border-t border-black/[0.06]">
           {/* Price Row */}
           <div className="flex items-baseline justify-between gap-2 mb-3">
             <div className="flex items-baseline gap-2">
@@ -132,19 +132,19 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
                 </span>
               )}
             </div>
-            <span className="text-[11px] font-medium text-[#16A34A] bg-[#DCFCE7]/70 px-2 py-0.5 rounded-full">
+            <span className="text-[11px] font-semibold text-[#059669] bg-[#DCFCE7] px-2 py-0.5 rounded-md">
               Free Delivery
             </span>
           </div>
 
-          {/* Action Button: Avian High-Converting Pill */}
+          {/* Action Button: WhiteLayer Signature Button */}
           {hasMultipleVariants ? (
             <Link
               href={`/product/${product.slug}`}
               prefetch={true}
-              className="w-full h-11 rounded-xl text-xs font-bold uppercase tracking-wider bg-[#111827] text-white hover:bg-[#E53935] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation select-none shadow-xs"
+              className="w-full h-11 rounded-xl text-xs font-extrabold uppercase tracking-wider bg-[#111827] text-white hover:bg-[#E61E2A] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation select-none shadow-xs"
             >
-              <span>View Options</span>
+              <span>Choose Options</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           ) : (
@@ -152,7 +152,7 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
               type="button"
               onClick={handleQuickAdd}
               disabled={!product.inStock}
-              className="w-full h-11 rounded-xl text-xs font-bold uppercase tracking-wider bg-[#E53935] text-white hover:bg-[#D32F2F] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 touch-manipulation select-none shadow-xs"
+              className="w-full h-11 rounded-xl text-xs font-extrabold uppercase tracking-wider bg-[#E61E2A] text-white hover:bg-[#C81420] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 touch-manipulation select-none shadow-xs"
             >
               {added ? (
                 <>

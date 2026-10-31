@@ -72,7 +72,7 @@ export function PincodeChecker({ className = '' }: PincodeCheckerProps) {
     <div className={`p-4 rounded-2xl bg-[#F5F5F7] border border-black/[0.06] text-xs ${className}`}>
       <div className="flex items-center justify-between mb-2.5">
         <span className="font-semibold text-[#1D1D1F] flex items-center gap-1.5">
-          <MapPin className="w-3.5 h-3.5 text-[#E53935]" />
+          <MapPin className="w-3.5 h-3.5 text-[#E61E2A]" />
           <span>Delivery &amp; COD Availability</span>
         </span>
         <span className="text-[10.5px] text-[#86868B] font-medium">Pan-India Air</span>

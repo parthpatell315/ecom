@@ -81,7 +81,7 @@ export default function ContactPage() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Arjun Mehta"
-                    className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-50 border border-neutral-200 focus:outline-none focus:border-neutral-900"
+                    className="w-full px-3.5 py-2.5 text-sm rounded-xl bg-neutral-50 border border-neutral-200 focus:outline-none focus:border-[#E61E2A] focus:ring-1 focus:ring-[#E61E2A]"
                   />
                 </div>
 
@@ -93,7 +93,7 @@ export default function ContactPage() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="arjun@example.com"
-                    className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-50 border border-neutral-200 focus:outline-none focus:border-neutral-900"
+                    className="w-full px-3.5 py-2.5 text-sm rounded-xl bg-neutral-50 border border-neutral-200 focus:outline-none focus:border-[#E61E2A] focus:ring-1 focus:ring-[#E61E2A]"
                   />
                 </div>
 
@@ -104,7 +104,7 @@ export default function ContactPage() {
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     placeholder="Order inquiry or custom lighting commission"
-                    className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-50 border border-neutral-200 focus:outline-none focus:border-neutral-900"
+                    className="w-full px-3.5 py-2.5 text-sm rounded-xl bg-neutral-50 border border-neutral-200 focus:outline-none focus:border-[#E61E2A] focus:ring-1 focus:ring-[#E61E2A]"
                   />
                 </div>
 
@@ -116,16 +116,16 @@ export default function ContactPage() {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="How can our customer care team assist you today?"
-                    className="w-full px-3 py-2 text-sm rounded-lg bg-neutral-50 border border-neutral-200 focus:outline-none focus:border-neutral-900"
+                    className="w-full px-3.5 py-2.5 text-sm rounded-xl bg-neutral-50 border border-neutral-200 focus:outline-none focus:border-[#E61E2A] focus:ring-1 focus:ring-[#E61E2A]"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 px-4 rounded-xl bg-neutral-900 text-white text-xs font-semibold hover:bg-black transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full h-11 px-4 rounded-xl bg-[#E61E2A] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#C81420] transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  Dispatch Inquiry
+                  <span>Send Message</span>
                 </button>
               </form>
             )}

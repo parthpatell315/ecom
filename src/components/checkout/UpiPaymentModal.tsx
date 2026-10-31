@@ -242,10 +242,10 @@ export function UpiPaymentModal({
             <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-2.5">
               <div className="flex items-center justify-between text-amber-950 font-bold text-xs sm:text-sm">
                 <span className="flex items-center gap-1.5">
-                  <IndianRupee className="w-4 h-4 text-[#D9232D]" />
+                  <IndianRupee className="w-4 h-4 text-[#E61E2A]" />
                   <span>Advance UPI Payable Now:</span>
                 </span>
-                <span className="font-mono text-base font-black text-[#D9232D]">₹149.00</span>
+                <span className="font-mono text-base font-black text-[#E61E2A]">₹149.00</span>
               </div>
               <div className="flex items-center justify-between text-xs text-amber-900 pt-2 border-t border-amber-200/60">
                 <span className="flex items-center gap-1.5">
@@ -306,7 +306,7 @@ export function UpiPaymentModal({
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              <Smartphone className="w-3.5 h-3.5 text-[#D9232D]" />
+              <Smartphone className="w-3.5 h-3.5 text-[#E61E2A]" />
               <span>1-Tap UPI Apps</span>
             </button>
             <button
@@ -330,7 +330,7 @@ export function UpiPaymentModal({
               <button
                 type="button"
                 onClick={() => triggerUpi(upiPayload.upiUrl)}
-                className="w-full py-4 px-6 rounded-2xl bg-[#D9232D] text-white font-extrabold text-sm sm:text-base hover:bg-[#b91c1c] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                className="w-full py-4 px-6 rounded-2xl bg-[#E61E2A] text-white font-extrabold text-sm sm:text-base hover:bg-[#C81420] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
               >
                 <Smartphone className="w-5 h-5" />
                 <span>Open UPI App to Pay ₹{upiPayload.amountRupees}</span>
@@ -345,28 +345,28 @@ export function UpiPaymentModal({
                   <button
                     type="button"
                     onClick={() => triggerUpi(upiPayload.deepLinks.gpay || upiPayload.upiUrl)}
-                    className="py-3 px-4 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold text-xs hover:border-[#D9232D] hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer"
+                    className="py-3 px-4 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold text-xs hover:border-[#E61E2A] hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer"
                   >
                     <span>Google Pay</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => triggerUpi(upiPayload.deepLinks.phonepe || upiPayload.upiUrl)}
-                    className="py-3 px-4 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold text-xs hover:border-[#D9232D] hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer"
+                    className="py-3 px-4 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold text-xs hover:border-[#E61E2A] hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer"
                   >
                     <span>PhonePe</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => triggerUpi(upiPayload.deepLinks.paytm || upiPayload.upiUrl)}
-                    className="py-3 px-4 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold text-xs hover:border-[#D9232D] hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer"
+                    className="py-3 px-4 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold text-xs hover:border-[#E61E2A] hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer"
                   >
                     <span>Paytm</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => triggerUpi(upiPayload.deepLinks.cred || upiPayload.upiUrl, upiPayload.upiUrl)}
-                    className="py-3 px-4 rounded-xl bg-[#D9232D]/10 text-[#D9232D] border border-[#D9232D]/20 font-bold text-xs hover:bg-[#D9232D]/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="py-3 px-4 rounded-xl bg-[#E61E2A]/10 text-[#E61E2A] border border-[#E61E2A]/20 font-bold text-xs hover:bg-[#E61E2A]/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <span>CRED / BHIM</span>
                   </button>
@@ -379,7 +379,7 @@ export function UpiPaymentModal({
                 <button
                   type="button"
                   onClick={handleCopyUpiUrl}
-                  className="font-bold text-[#D9232D] hover:underline flex items-center gap-1 cursor-pointer flex-shrink-0 ml-2"
+                  className="font-bold text-[#E61E2A] hover:underline flex items-center gap-1 cursor-pointer flex-shrink-0 ml-2"
                 >
                   <Copy className="w-3.5 h-3.5" />
                   <span>{copied ? 'Copied!' : 'Copy UPI ID'}</span>
@@ -459,7 +459,7 @@ export function UpiPaymentModal({
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-xs font-bold text-gray-900 flex items-center gap-1">
                   <span>Step 2: Enter 12-Digit UPI UTR / Ref No.</span>
-                  <span className="text-[#D9232D]">*</span>
+                  <span className="text-[#E61E2A]">*</span>
                 </label>
                 <span className="text-[10px] text-gray-400">On payment receipt</span>
               </div>
@@ -472,7 +472,7 @@ export function UpiPaymentModal({
                 value={utrNumber}
                 onChange={(e) => setUtrNumber(e.target.value.replace(/[^a-zA-Z0-9]/g, ''))}
                 placeholder="e.g. 423819284712"
-                className="w-full px-4 py-3 text-base font-mono tracking-widest rounded-xl bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#D9232D]"
+                className="w-full px-4 py-3 text-base font-mono tracking-widest rounded-xl bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E61E2A]"
               />
               <p className="text-[11px] text-gray-500 mt-1">
                 Found as UPI Ref No., RRN, or Transaction ID in your payment receipt.

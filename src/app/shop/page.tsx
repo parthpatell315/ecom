@@ -111,7 +111,7 @@ function ShopContent() {
         {/* Page Header */}
         <div className="mb-10 text-center max-w-2xl mx-auto">
           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#F5F5F7] text-xs font-semibold text-[#1D1D1F] mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#E53935]" />
+            <Sparkles className="w-3.5 h-3.5 text-[#E61E2A]" />
             <span>Studio Collection Catalog</span>
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#111827]">
@@ -249,7 +249,7 @@ function ShopContent() {
               <button
                 type="button"
                 onClick={handleClearFilters}
-                className="text-xs font-semibold text-[#E53935] hover:underline cursor-pointer flex items-center gap-1"
+                className="text-xs font-semibold text-[#E61E2A] hover:underline cursor-pointer flex items-center gap-1"
               >
                 <span>Reset Filters</span>
                 <X className="w-3 h-3" />
