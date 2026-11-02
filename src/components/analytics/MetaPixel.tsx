@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '946508041872382';
+export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '1140827711731446';
 
 export interface PixelPurchaseItem {
   productId: string;

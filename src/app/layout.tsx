@@ -72,13 +72,13 @@ export default function RootLayout({
             height="1"
             width="1"
             style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=946508041872382&ev=PageView&noscript=1"
+            src="https://www.facebook.com/tr?id=1140827711731446&ev=PageView&noscript=1"
             alt=""
           />
         </noscript>
       </head>
       <body className="min-h-full flex flex-col bg-[#FAF8F5] text-[#222225] font-sans antialiased selection:bg-[#E61E2A]/15 selection:text-[#E61E2A]">
-        {/* Official Meta Pixel (ID: 946508041872382) */}
+        {/* Official Meta Pixel (ID: 1140827711731446 - Flirta Pixel) */}
         <Script
           id="meta-pixel-init"
           strategy="afterInteractive"
@@ -92,7 +92,7 @@ export default function RootLayout({
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('init', '946508041872382');
+              fbq('init', '1140827711731446');
               fbq('track', 'PageView');
             `,
           }}
