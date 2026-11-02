@@ -80,12 +80,10 @@ export function LiveSearchModal({ isOpen, onClose }: LiveSearchModalProps) {
   };
 
   const popularSearches = [
-    'Levitating Lamp',
+    'Magnetic Levitation F1',
     'Core Reactor',
-    'Controller Stand',
-    'ClockDock',
-    'Laptop Stand',
-    'Foldable Chess',
+    'Levitating Money Stack',
+    'Ambient Lighting',
   ];
 
   if (!isOpen) return null;

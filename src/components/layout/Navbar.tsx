@@ -232,37 +232,33 @@ export function Navbar() {
               <Link
                 href="/shop"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2.5 text-base font-semibold text-[#111827]"
+                className="block py-2.5 text-base font-bold text-[#111827]"
               >
-                All Products
+                All 3 Signature Creations
               </Link>
               <Link
-                href="/shop?category=lamps"
+                href="/product/magnetic-levitation-f1-racing-car"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2.5 text-sm text-[#6E6E73] hover:text-[#111827]"
+                className="block py-2.5 text-sm font-semibold text-[#111827] hover:text-[#E61E2A] flex items-center justify-between"
               >
-                Lamps &amp; Illumination
+                <span>🏎️ 1. F1 MagLev Racing Car</span>
+                <span className="text-xs text-[#E61E2A] font-bold">₹2,199</span>
               </Link>
               <Link
-                href="/shop?category=stands"
+                href="/product/core-reactor-desk-light"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2.5 text-sm text-[#6E6E73] hover:text-[#111827]"
+                className="block py-2.5 text-sm font-semibold text-[#111827] hover:text-[#E61E2A] flex items-center justify-between"
               >
-                Stands &amp; Docks
+                <span>⚡ 2. Core Reactor Desk Light</span>
+                <span className="text-xs text-[#E61E2A] font-bold">₹1,499</span>
               </Link>
               <Link
-                href="/shop?category=clocks"
+                href="/product/levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2.5 text-sm text-[#6E6E73] hover:text-[#111827]"
+                className="block py-2.5 text-sm font-semibold text-[#111827] hover:text-[#E61E2A] flex items-center justify-between"
               >
-                Clocks &amp; Timepieces
-              </Link>
-              <Link
-                href="/shop?category=games"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-2.5 text-sm text-[#6E6E73] hover:text-[#111827]"
-              >
-                Collectibles &amp; Games
+                <span>💸 3. Levitating Money Stack</span>
+                <span className="text-xs text-[#E61E2A] font-bold">₹999</span>
               </Link>
               <Link
                 href="/tracking"

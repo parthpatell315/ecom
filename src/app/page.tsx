@@ -52,71 +52,52 @@ export default async function HomePage() {
     console.warn('HomePage: Failed to fetch verified reviews from DB:', error);
   }
 
-  // Find WhiteLayer featured pieces from real database catalog
+  // Find the 3 signature studio pieces in user priority order:
+  // 1st: Magnetic Levitation F1 Racing Car
+  // 2nd: Core Reactor Desk Light (₹1,499)
+  // 3rd: Levitating Money Stack Lamp
   const maglevF1 =
     products.find((p) => p.slug === 'magnetic-levitation-f1-racing-car') || products[0];
-
-  const heroEmblem =
-    products.find((p) => p.slug === 'hero-emblem-led-lamp');
-
-  const waveStand =
-    products.find((p) => p.slug === 'wave-parametric-device-stand');
-
-  const iskremLamp =
-    products.find((p) => p.slug === 'iskrem-lamp-by-white-layer-studio');
-
-  const levitatingLamp =
-    products.find(
-      (p) => p.slug === 'levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light'
-    );
 
   const coreReactor =
     products.find((p) => p.slug === 'core-reactor-desk-light') || products[1];
 
-  const featuredLineup = products
-    .filter(
-      (p) =>
-        p.slug !== maglevF1?.slug &&
-        p.slug !== heroEmblem?.slug &&
-        p.slug !== waveStand?.slug
-    )
-    .slice(0, 6);
+  const levitatingLamp =
+    products.find(
+      (p) => p.slug === 'levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light'
+    ) || products[2];
 
-  // Curated core collections matching Flirta's actual sales strategy
+  // The 3 signature disciplines
   const categoryHighlights = [
     {
       title: 'Zero-Gravity Levitation',
-      subtitle: '360° floating racing displays & magnetic levitation lamps',
+      subtitle: '360° frictionless perpetual spin • 12–15mm electromagnetic air gap',
       href: '/product/magnetic-levitation-f1-racing-car',
       image:
         maglevF1?.images?.[0]?.url ||
         'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/photo_5379765186618664415_x.jpg?v=1793282705',
+      price: 'Rs. 2,199.00',
+      badge: 'Main Flagship',
     },
     {
-      title: 'Ambient Illumination',
-      subtitle: 'Multi-ring reactor lights & atmospheric RGB illumination',
-      href: '/shop?category=lamps',
+      title: 'Core Reactor Ambient Light',
+      subtitle: 'Cinematic breathing pulse • High-density precision engineering core',
+      href: '/product/core-reactor-desk-light',
       image:
         coreReactor?.images?.[0]?.url ||
+        'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_fullxfull.8281487299_9aq9.webp?v=1791795990',
+      price: 'Rs. 1,499.00',
+      badge: 'Studio Edition',
+    },
+    {
+      title: 'Levitating Money Stack',
+      subtitle: 'Zero-gravity cash stack suspension • Atmospheric RGB mood aura',
+      href: '/product/levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light',
+      image:
         levitatingLamp?.images?.[0]?.url ||
         'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_1588xN.8339847604_sfk4.webp?v=1789717192',
-    },
-    {
-      title: 'Iconic Lightboxes',
-      subtitle: 'High-definition illuminated geometric statement pieces',
-      href: '/product/hero-emblem-led-lamp',
-      image:
-        heroEmblem?.images?.[0]?.url ||
-        'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_1588xN.7800210730_enye.webp?v=1789630077',
-    },
-    {
-      title: 'Desk Architecture',
-      subtitle: 'Precision biopolymer parametric device docks & workstation stands',
-      href: '/product/wave-parametric-device-stand',
-      image:
-        waveStand?.images?.[0]?.url ||
-        products.find((p) => p.slug.includes('stand'))?.images?.[0]?.url ||
-        'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=600&q=80',
+      price: 'Rs. 999.00',
+      badge: 'Floating Aura',
     },
   ];
 
@@ -259,21 +240,21 @@ export default async function HomePage() {
                 </div>
               )}
 
-              {/* 2 Quick Showcase Cards Below Hero */}
+              {/* 2 Quick Showcase Cards Below Hero (Products 2 & 3) */}
               <div className="grid grid-cols-2 gap-4 mt-4">
-                {/* Mini Card 1: Hero Emblem LED Lightbox */}
-                {heroEmblem && (
+                {/* Mini Card 1: Core Reactor Desk Light (2nd Product) */}
+                {coreReactor && (
                   <Link
-                    href={`/product/${heroEmblem.slug}`}
+                    href={`/product/${coreReactor.slug}`}
                     className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-black/[0.08] shadow-xs hover:border-black/20 transition-all group"
                   >
                     <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-neutral-900 shrink-0">
                       <Image
                         src={
-                          heroEmblem.images?.[0]?.url ||
-                          'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_1588xN.7800210730_enye.webp?v=1789630077'
+                          coreReactor.images?.[0]?.url ||
+                          'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_fullxfull.8281487299_9aq9.webp?v=1791795990'
                         }
-                        alt={heroEmblem.title}
+                        alt={coreReactor.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform"
                         sizes="56px"
@@ -281,31 +262,38 @@ export default async function HomePage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <span className="text-[10px] font-bold text-[#86868B] uppercase tracking-wider block truncate">
-                        ICONIC LIGHTBOX
+                        2ND PRODUCT • ₹1,499
                       </span>
                       <h4 className="text-xs font-bold text-[#111827] group-hover:text-[#E61E2A] transition-colors truncate">
-                        {heroEmblem.title}
+                        {coreReactor.title}
                       </h4>
-                      <span className="text-xs font-extrabold text-[#E61E2A] block mt-0.5">
-                        Rs. {Math.round(heroEmblem.priceMinor / 100).toLocaleString('en-IN')}.00
-                      </span>
+                      <div className="flex items-baseline gap-1.5 mt-0.5">
+                        <span className="text-xs font-extrabold text-[#E61E2A]">
+                          Rs. {Math.round(coreReactor.priceMinor / 100).toLocaleString('en-IN')}.00
+                        </span>
+                        {coreReactor.originalPriceMinor && (
+                          <span className="text-[10px] text-neutral-400 line-through">
+                            Rs. {Math.round(coreReactor.originalPriceMinor / 100).toLocaleString('en-IN')}.00
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </Link>
                 )}
 
-                {/* Mini Card 2: Wave Parametric Stand */}
-                {waveStand && (
+                {/* Mini Card 2: Levitating Money Stack Lamp (3rd Product) */}
+                {levitatingLamp && (
                   <Link
-                    href={`/product/${waveStand.slug}`}
+                    href={`/product/${levitatingLamp.slug}`}
                     className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-black/[0.08] shadow-xs hover:border-black/20 transition-all group"
                   >
-                    <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
+                    <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-neutral-900 shrink-0">
                       <Image
                         src={
-                          waveStand.images?.[0]?.url ||
-                          'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/66ad526b01047be4.webp?v=1788510509'
+                          levitatingLamp.images?.[0]?.url ||
+                          'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_1588xN.8339847604_sfk4.webp?v=1789717192'
                         }
-                        alt={waveStand.title}
+                        alt={levitatingLamp.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform"
                         sizes="56px"
@@ -313,14 +301,21 @@ export default async function HomePage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <span className="text-[10px] font-bold text-[#86868B] uppercase tracking-wider block truncate">
-                        MINIMAL DOCK
+                        3RD PRODUCT • LEVITATION
                       </span>
                       <h4 className="text-xs font-bold text-[#111827] group-hover:text-[#E61E2A] transition-colors truncate">
-                        Wave • Parametric Stand
+                        {levitatingLamp.title}
                       </h4>
-                      <span className="text-xs font-extrabold text-[#E61E2A] block mt-0.5">
-                        Rs. 499.00
-                      </span>
+                      <div className="flex items-baseline gap-1.5 mt-0.5">
+                        <span className="text-xs font-extrabold text-[#E61E2A]">
+                          Rs. {Math.round(levitatingLamp.priceMinor / 100).toLocaleString('en-IN')}.00
+                        </span>
+                        {levitatingLamp.originalPriceMinor && (
+                          <span className="text-[10px] text-neutral-400 line-through">
+                            Rs. {Math.round(levitatingLamp.originalPriceMinor / 100).toLocaleString('en-IN')}.00
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </Link>
                 )}
@@ -448,16 +443,16 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* 3. CURATED FEATURED LINEUP */}
+      {/* 3. SIGNATURE STUDIO DROPS (THE 3 CORE PRODUCTS) */}
       <section className="py-16 md:py-24 bg-[#FAFAFA] border-b border-black/[0.06]">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-[#E61E2A] block mb-1">
-                Studio Bestsellers
+                Studio Signature Catalog
               </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#111827]">
-                Featured Architecture &amp; Ambient Lighting
+                The 3 Core Flagship Drops
               </h2>
             </div>
 
@@ -465,56 +460,63 @@ export default async function HomePage() {
               href="/shop"
               className="text-xs font-bold text-[#E61E2A] hover:underline flex items-center gap-1 self-start sm:self-end"
             >
-              <span>Explore All Products ({products.length})</span>
+              <span>Explore All 3 Creations</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredLineup.map((product) => (
+            {products.slice(0, 3).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* 4. PRODUCT CATEGORIES HUB */}
+      {/* 4. THE 3 SIGNATURE DISCIPLINES */}
       <section className="py-16 md:py-24 bg-white border-b border-black/[0.06]">
         <div className="max-w-[1140px] mx-auto px-4 sm:px-6">
           <div className="text-center max-w-xl mx-auto mb-12">
             <span className="text-xs font-bold uppercase tracking-wider text-[#E61E2A] block mb-1">
-              Curated Collections
+              Curated Focus
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#111827]">
-              Explore by Discipline
+              The 3 Signature Studio Creations
             </h2>
             <p className="text-sm text-[#6E6E73] mt-2">
-              Discover pieces engineered for kinetic zero-gravity suspension, ambient lighting architecture, and modern workstation aesthetics.
+              Engineered with 0.12mm precision for kinetic zero-gravity suspension and atmospheric ambient illumination.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {categoryHighlights.map((cat, idx) => (
               <Link
                 key={idx}
                 href={cat.href}
                 className="group relative rounded-3xl overflow-hidden border border-black/[0.06] bg-[#F5F5F7] p-5 flex flex-col justify-between hover:shadow-apple-card transition-all duration-300"
               >
-                <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-white mb-4 border border-black/[0.04]">
-                  <Image
-                    src={cat.image}
-                    alt={cat.title}
-                    fill
-                    className="object-contain p-3 group-hover:scale-105 transition-transform duration-500"
-                    sizes="(max-width: 640px) 100vw, 250px"
-                  />
-                </div>
                 <div>
+                  <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-white mb-4 border border-black/[0.04]">
+                    <Image
+                      src={cat.image}
+                      alt={cat.title}
+                      fill
+                      className="object-contain p-3 group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 640px) 100vw, 350px"
+                    />
+                    <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-[10.5px] font-bold text-[#111827] shadow-2xs border border-black/5">
+                      {cat.badge}
+                    </div>
+                  </div>
                   <h3 className="text-base font-bold text-[#111827] group-hover:text-[#E61E2A] transition-colors flex items-center justify-between">
                     <span>{cat.title}</span>
                     <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#E61E2A] transition-colors" />
                   </h3>
                   <p className="text-xs text-[#6E6E73] mt-1 leading-snug">{cat.subtitle}</p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-black/[0.06] flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#E61E2A]">{cat.price}</span>
+                  <span className="text-[11px] font-semibold text-[#111827] group-hover:underline">Explore Piece →</span>
                 </div>
               </Link>
             ))}

@@ -64,6 +64,12 @@ export interface CachedProduct {
   updatedAt: Date;
 }
 
+export const ACTIVE_PRODUCT_SLUGS = [
+  'magnetic-levitation-f1-racing-car',
+  'core-reactor-desk-light',
+  'levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light',
+] as const;
+
 // In-Memory Catalog Cache (Shared across warm Vercel/Node instances)
 let cachedProducts: CachedProduct[] | null = null;
 let cachedCategories: CachedCategory[] | null = null;
@@ -86,6 +92,12 @@ export async function getCachedProducts(forceRefresh = false): Promise<CachedPro
   pendingFetch = (async () => {
     try {
       const products = await prisma.product.findMany({
+        where: {
+          inStock: true,
+          slug: {
+            in: [...ACTIVE_PRODUCT_SLUGS],
+          },
+        },
         include: {
           category: true,
           images: {
@@ -99,11 +111,22 @@ export async function getCachedProducts(forceRefresh = false): Promise<CachedPro
             orderBy: { createdAt: 'desc' },
           },
         },
-        orderBy: { reviewCount: 'desc' },
       });
 
-      if (products && products.length > 0) {
-        cachedProducts = products as unknown as CachedProduct[];
+      // Maintain strict user priority order:
+      // 1st: magnetic-levitation-f1-racing-car
+      // 2nd: core-reactor-desk-light (₹1,499)
+      // 3rd: levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light
+      const sorted = [...products].sort((a, b) => {
+        const idxA = ACTIVE_PRODUCT_SLUGS.indexOf(a.slug as any);
+        const idxB = ACTIVE_PRODUCT_SLUGS.indexOf(b.slug as any);
+        const rankA = idxA === -1 ? 999 : idxA;
+        const rankB = idxB === -1 ? 999 : idxB;
+        return rankA - rankB;
+      });
+
+      if (sorted && sorted.length > 0) {
+        cachedProducts = sorted as unknown as CachedProduct[];
         lastCacheTime = Date.now();
       }
       return cachedProducts || [];
@@ -146,11 +169,12 @@ export async function getCachedProductBySlug(slug: string): Promise<CachedProduc
 export async function getCachedRelatedProducts(
   categoryId: string,
   excludeId: string,
-  limit = 4
+  limit = 2
 ): Promise<CachedProduct[]> {
   const products = await getCachedProducts();
+  // Return the other signature products
   return products
-    .filter((p) => p.categoryId === categoryId && p.id !== excludeId)
+    .filter((p) => p.id !== excludeId)
     .slice(0, limit);
 }
 
@@ -162,10 +186,19 @@ export async function getCachedCategories(): Promise<CachedCategory[]> {
 
   try {
     const categories = await prisma.category.findMany({
+      where: {
+        products: {
+          some: { inStock: true },
+        },
+      },
       orderBy: { displayOrder: 'asc' },
       include: {
         _count: {
-          select: { products: true },
+          select: {
+            products: {
+              where: { inStock: true },
+            },
+          },
         },
       },
     });

@@ -77,32 +77,27 @@ export function Footer() {
           {/* Shop Column */}
           <div className="space-y-3">
             <h3 className="font-semibold text-xs text-[#1D1D1F] tracking-tight">
-              Collections
+              Signature Drops
             </h3>
             <ul className="space-y-2 text-[#6E6E73]">
               <li>
-                <Link href="/shop" className="hover:text-[#E61E2A] transition-colors">
-                  All Products
+                <Link href="/product/magnetic-levitation-f1-racing-car" className="hover:text-[#E61E2A] transition-colors">
+                  1. F1 MagLev Racing Car
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=lamps" className="hover:text-[#E61E2A] transition-colors">
-                  Ambient Lamps
+                <Link href="/product/core-reactor-desk-light" className="hover:text-[#E61E2A] transition-colors">
+                  2. Core Reactor Light (₹1,499)
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=stands" className="hover:text-[#E61E2A] transition-colors">
-                  Stands &amp; Docks
+                <Link href="/product/levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light" className="hover:text-[#E61E2A] transition-colors">
+                  3. Levitating Money Stack
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=clocks" className="hover:text-[#E61E2A] transition-colors">
-                  Desk Clocks
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=games" className="hover:text-[#E61E2A] transition-colors">
-                  Board Games &amp; Collectibles
+                <Link href="/shop" className="hover:text-[#E61E2A] transition-colors font-medium text-[#111827]">
+                  View All 3 Pieces →
                 </Link>
               </li>
             </ul>
