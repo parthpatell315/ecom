@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -124,9 +125,16 @@ export function Navbar() {
               </button>
 
               <Link href="/" className="flex items-center gap-2.5 group shrink-0" aria-label="Flirta by WhiteLayer">
-                <span className="w-8 h-8 rounded-full border border-black/70 flex items-center justify-center text-[12px] font-black tracking-tight text-[#111827] shrink-0">
-                  WL
-                </span>
+                <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-black/15 shadow-2xs">
+                  <Image
+                    src="/wl-logo.png"
+                    alt="WhiteLayer Logo"
+                    width={32}
+                    height={32}
+                    priority
+                    className="object-contain"
+                  />
+                </div>
                 <span className="text-[14px] sm:text-[16px] font-black tracking-wider text-[#111827] uppercase whitespace-nowrap">
                   FLIRTA BY WHITELAYER
                 </span>

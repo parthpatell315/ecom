@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { LEGAL_CONFIG } from '@/config/legal';
 import { SOCIALS } from '@/config/social';
 import { DELIVERY_PROMISE } from '@/config/shipping';
@@ -24,9 +25,15 @@ export function Footer() {
           {/* Brand & Mission */}
           <div className="col-span-2 md:col-span-2 lg:col-span-1 space-y-3">
             <div className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full border border-black/60 flex items-center justify-center text-[10px] font-black text-[#111827]">
-                WL
-              </span>
+              <div className="relative w-6 h-6 rounded-full overflow-hidden border border-black/15 shadow-2xs shrink-0">
+                <Image
+                  src="/wl-logo.png"
+                  alt="WhiteLayer Emblem"
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
+              </div>
               <span className="font-extrabold text-sm tracking-wide text-[#111827] uppercase">
                 FLIRTA BY WHITELAYER
               </span>
