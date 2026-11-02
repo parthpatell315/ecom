@@ -242,25 +242,29 @@ export function ProductDetailClient({
     if (!product.inStock) return;
     setIsBuying(true);
     try {
-      addItem(product.id, selectedVariant?.id, quantity, {
+      const success = await addItem(product.id, selectedVariant?.id, quantity, {
         title: product.title,
         variantName: selectedVariant?.name || null,
         colorHex: selectedVariant?.colorHex || null,
         unitPriceMinor: effectivePriceMinor,
         image: selectedImage || (product.images && product.images[0]?.url) || '',
       });
-      trackPixelEvent('AddToCart', {
-        content_name: product.title,
-        content_ids: [product.id],
-        content_type: 'product',
-        value: totalPriceMinor / 100,
-        currency: 'INR',
-      });
+      if (success) {
+        trackPixelEvent('AddToCart', {
+          content_name: product.title,
+          content_ids: [product.id],
+          content_type: 'product',
+          value: totalPriceMinor / 100,
+          currency: 'INR',
+        });
+      }
       const query = typeof window !== 'undefined' ? window.location.search : '';
       router.push('/checkout' + (query || ''));
     } catch {
       const query = typeof window !== 'undefined' ? window.location.search : '';
       router.push('/checkout' + (query || ''));
+    } finally {
+      setIsBuying(false);
     }
   };
 

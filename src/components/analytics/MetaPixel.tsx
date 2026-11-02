@@ -12,6 +12,33 @@ declare global {
 
 export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '1140827711731446';
 
+const PURCHASE_TRACKED_PREFIX = 'flirta_pixel_purchased_';
+
+/**
+ * Checks whether a Purchase event has already been tracked for a given orderNumber.
+ * Guards against duplicate Purchase events on page refreshes, back navigation, or revisits.
+ */
+export function isPurchaseAlreadyTracked(orderNumber: string): boolean {
+  if (typeof window === 'undefined' || !orderNumber) return false;
+  try {
+    return localStorage.getItem(`${PURCHASE_TRACKED_PREFIX}${orderNumber}`) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Records that a Purchase event has been tracked for this orderNumber in browser storage.
+ */
+export function markPurchaseTracked(orderNumber: string): void {
+  if (typeof window === 'undefined' || !orderNumber) return;
+  try {
+    localStorage.setItem(`${PURCHASE_TRACKED_PREFIX}${orderNumber}`, 'true');
+  } catch {
+    // ignore
+  }
+}
+
 export interface PixelPurchaseItem {
   productId: string;
   title?: string;
@@ -68,8 +95,16 @@ export function trackPixelEvent(
 /**
  * Standard Meta Purchase Event Tracker
  * Ensures value > 0, currency, content_ids, and contents are strictly formatted for Meta Ads
+ * Enforces order-level idempotency via localStorage to prevent duplicate events on refresh/revisit
  */
-export function trackPurchaseEvent(data: PixelPurchaseData) {
+export function trackPurchaseEvent(data: PixelPurchaseData): boolean {
+  if (typeof window === 'undefined' || !data.orderNumber) return false;
+
+  if (isPurchaseAlreadyTracked(data.orderNumber)) {
+    console.log(`[Meta Pixel] Purchase for order ${data.orderNumber} already tracked. Skipping.`);
+    return false;
+  }
+
   const numValue = Math.max(1, Number(data.value) || 999);
   const currency = data.currency || 'INR';
 
@@ -96,7 +131,9 @@ export function trackPurchaseEvent(data: PixelPurchaseData) {
     order_id: data.orderNumber,
   };
 
+  markPurchaseTracked(data.orderNumber);
   trackPixelEvent('Purchase', payload, { eventID: data.orderNumber });
+  return true;
 }
 
 function PixelPageViewTracker() {

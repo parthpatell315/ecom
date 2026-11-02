@@ -39,30 +39,34 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
 
   const saleActive = isSaleActive(SALE_CONFIG.SALE_END_DATE);
 
-  const handleClaimDeal = (product: FlashSaleProduct, variantId?: string) => {
+  const handleClaimDeal = async (product: FlashSaleProduct, variantId?: string) => {
     const selectedVariant = product.variants?.find((v) => v.id === variantId) || product.variants?.[0];
     const image = selectedVariant?.image || product.images?.[0]?.url || '';
 
     setAddedSlug(product.slug);
-    addItem(product.id, selectedVariant?.id, 1, {
-      title: product.title,
-      variantName: selectedVariant?.name || null,
-      colorHex: selectedVariant?.colorHex || null,
-      unitPriceMinor: product.priceMinor,
-      image,
-    });
+    try {
+      const success = await addItem(product.id, selectedVariant?.id, 1, {
+        title: product.title,
+        variantName: selectedVariant?.name || null,
+        colorHex: selectedVariant?.colorHex || null,
+        unitPriceMinor: product.priceMinor,
+        image,
+      });
 
-    trackPixelEvent('AddToCart', {
-      content_name: product.title,
-      content_ids: [product.id],
-      content_type: 'product',
-      value: product.priceMinor / 100,
-      currency: 'INR',
-    });
-
-    setTimeout(() => {
-      setAddedSlug(null);
-    }, 2200);
+      if (success) {
+        trackPixelEvent('AddToCart', {
+          content_name: product.title,
+          content_ids: [product.id],
+          content_type: 'product',
+          value: product.priceMinor / 100,
+          currency: 'INR',
+        });
+      }
+    } finally {
+      setTimeout(() => {
+        setAddedSlug(null);
+      }, 2200);
+    }
   };
 
   return (

@@ -7,7 +7,7 @@ import confetti from 'canvas-confetti';
 import { formatCurrency } from '@/lib/currency';
 import { CheckCircle2, Package, Truck, ArrowRight, ShieldCheck, Printer } from 'lucide-react';
 import Image from 'next/image';
-import { trackPurchaseEvent } from '@/components/analytics/MetaPixel';
+import { trackPurchaseEvent, isPurchaseAlreadyTracked } from '@/components/analytics/MetaPixel';
 import { PARTIAL_COD_ADVANCE_RUPEES } from '@/config/shipping';
 
 function OrderSuccessContent() {
@@ -34,7 +34,7 @@ function OrderSuccessContent() {
       // ignore
     }
 
-    // 1. Immediately read cached order from sessionStorage if available (zero latency)
+    // 1. Immediately read cached order from sessionStorage for zero-latency UI rendering
     if (orderNumber && typeof window !== 'undefined') {
       try {
         const cachedStr = sessionStorage.getItem(`flirta_order_${orderNumber}`);
@@ -42,32 +42,13 @@ function OrderSuccessContent() {
           const cached = JSON.parse(cachedStr);
           setOrder((prev: any) => prev || cached);
           setLoading(false);
-
-          if (!purchaseTrackedRef.current && cached.items?.length > 0) {
-            purchaseTrackedRef.current = true;
-            const isPartialCod = Boolean(cached.isPartialCod || gatewayParam === 'PARTIAL_COD');
-            const purchaseValue = isPartialCod ? PARTIAL_COD_ADVANCE_RUPEES : (cached.totalMinor || 0) / 100;
-
-            trackPurchaseEvent({
-              orderNumber: cached.orderNumber,
-              value: purchaseValue,
-              items: cached.items.map((it: any) => ({
-                productId: it.productId,
-                title: it.titleSnapshot || it.title,
-                quantity: it.quantity || 1,
-                price: isPartialCod ? purchaseValue : (it.unitPriceMinor || 0) / 100,
-              })),
-              customerEmail: cached.customerEmail,
-              customerPhone: cached.customerPhone,
-            });
-          }
         }
       } catch {
         // ignore
       }
     }
 
-    // 2. Fetch verified server order data
+    // 2. Fetch authoritative order data verified by backend
     if (orderNumber) {
       const url = emailParam
         ? `/api/orders/${orderNumber}?email=${encodeURIComponent(emailParam)}`
@@ -77,26 +58,43 @@ function OrderSuccessContent() {
         .then((res) => res.json())
         .then((data) => {
           if (data.success && data.order) {
-            setOrder(data.order);
-            if (!purchaseTrackedRef.current) {
+            const verifiedOrder = data.order;
+            setOrder(verifiedOrder);
+
+            // Verification criteria:
+            // - Confirmed COD: gateway is COD and backend confirms placement (order.status === 'CONFIRMED')
+            // - Verified Prepaid: payment is SUCCESS or verifiedAt exists, or backend confirms order.status === 'CONFIRMED'
+            // - Pending, unverified, or failed UPI: NEVER fires Purchase
+            const isCodOrder = gatewayParam === 'COD' || verifiedOrder.payments?.some((p: any) => p.gateway === 'COD');
+            const isConfirmedStatus = ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'].includes(verifiedOrder.status);
+            const isPaymentVerified = verifiedOrder.payments?.some(
+              (p: any) => p.status === 'SUCCESS' || Boolean(p.verifiedAt)
+            );
+
+            const isOrderVerified = isCodOrder
+              ? isConfirmedStatus
+              : (isConfirmedStatus && isPaymentVerified);
+
+            if (isOrderVerified && !purchaseTrackedRef.current && !isPurchaseAlreadyTracked(verifiedOrder.orderNumber)) {
               purchaseTrackedRef.current = true;
-              const isPartialCod = Boolean(data.order.isPartialCod || gatewayParam === 'PARTIAL_COD');
-              const paymentAmount = data.order.payments?.[0]?.amountMinor
-                ? data.order.payments[0].amountMinor / 100
+              const isPartialCod = Boolean(verifiedOrder.isPartialCod || gatewayParam === 'PARTIAL_COD');
+              const paymentAmount = verifiedOrder.payments?.[0]?.amountMinor
+                ? verifiedOrder.payments[0].amountMinor / 100
                 : PARTIAL_COD_ADVANCE_RUPEES;
-              const purchaseValue = isPartialCod ? paymentAmount : (data.order.totalMinor || 0) / 100;
+              const purchaseValue = isPartialCod ? paymentAmount : (verifiedOrder.totalMinor || 0) / 100;
 
               trackPurchaseEvent({
-                orderNumber: data.order.orderNumber,
+                orderNumber: verifiedOrder.orderNumber,
                 value: purchaseValue,
-                items: (data.order.items || []).map((it: any) => ({
+                currency: 'INR',
+                items: (verifiedOrder.items || []).map((it: any) => ({
                   productId: it.productId,
                   title: it.titleSnapshot,
-                  quantity: it.quantity,
+                  quantity: it.quantity || 1,
                   price: isPartialCod ? purchaseValue : (it.unitPriceMinor || 0) / 100,
                 })),
-                customerEmail: data.order.guestEmail || emailParam || undefined,
-                customerPhone: data.order.guestPhone || undefined,
+                customerEmail: verifiedOrder.guestEmail || emailParam || undefined,
+                customerPhone: verifiedOrder.guestPhone || undefined,
               });
             }
           }
@@ -106,7 +104,7 @@ function OrderSuccessContent() {
     } else {
       setLoading(false);
     }
-  }, [orderNumber, emailParam]);
+  }, [orderNumber, emailParam, gatewayParam]);
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">

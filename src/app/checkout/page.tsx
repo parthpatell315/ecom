@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { formatCurrency } from '@/lib/currency';
@@ -130,16 +130,20 @@ function CheckoutContent() {
   const shippingMinor = 0;
   const finalTotalMinor = Math.max(0, subtotalMinor - discountMinor - prepaidDiscountMinor + shippingMinor);
 
-  // Fire InitiateCheckout Meta Pixel Event
+  // Fire InitiateCheckout Meta Pixel Event strictly once per checkout session
+  const hasTrackedCheckoutRef = useRef(false);
   useEffect(() => {
-    if (isLoaded && items.length > 0) {
+    if (isLoaded && items.length > 0 && !hasTrackedCheckoutRef.current) {
+      hasTrackedCheckoutRef.current = true;
       trackPixelEvent('InitiateCheckout', {
-        num_items: items.length,
+        content_ids: items.map((it) => it.productId),
+        content_type: 'product',
+        num_items: items.reduce((acc, it) => acc + (it.quantity || 1), 0),
         value: finalTotalMinor / 100,
         currency: 'INR',
       });
     }
-  }, [isLoaded, items.length, finalTotalMinor]);
+  }, [isLoaded, items.length]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
