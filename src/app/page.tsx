@@ -82,39 +82,41 @@ export default async function HomePage() {
     )
     .slice(0, 6);
 
-  // Curated category collection cards
+  // Curated core collections matching Flirta's actual sales strategy
   const categoryHighlights = [
     {
-      title: 'Lamps & Illumination',
-      subtitle: 'Magnetic floating lamps & LED lightboxes',
+      title: 'Zero-Gravity Levitation',
+      subtitle: '360° floating racing displays & magnetic levitation lamps',
+      href: '/product/magnetic-levitation-f1-racing-car',
+      image:
+        maglevF1?.images?.[0]?.url ||
+        'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/photo_5379765186618664415_x.jpg?v=1793282705',
+    },
+    {
+      title: 'Ambient Illumination',
+      subtitle: 'Multi-ring reactor lights & atmospheric RGB illumination',
       href: '/shop?category=lamps',
       image:
+        coreReactor?.images?.[0]?.url ||
         levitatingLamp?.images?.[0]?.url ||
         'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_1588xN.8339847604_sfk4.webp?v=1789717192',
     },
     {
-      title: 'Stands & Docks',
-      subtitle: 'Weighted controller cradles & laptop risers',
-      href: '/shop?category=stands',
+      title: 'Iconic Lightboxes',
+      subtitle: 'High-definition illuminated geometric statement pieces',
+      href: '/product/hero-emblem-led-lamp',
       image:
+        heroEmblem?.images?.[0]?.url ||
+        'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_1588xN.7800210730_enye.webp?v=1789630077',
+    },
+    {
+      title: 'Desk Architecture',
+      subtitle: 'Precision biopolymer parametric device docks & workstation stands',
+      href: '/product/wave-parametric-device-stand',
+      image:
+        waveStand?.images?.[0]?.url ||
         products.find((p) => p.slug.includes('stand'))?.images?.[0]?.url ||
         'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=600&q=80',
-    },
-    {
-      title: 'Clocks & Timepieces',
-      subtitle: 'StandBy mode docks & mathematical clocks',
-      href: '/shop?category=clocks',
-      image:
-        products.find((p) => p.slug.includes('clock'))?.images?.[0]?.url ||
-        'https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?auto=format&fit=crop&w=600&q=80',
-    },
-    {
-      title: 'Collectibles & Games',
-      subtitle: 'Tactile chessboards & collectible props',
-      href: '/shop?category=games',
-      image:
-        products.find((p) => p.slug.includes('chess') || p.slug.includes('prop'))?.images?.[0]?.url ||
-        'https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=600&q=80',
     },
   ];
 
@@ -174,8 +176,8 @@ export default async function HomePage() {
                   <span className="block text-xs text-[#6B7280] mt-0.5">Layer precision, PLA+</span>
                 </div>
                 <div>
-                  <strong className="block text-sm font-extrabold text-[#111827]">₹999+</strong>
-                  <span className="block text-xs text-[#6B7280] mt-0.5">Free delivery on prepaid orders</span>
+                  <strong className="block text-sm font-extrabold text-[#111827]">Free Delivery</strong>
+                  <span className="block text-xs text-[#6B7280] mt-0.5">Pan-India on all orders</span>
                 </div>
               </div>
             </div>
@@ -480,14 +482,14 @@ export default async function HomePage() {
       <section className="py-16 md:py-24 bg-white border-b border-black/[0.06]">
         <div className="max-w-[1140px] mx-auto px-4 sm:px-6">
           <div className="text-center max-w-xl mx-auto mb-12">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#86868B] block mb-1">
-              Curated Taxonomy
+            <span className="text-xs font-bold uppercase tracking-wider text-[#E61E2A] block mb-1">
+              Curated Collections
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#111827]">
-              Explore by Collection
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#111827]">
+              Explore by Discipline
             </h2>
             <p className="text-sm text-[#6E6E73] mt-2">
-              Discover pieces categorized by design discipline, lighting architecture, and workstation utility.
+              Discover pieces engineered for kinetic zero-gravity suspension, ambient lighting architecture, and modern workstation aesthetics.
             </p>
           </div>
 

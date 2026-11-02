@@ -233,7 +233,7 @@ export function getProductBoxContents(product: any): BoxItem[] {
       { item: 'Non-Scratch Silicone Surface Pads', desc: 'Protective grips for laptop base and workstation surface' },
       { item: 'Velvet Travel Drawstring Sleeve', desc: 'Compact carrying pouch for easy mobile portability' },
       { item: 'Ergonomic Setup & Angle Guide', desc: 'Recommended posture angles for workstation comfort' },
-      { item: 'Quality Guarantee Card', desc: 'Studio warranty and 7-day replacement certificate' },
+      { item: 'Quality Guarantee Card', desc: 'Studio quality inspection and 7-day transit replacement certificate' },
     ];
   }
 
@@ -325,7 +325,7 @@ export function getProductStoryMeta(product: any): ProductStoryMeta {
           desc: 'Glides continuously with near-zero air friction for mesmerizing kinetic display',
         },
         {
-          title: 'BIS-Certified Base',
+          title: 'Failsafe Auto-Catch Base',
           desc: 'Low-voltage 12V 2A power supply with failsafe auto-catch magnetic safety',
         },
       ],
@@ -715,7 +715,7 @@ export function getProductBuyPerks(product: any): BuyPerk[] {
     return [
       { text: 'Genuine 15–20mm Electromagnetic Air Gap Suspension', color: '#059669' },
       { text: 'Active Sensor Coils with Ambient Multi-Color Halo Glow', color: '#0284C7' },
-      { text: 'BIS-Certified Indian 2-Pin 12V 2A Power Adapter Included', color: '#D97706' },
+      { text: 'Standard Indian 2-Pin 12V 2A Power Adapter Included', color: '#D97706' },
     ];
   }
   if (slug.includes('reactor')) {

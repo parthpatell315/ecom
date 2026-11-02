@@ -63,7 +63,7 @@ export default function GrievancePage() {
           <div className="pt-2">
             <span className="text-[11px] uppercase tracking-wider text-neutral-500 font-semibold block">Registered Corporate Office</span>
             <p className="text-xs text-neutral-700 mt-0.5 font-medium">{LEGAL_CONFIG.REGISTERED_ADDRESS}</p>
-            <p className="text-xs text-neutral-500 mt-0.5">GSTIN: <span className="font-mono text-neutral-700">{LEGAL_CONFIG.GSTIN}</span></p>
+            <p className="text-xs text-neutral-500 mt-0.5">GST Status: <span className="text-neutral-700">{LEGAL_CONFIG.GSTIN}</span></p>
           </div>
         </section>
 

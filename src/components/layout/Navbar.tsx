@@ -86,7 +86,7 @@ export function Navbar() {
           <span className="text-white/40">•</span>
           <span>MADE IN INDIA</span>
           <span className="text-white/40">•</span>
-          <span>FREE DELIVERY ON ORDERS ₹999+</span>
+          <span>FREE PAN-INDIA AIR DELIVERY</span>
           <span className="text-white/40">•</span>
           <span>7-DAY REPLACEMENT IF DAMAGED</span>
           <span className="text-white/40">•</span>
@@ -96,13 +96,13 @@ export function Navbar() {
           <span className="text-white/40">•</span>
           <span>MADE IN INDIA</span>
           <span className="text-white/40">•</span>
-          <span>FREE DELIVERY ON ORDERS ₹999+</span>
+          <span>FREE PAN-INDIA AIR DELIVERY</span>
           <span className="text-white/40">•</span>
           <span>7-DAY REPLACEMENT IF DAMAGED</span>
           <span className="text-white/40">•</span>
           <span>MADE IN INDIA</span>
           <span className="text-white/40">•</span>
-          <span>FREE DELIVERY ON ORDERS ₹999+</span>
+          <span>FREE PAN-INDIA AIR DELIVERY</span>
           <span className="text-white/40">•</span>
           <span>7-DAY REPLACEMENT IF DAMAGED</span>
         </div>

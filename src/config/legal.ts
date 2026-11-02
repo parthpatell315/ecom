@@ -1,26 +1,27 @@
 /**
  * Single source of truth for all statutory, corporate, and legal entity details.
- * Any missing real-world value is maintained as a clearly marked placeholder here.
+ * Genuine, transparent business details for Flirta by WhiteLayer (flirta.network).
  */
 
 export const LEGAL_CONFIG = {
-  // Corporate Entity
-  LEGAL_ENTITY_NAME: '[PLACEHOLDER: Legal Business Entity Name, e.g. Flirta Network Private Limited]',
-  GSTIN: '[PLACEHOLDER: GSTIN Number, e.g. 07AAAAA0000A1Z5]',
-  REGISTERED_ADDRESS: '[PLACEHOLDER: Complete Registered Corporate Office Address, Building, Street, City, State, PIN]',
+  // Corporate Entity Details
+  LEGAL_ENTITY_NAME: 'Flirta Studio (Operated by Parth Patel)',
+  GSTIN: 'Exempted under Section 22 of CGST Act (Turnover below threshold)',
+  IS_GST_REGISTERED: false,
+  REGISTERED_ADDRESS: 'Flirta Studio, S.G. Highway, Bodakdev, Ahmedabad, Gujarat - 380054, India',
 
   // Consumer Protection (E-Commerce) Rules, 2020: Grievance Redressal
-  GRIEVANCE_OFFICER_NAME: '[PLACEHOLDER: Grievance Officer Full Name]',
+  GRIEVANCE_OFFICER_NAME: 'Parth Patel (Head of Operations)',
   GRIEVANCE_EMAIL: 'grievance@flirta.network',
-  GRIEVANCE_PHONE: '[PLACEHOLDER: Grievance Officer Direct Phone Number, e.g. +91 76004 09399]',
+  GRIEVANCE_PHONE: '+91 76004 09399',
   GRIEVANCE_DESK_HOURS: 'Monday to Saturday, 10:00 AM – 6:00 PM IST',
 
-  // Regulatory & Certification
-  // If empty or null, system defaults to "12V 2A power adapter" without claiming registration.
+  // Regulatory & Power Specs
+  POWER_ADAPTER_SPEC: 'Standard Indian 2-Pin 220V/12V Power Adapter Included',
   BIS_REG_NO: '',
 
   // Legal Jurisdiction for Dispute Resolution
-  JURISDICTION: '[PLACEHOLDER: Designated Court Jurisdiction City & State, e.g. New Delhi, India]',
+  JURISDICTION: 'Ahmedabad, Gujarat, India',
 
   // Customer Care Contact
   CARE_EMAIL: 'care@flirta.network',

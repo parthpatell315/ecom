@@ -208,7 +208,7 @@ export function Footer() {
         {/* Corporate Statutory & Compliance Box */}
         <div className="pt-6 border-t border-black/[0.08] text-[11px] text-[#86868B] space-y-1">
           <p>
-            Sold and fulfilled by <strong className="font-medium text-[#1D1D1F]">{LEGAL_CONFIG.LEGAL_ENTITY_NAME}</strong> • GSTIN: <span className="font-mono text-[#1D1D1F]">{LEGAL_CONFIG.GSTIN}</span>
+            Sold and fulfilled by <strong className="font-medium text-[#1D1D1F]">{LEGAL_CONFIG.LEGAL_ENTITY_NAME}</strong> • GST Status: <span className="text-[#1D1D1F]">{LEGAL_CONFIG.GSTIN}</span>
           </p>
           <p>
             Registered Corporate Office: {LEGAL_CONFIG.REGISTERED_ADDRESS}

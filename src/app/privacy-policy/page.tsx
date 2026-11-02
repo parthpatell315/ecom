@@ -101,7 +101,7 @@ export default function PrivacyPolicyPage() {
         {/* Legal Entity Footer Note */}
         <div className="pt-4 border-t border-neutral-200 text-xs text-neutral-500">
           <p>
-            Sold by {LEGAL_CONFIG.LEGAL_ENTITY_NAME} • GSTIN: {LEGAL_CONFIG.GSTIN} • Registered Office: {LEGAL_CONFIG.REGISTERED_ADDRESS}
+            Sold by {LEGAL_CONFIG.LEGAL_ENTITY_NAME} • GST Status: {LEGAL_CONFIG.GSTIN} • Registered Office: {LEGAL_CONFIG.REGISTERED_ADDRESS}
           </p>
         </div>
       </div>

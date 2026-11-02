@@ -30,7 +30,7 @@ export default function TermsPage() {
             1. Agreement to Terms
           </h2>
           <p className="text-neutral-700">
-            Welcome to flirta.network. This website is owned and operated by <strong>{LEGAL_CONFIG.LEGAL_ENTITY_NAME}</strong> (GSTIN: {LEGAL_CONFIG.GSTIN}). By accessing our site, browsing collections, or placing an order, you agree to be legally bound by these Terms and Conditions and our referenced policies (including our Shipping Policy, Refund Policy, and Privacy Policy).
+            Welcome to flirta.network. This website is owned and operated by <strong>{LEGAL_CONFIG.LEGAL_ENTITY_NAME}</strong> ({LEGAL_CONFIG.GSTIN}). By accessing our site, browsing collections, or placing an order, you agree to be legally bound by these Terms and Conditions and our referenced policies (including our Shipping Policy, Refund Policy, and Privacy Policy).
           </p>
         </section>
 
@@ -98,7 +98,7 @@ export default function TermsPage() {
             Questions regarding our Terms: Write to our legal team at <a href={`mailto:${LEGAL_CONFIG.CARE_EMAIL}`} className="text-[#E61E2A] underline">{LEGAL_CONFIG.CARE_EMAIL}</a>.
           </p>
           <p className="mt-1">
-            Sold by {LEGAL_CONFIG.LEGAL_ENTITY_NAME} • GSTIN: {LEGAL_CONFIG.GSTIN} • Registered Office: {LEGAL_CONFIG.REGISTERED_ADDRESS}
+            Sold by {LEGAL_CONFIG.LEGAL_ENTITY_NAME} • GST Status: {LEGAL_CONFIG.GSTIN} • Registered Office: {LEGAL_CONFIG.REGISTERED_ADDRESS}
           </p>
         </div>
       </div>

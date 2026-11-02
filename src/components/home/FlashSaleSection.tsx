@@ -79,7 +79,7 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
               <span className="w-2.5 h-2.5 rounded-full bg-[#E61E2A] animate-pulse" />
               <span className="text-[11px] font-bold tracking-wider uppercase text-[#F43F5E] flex items-center gap-1.5">
                 <Sparkles className="w-3 h-3 fill-current text-amber-400" />
-                FEATURED STUDIO DROP • FLAT ₹999
+                FEATURED STUDIO COLLECTION • DIRECT STUDIO DROPS
               </span>
             </div>
 
@@ -92,7 +92,7 @@ export function FlashSaleSection({ products }: FlashSaleSectionProps) {
               )}
             </h2>
             <p className="text-xs sm:text-sm text-[#A1A1AA] mt-1.5 max-w-xl font-normal leading-relaxed">
-              Studio direct pricing. Elevate your desk sanctuary with benchmark ambient lighting at <strong className="text-white">flat ₹999</strong> with {DELIVERY_PROMISE.toLowerCase()}.
+              Studio direct pricing. Elevate your desk sanctuary with precision ambient lighting &amp; levitating architecture with {DELIVERY_PROMISE.toLowerCase()}.
             </p>
           </div>
 

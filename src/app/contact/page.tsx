@@ -36,7 +36,7 @@ export default function ContactPage() {
               <div>
                 <p className="font-medium text-neutral-900">{LEGAL_CONFIG.LEGAL_ENTITY_NAME}</p>
                 <p className="text-neutral-500 mt-0.5">{LEGAL_CONFIG.REGISTERED_ADDRESS}</p>
-                <p className="text-[11px] text-neutral-400 mt-1">GSTIN: {LEGAL_CONFIG.GSTIN}</p>
+                <p className="text-[11px] text-neutral-500 mt-1">GST Status: {LEGAL_CONFIG.GSTIN}</p>
               </div>
             </div>
 

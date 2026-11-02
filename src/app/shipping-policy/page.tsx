@@ -50,7 +50,7 @@ export default function ShippingPolicyPage() {
             We deliver to over 19,000+ Indian postal PIN codes covering all 28 states and 8 union territories.
           </p>
           <ul className="list-disc pl-5 space-y-1 text-neutral-600">
-            <li><strong>Prepaid Orders:</strong> All prepaid orders (₹999 and above) qualify for 100% Free Express Air Shipping with zero additional handling charges.</li>
+            <li><strong>Prepaid Orders:</strong> All prepaid orders qualify for 100% Free Express Air Shipping with zero additional handling charges.</li>
             <li><strong>Serviceable Locations:</strong> If your delivery pincode is deemed non-serviceable by our primary courier, our support concierge will contact you within 24 hours to arrange alternate surface priority delivery or issue an immediate full refund.</li>
           </ul>
         </section>
@@ -66,8 +66,8 @@ export default function ShippingPolicyPage() {
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-neutral-600">
             <li><strong>Advance Commitment Fee:</strong> You pay a small advance of <strong>₹149</strong> securely via UPI at checkout to confirm your parcel reservation.</li>
-            <li><strong>Doorstep Balance:</strong> You pay the remaining balance of <strong>₹850</strong> in cash or via courier UPI QR scan when the package arrives at your doorstep.</li>
-            <li><strong>Total Order Cost:</strong> The total order amount remains flat ₹999 with zero additional COD convenience fees.</li>
+            <li><strong>Doorstep Balance:</strong> You pay the remaining balance of your order (e.g. ₹2,050 for the F1 MagLev Car) in cash or via courier UPI QR scan when the package arrives at your doorstep.</li>
+            <li><strong>Total Order Cost:</strong> The total order amount strictly matches the product's regular listed price with zero hidden COD convenience fees.</li>
             <li><strong>Refusal of Delivery:</strong> If an order is cancelled after courier handover or rejected at doorstep without genuine transit damage, the ₹149 advance fee is non-refundable as it offsets the two-way air courier freight.</li>
           </ul>
         </section>
@@ -100,7 +100,7 @@ export default function ShippingPolicyPage() {
             Logistics questions or address corrections: Contact our studio concierge at <a href={`mailto:${LEGAL_CONFIG.CARE_EMAIL}`} className="text-[#E61E2A] underline">{LEGAL_CONFIG.CARE_EMAIL}</a> or WhatsApp <span className="font-mono">{LEGAL_CONFIG.CARE_PHONE}</span>.
           </p>
           <p className="mt-1">
-            Sold by {LEGAL_CONFIG.LEGAL_ENTITY_NAME} • GSTIN: {LEGAL_CONFIG.GSTIN} • Registered Office: {LEGAL_CONFIG.REGISTERED_ADDRESS}
+            Sold by {LEGAL_CONFIG.LEGAL_ENTITY_NAME} • GST Status: {LEGAL_CONFIG.GSTIN} • Registered Office: {LEGAL_CONFIG.REGISTERED_ADDRESS}
           </p>
         </div>
       </div>

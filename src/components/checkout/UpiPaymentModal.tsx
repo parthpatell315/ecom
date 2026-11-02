@@ -73,9 +73,13 @@ export function UpiPaymentModal({
   const [hasInitiatedPayment, setHasInitiatedPayment] = useState(false);
   const [userReturnedFromApp, setUserReturnedFromApp] = useState(false);
   const [selectedQrType, setSelectedQrType] = useState<'dynamic' | 'paytm'>('dynamic');
+  const [isIOS, setIsIOS] = useState(false);
 
   // Auto-select QR on Desktop & auto-detect customer returning from UPI app
   useEffect(() => {
+    if (typeof navigator !== 'undefined') {
+      setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent));
+    }
     if (typeof window !== 'undefined' && window.innerWidth >= 640) {
       setActiveTab('qr');
     }
@@ -101,10 +105,10 @@ export function UpiPaymentModal({
   }, [hasInitiatedPayment]);
 
   // Robust UPI trigger supporting Android intents, iOS direct app schemes, and universal fallback
-  const triggerUpiApp = (app: 'gpay' | 'phonepe' | 'paytm' | 'cred' | 'generic') => {
+  const triggerUpiApp = (app: 'gpay' | 'phonepe' | 'paytm' | 'cred' | 'whatsapp' | 'generic') => {
     setHasInitiatedPayment(true);
     try {
-      const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isMobileIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
       const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768 && !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
       if (isDesktop) {
@@ -116,7 +120,7 @@ export function UpiPaymentModal({
 
       let targetUrl = upiPayload.upiUrl;
 
-      if (isIOS) {
+      if (isMobileIOS) {
         // Direct iOS URL schemes avoid iOS opening WhatsApp Pay when customer wanted Google Pay/PhonePe/Paytm
         switch (app) {
           case 'gpay':
@@ -131,9 +135,14 @@ export function UpiPaymentModal({
           case 'cred':
             targetUrl = upiPayload.deepLinks?.ios?.cred || `credpay://upi/pay?${upiQuery}`;
             break;
+          case 'whatsapp':
+            targetUrl = `whatsapp://pay?${upiQuery}`;
+            break;
           case 'generic':
           default:
-            targetUrl = upiPayload.upiUrl;
+            // On iOS, generic `upi://` is handled by WhatsApp Pay. Defaulting to PhonePe (India's #1 UPI app)
+            // or GPay avoids unexpected WhatsApp hijack!
+            targetUrl = upiPayload.deepLinks?.ios?.phonepe || `phonepe://upi/pay?${upiQuery}`;
             break;
         }
       } else {
@@ -150,6 +159,9 @@ export function UpiPaymentModal({
             break;
           case 'cred':
             targetUrl = upiPayload.deepLinks.cred || upiPayload.upiUrl;
+            break;
+          case 'whatsapp':
+            targetUrl = `intent://pay?${upiQuery}#Intent;scheme=upi;package=com.whatsapp;end`;
             break;
           case 'generic':
           default:
@@ -377,58 +389,130 @@ export function UpiPaymentModal({
           {/* TAB 1: 1-TAP PAY WITH MOBILE UPI APPS */}
           {activeTab === '1tap' && (
             <div className="space-y-4 animate-fade-in">
-              {/* Giant Primary Instant Pay Button */}
-              <button
-                type="button"
-                onClick={() => triggerUpiApp('generic')}
-                className="w-full py-4 px-6 rounded-2xl bg-[#E61E2A] text-white font-extrabold text-sm sm:text-base hover:bg-[#C81420] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
-              >
-                <Smartphone className="w-5 h-5" />
-                <span>Open UPI App to Pay ₹{upiPayload.amountRupees}</span>
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </button>
+              {isIOS ? (
+                /* iOS (iPhone/iPad): Direct 1-Tap App Selectors to prevent iOS hijacking generic links to WhatsApp */
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-gray-700 uppercase tracking-wider block">
+                      Choose Your UPI App on iPhone
+                    </span>
+                    <span className="text-[10.5px] text-emerald-600 font-semibold flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" /> Direct 1-Tap Open
+                    </span>
+                  </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider block">
-                    Or Tap Your Preferred UPI App
-                  </span>
-                  <span className="text-[10px] text-gray-400 font-medium">
-                    (Direct App Launch)
-                  </span>
-                </div>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {/* PhonePe */}
+                    <button
+                      type="button"
+                      onClick={() => triggerUpiApp('phonepe')}
+                      className="p-3.5 rounded-2xl bg-[#5F259F]/5 hover:bg-[#5F259F]/10 border-2 border-[#5F259F]/30 hover:border-[#5F259F] text-gray-900 font-extrabold text-xs flex flex-col items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 group"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-[#5F259F] text-white flex items-center justify-center font-black text-sm shadow-xs">
+                        पे
+                      </div>
+                      <span className="text-[#5F259F] group-hover:underline">PhonePe</span>
+                    </button>
 
-                <div className="grid grid-cols-2 gap-2.5">
+                    {/* Google Pay */}
+                    <button
+                      type="button"
+                      onClick={() => triggerUpiApp('gpay')}
+                      className="p-3.5 rounded-2xl bg-blue-50/60 hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-500 text-gray-900 font-extrabold text-xs flex flex-col items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 group"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-xs font-black shadow-xs">
+                        <span className="text-[#4285F4]">G</span>
+                        <span className="text-[#EA4335]">P</span>
+                        <span className="text-[#FBBC05]">a</span>
+                        <span className="text-[#34A853]">y</span>
+                      </div>
+                      <span className="text-gray-800 group-hover:text-blue-600">Google Pay</span>
+                    </button>
+
+                    {/* Paytm */}
+                    <button
+                      type="button"
+                      onClick={() => triggerUpiApp('paytm')}
+                      className="py-3 px-4 rounded-xl bg-white border border-gray-200 hover:border-[#00BAF2] hover:bg-sky-50/30 text-gray-800 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-2xs cursor-pointer active:scale-95"
+                    >
+                      <span className="text-[#00BAF2] font-black">Paytm</span>
+                    </button>
+
+                    {/* CRED */}
+                    <button
+                      type="button"
+                      onClick={() => triggerUpiApp('cred')}
+                      className="py-3 px-4 rounded-xl bg-neutral-900 text-white font-bold text-xs hover:bg-black active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                    >
+                      <span>CRED / BHIM</span>
+                    </button>
+                  </div>
+
+                  {/* Explicit WhatsApp Pay Option */}
                   <button
                     type="button"
-                    onClick={() => triggerUpiApp('gpay')}
-                    className="py-3 px-4 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold text-xs hover:border-[#E61E2A] hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer group"
+                    onClick={() => triggerUpiApp('whatsapp')}
+                    className="w-full py-2.5 px-4 rounded-xl bg-emerald-50 border border-emerald-200 hover:bg-emerald-100/70 text-emerald-800 font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   >
-                    <span className="group-hover:text-[#E61E2A] transition-colors">Google Pay</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => triggerUpiApp('phonepe')}
-                    className="py-3 px-4 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold text-xs hover:border-[#E61E2A] hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer group"
-                  >
-                    <span className="group-hover:text-[#E61E2A] transition-colors">PhonePe</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => triggerUpiApp('paytm')}
-                    className="py-3 px-4 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold text-xs hover:border-[#E61E2A] hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer group"
-                  >
-                    <span className="group-hover:text-[#E61E2A] transition-colors">Paytm</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => triggerUpiApp('cred')}
-                    className="py-3 px-4 rounded-xl bg-neutral-900 text-white font-bold text-xs hover:bg-black active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    <span>CRED / BHIM</span>
+                    <span>Pay via WhatsApp UPI</span>
                   </button>
                 </div>
-              </div>
+              ) : (
+                /* Android: Native OS Intent Chooser */
+                <>
+                  <button
+                    type="button"
+                    onClick={() => triggerUpiApp('generic')}
+                    className="w-full py-4 px-6 rounded-2xl bg-[#E61E2A] text-white font-extrabold text-sm sm:text-base hover:bg-[#C81420] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                  >
+                    <Smartphone className="w-5 h-5" />
+                    <span>Open UPI App to Pay ₹{upiPayload.amountRupees}</span>
+                    <ArrowRight className="w-4 h-4 ml-1" />
+                  </button>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider block">
+                        Or Tap Your Preferred UPI App
+                      </span>
+                      <span className="text-[10px] text-gray-400 font-medium">
+                        (Direct App Launch)
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => triggerUpiApp('gpay')}
+                        className="py-3 px-4 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold text-xs hover:border-[#E61E2A] hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer group"
+                      >
+                        <span className="group-hover:text-[#E61E2A] transition-colors">Google Pay</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => triggerUpiApp('phonepe')}
+                        className="py-3 px-4 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold text-xs hover:border-[#E61E2A] hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer group"
+                      >
+                        <span className="group-hover:text-[#E61E2A] transition-colors">PhonePe</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => triggerUpiApp('paytm')}
+                        className="py-3 px-4 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold text-xs hover:border-[#E61E2A] hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer group"
+                      >
+                        <span className="group-hover:text-[#E61E2A] transition-colors">Paytm</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => triggerUpiApp('cred')}
+                        className="py-3 px-4 rounded-xl bg-neutral-900 text-white font-bold text-xs hover:bg-black active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <span>CRED / BHIM</span>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
 
               {/* Copy UPI ID Helper */}
               <div className="pt-2 flex items-center justify-between text-xs text-gray-500 bg-gray-50 px-3.5 py-2.5 rounded-xl border border-gray-200">

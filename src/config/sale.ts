@@ -9,10 +9,10 @@ export const SALE_CONFIG = {
   SALE_END_DATE: null as string | null,
 
   // Fallback text when SALE_END_DATE is null or in the past
-  DEFAULT_ANNOUNCEMENT: 'Diwali Studio Drop: ₹999 prepaid | Free delivery',
+  DEFAULT_ANNOUNCEMENT: 'Studio Drop: Free Pan-India Air Delivery | Cash on Delivery Available',
 
   // Label shown on promotional cards when sale is active
-  PROMOTION_LABEL: 'Diwali Special',
+  PROMOTION_LABEL: 'Limited Edition',
 } as const;
 
 /**
