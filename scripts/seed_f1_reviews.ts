@@ -97,8 +97,8 @@ const REVIEWS = [
     authorName: 'Harsh Vardhan',
     city: 'Ahmedabad, Gujarat',
     rating: 5,
-    title: 'Cash on delivery was seamless, great product',
-    comment: 'Opted for Cash on Delivery, package arrived safely boxed and sealed. Checked everything before paying the courier. Works like a charm!',
+    title: 'Partial COD was seamless, great product',
+    comment: 'Opted for Partial COD with ₹149 advance, package arrived safely boxed and sealed. Paid the remaining balance to the courier. Works like a charm!',
     createdAt: new Date('2026-11-01T14:30:00Z'),
   },
 ];
@@ -169,3 +169,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+

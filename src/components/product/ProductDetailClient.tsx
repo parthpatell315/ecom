@@ -873,12 +873,12 @@ export function ProductDetailClient({
                   </div>
                   <div className="text-[#6E6E73] text-[11.5px] leading-relaxed pt-1 space-y-1.5">
                     <p className="flex items-center justify-between">
-                      <span><strong className="text-[#111827]">Cash on Delivery:</strong> Pay 100% on arrival (₹0 advance)</span>
-                      <strong className="text-[#111827] font-bold">{formatCurrency(totalPriceMinor)}</strong>
-                    </p>
-                    <p className="pt-1.5 border-t border-black/[0.04] flex items-center justify-between">
                       <span><strong className="text-[#111827]">Prepaid UPI:</strong> Full online payment {isF1MagLev ? '(Includes ₹300 instant discount)' : ''}</span>
                       <strong className="text-emerald-700 font-bold">{formatCurrency(isF1MagLev ? prepaidTotalPriceMinor : totalPriceMinor)}</strong>
+                    </p>
+                    <p className="pt-1.5 border-t border-black/[0.04] flex items-center justify-between">
+                      <span><strong className="text-[#111827]">Partial COD:</strong> Pay <strong>₹{PARTIAL_COD_ADVANCE_RUPEES} advance</strong> now via UPI, pay balance at doorstep.</span>
+                      <strong className="text-[#111827] font-semibold">{formatCurrency(doorstepBalanceMinor)}</strong>
                     </p>
                   </div>
                 </div>

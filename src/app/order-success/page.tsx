@@ -216,17 +216,6 @@ function OrderSuccessContent() {
                     <span>{formatCurrency(order.totalMinor)}</span>
                   </div>
                 </>
-              ) : (gatewayParam === 'COD' || order.payments?.some((p: any) => p.gateway === 'COD')) ? (
-                <>
-                  <div className="flex justify-between text-xs font-semibold text-amber-600 dark:text-amber-400">
-                    <span>Payment Mode</span>
-                    <span>Cash on Delivery (₹0 Advance)</span>
-                  </div>
-                  <div className="flex justify-between text-sm font-bold text-neutral-900 dark:text-neutral-100 pt-2 border-t border-black/[0.06] dark:border-white/[0.08]">
-                    <span>Payable on Delivery</span>
-                    <span>{formatCurrency(order.totalMinor)}</span>
-                  </div>
-                </>
               ) : (
                 <div className="flex justify-between text-sm font-bold text-neutral-900 dark:text-neutral-100 pt-2 border-t border-black/[0.06] dark:border-white/[0.08]">
                   <span>Total Paid</span>

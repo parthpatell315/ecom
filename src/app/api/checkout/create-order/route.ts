@@ -328,7 +328,7 @@ export async function POST(req: NextRequest) {
             codBalanceMinor: totalMinor,
             couponCode: validatedCoupon,
             shippingAddress,
-            notes: notes ? `${notes} | 100% Cash on Delivery (Pay ₹${(totalMinor / 100).toFixed(2)} on arrival)` : `100% Cash on Delivery (Pay ₹${(totalMinor / 100).toFixed(2)} on arrival)`,
+            notes: notes || null,
             items: {
               create: orderItemsData.map((item) => {
                 const unitPrice = item.product.priceMinor + (item.variant?.priceAdjustmentMinor || 0);
