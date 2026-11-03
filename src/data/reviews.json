@@ -1,1 +1,146 @@
-[]
+[
+  {
+    "id": "rev-f1-01",
+    "productId": "cmvw1h8bg0001rtetesjwuy6d",
+    "authorName": "Vikramaditya Sengupta",
+    "city": "Bengaluru, Karnataka",
+    "rating": 5,
+    "title": "The magnetic levitation is pure magic",
+    "comment": "Took less than 30 seconds to balance it using the guide tool. Once floating, it rotates continuously without stopping. The build quality of both the carbon-black base and the aerodynamic car chassis is remarkable. Absolute showstopper on my desk.",
+    "verifiedPurchase": true,
+    "isApproved": true,
+    "createdAt": "2026-10-18T10:30:00.000Z"
+  },
+  {
+    "id": "rev-f1-02",
+    "productId": "cmvw1h8bg0001rtetesjwuy6d",
+    "authorName": "Aarav Patel",
+    "city": "Mumbai, Maharashtra",
+    "rating": 5,
+    "title": "Every single person in my office stopped to stare",
+    "comment": "I placed this on my studio reception desk. People literally do a double take. It floats with zero contact and spins silently 24/7. Packaging was super secure with thick custom foam.",
+    "verifiedPurchase": true,
+    "isApproved": true,
+    "createdAt": "2026-10-20T14:15:00.000Z"
+  },
+  {
+    "id": "rev-f1-03",
+    "productId": "cmvw1h8bg0001rtetesjwuy6d",
+    "authorName": "Karan Malhotra",
+    "city": "Delhi NCR",
+    "rating": 5,
+    "title": "Phenomenal engineering and zero motor noise",
+    "comment": "I was worried there might be a buzzing sound from the electromagnets, but it is 100% dead silent. The base stays cool to the touch even after being plugged in for 4 days straight. Worth every rupee.",
+    "verifiedPurchase": true,
+    "isApproved": true,
+    "createdAt": "2026-10-22T09:45:00.000Z"
+  },
+  {
+    "id": "rev-f1-04",
+    "productId": "cmvw1h8bg0001rtetesjwuy6d",
+    "authorName": "Pooja Hegde",
+    "city": "Hyderabad, Telangana",
+    "rating": 5,
+    "title": "Ordered this as an anniversary gift for my husband",
+    "comment": "He is a hardcore motorsport and racing fan. When he saw it floating in mid-air, he was completely blown away. The matte finish and aerodynamic detailing look very high-end.",
+    "verifiedPurchase": true,
+    "isApproved": true,
+    "createdAt": "2026-10-23T16:20:00.000Z"
+  },
+  {
+    "id": "rev-f1-05",
+    "productId": "cmvw1h8bg0001rtetesjwuy6d",
+    "authorName": "Aditya Nair",
+    "city": "Pune, Maharashtra",
+    "rating": 5,
+    "title": "Super quick delivery to Pune and flawless finish",
+    "comment": "Delivered in 3 days. The levitation mechanism is very stable. Even if someone accidentally bumps the table, it wobbles slightly but doesn't drop. Excellent customer support too.",
+    "verifiedPurchase": true,
+    "isApproved": true,
+    "createdAt": "2026-10-25T11:00:00.000Z"
+  },
+  {
+    "id": "rev-f1-06",
+    "productId": "cmvw1h8bg0001rtetesjwuy6d",
+    "authorName": "Siddharth Rao",
+    "city": "Chennai, Tamil Nadu",
+    "rating": 4,
+    "title": "Took a couple tries to balance, but looks unbelievable",
+    "comment": "First time balancing a levitating object takes a few tries until you feel the magnetic sweet spot with both hands. Once you get the feel, it locks into place instantly. Looks futuristic on my dark wood setup.",
+    "verifiedPurchase": true,
+    "isApproved": true,
+    "createdAt": "2026-10-26T18:10:00.000Z"
+  },
+  {
+    "id": "rev-f1-07",
+    "productId": "cmvw1h8bg0001rtetesjwuy6d",
+    "authorName": "Sneha Mukherjee",
+    "city": "Kolkata, West Bengal",
+    "rating": 5,
+    "title": "Much higher quality than typical online gadgets",
+    "comment": "Usually these novelty items feel plasticky, but this has substantial weight. The base has non-slip silicone feet and the magnetic field is very strong. Highly recommended.",
+    "verifiedPurchase": true,
+    "isApproved": true,
+    "createdAt": "2026-10-27T13:40:00.000Z"
+  },
+  {
+    "id": "rev-f1-08",
+    "productId": "cmvw1h8bg0001rtetesjwuy6d",
+    "authorName": "Rishabh Jain",
+    "city": "Jaipur, Rajasthan",
+    "rating": 5,
+    "title": "Best desk centerpiece I've ever owned",
+    "comment": "The subtle ambient glow from the base ring at night combined with the floating car model looks out of this world. Looks like something straight out of a design museum.",
+    "verifiedPurchase": true,
+    "isApproved": true,
+    "createdAt": "2026-10-28T15:25:00.000Z"
+  },
+  {
+    "id": "rev-f1-09",
+    "productId": "cmvw1h8bg0001rtetesjwuy6d",
+    "authorName": "Manish Chawla",
+    "city": "Gurugram, Haryana",
+    "rating": 5,
+    "title": "Prepaid UPI discount was great, smooth dispatch",
+    "comment": "Got the ₹300 instant discount and order confirmation arrived on WhatsApp instantly. Delivery was fast. The product itself exceeded my expectations.",
+    "verifiedPurchase": true,
+    "isApproved": true,
+    "createdAt": "2026-10-29T10:15:00.000Z"
+  },
+  {
+    "id": "rev-f1-10",
+    "productId": "cmvw1h8bg0001rtetesjwuy6d",
+    "authorName": "Varun Sharma",
+    "city": "Chandigarh",
+    "rating": 5,
+    "title": "True 360 degree floating — unbelievable physics",
+    "comment": "Giving it a gentle tap gives it a frictionless spin that lasts for hours. Premium studio packaging made unboxing feel like a top-tier product.",
+    "verifiedPurchase": true,
+    "isApproved": true,
+    "createdAt": "2026-10-30T17:05:00.000Z"
+  },
+  {
+    "id": "rev-f1-11",
+    "productId": "cmvw1h8bg0001rtetesjwuy6d",
+    "authorName": "Ananya Deshmukh",
+    "city": "Navi Mumbai, Maharashtra",
+    "rating": 5,
+    "title": "Stunning aesthetic for tech & racing lovers",
+    "comment": "The level of precision on the suspension arms and front wing is insane. It floats about 20mm above the magnetic platform. Everyone asks where I got this from.",
+    "verifiedPurchase": true,
+    "isApproved": true,
+    "createdAt": "2026-10-31T12:50:00.000Z"
+  },
+  {
+    "id": "rev-f1-12",
+    "productId": "cmvw1h8bg0001rtetesjwuy6d",
+    "authorName": "Harsh Vardhan",
+    "city": "Ahmedabad, Gujarat",
+    "rating": 5,
+    "title": "Cash on delivery was seamless, great product",
+    "comment": "Opted for Cash on Delivery, package arrived safely boxed and sealed. Checked everything before paying the courier. Works like a charm!",
+    "verifiedPurchase": true,
+    "isApproved": true,
+    "createdAt": "2026-11-01T14:30:00.000Z"
+  }
+]

@@ -324,9 +324,11 @@ export async function POST(req: NextRequest) {
             shippingMinor,
             taxMinor: 0,
             totalMinor,
+            isPartialCod: false,
+            codBalanceMinor: totalMinor,
             couponCode: validatedCoupon,
             shippingAddress,
-            notes: notes || null,
+            notes: notes ? `${notes} | 100% Cash on Delivery (Pay ₹${(totalMinor / 100).toFixed(2)} on arrival)` : `100% Cash on Delivery (Pay ₹${(totalMinor / 100).toFixed(2)} on arrival)`,
             items: {
               create: orderItemsData.map((item) => {
                 const unitPrice = item.product.priceMinor + (item.variant?.priceAdjustmentMinor || 0);
@@ -381,7 +383,11 @@ export async function POST(req: NextRequest) {
         gateway: 'COD',
         orderId: createdOrder.id,
         orderNumber: createdOrder.orderNumber,
+        isPartialCod: false,
         amountMinor: totalMinor,
+        totalOrderMinor: totalMinor,
+        codBalanceMinor: totalMinor,
+        customerDetails: { name, email, phone },
       });
     }
 
