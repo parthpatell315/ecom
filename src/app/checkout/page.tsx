@@ -29,8 +29,13 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const initialCoupon = searchParams.get('coupon') || '';
 
-  const { items, subtotalMinor, refreshCart, isLoaded } = useCart();
+  const { items, subtotalMinor, refreshCart, isLoaded, closeCart } = useCart();
   const { user } = useAuth();
+
+  // Always close any open cart drawer when arriving at checkout
+  useEffect(() => {
+    closeCart();
+  }, [closeCart]);
 
   // Contact & Shipping Form State
   const [formData, setFormData] = useState({

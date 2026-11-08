@@ -250,13 +250,19 @@ export function ProductDetailClient({
     if (!product.inStock) return;
     setIsBuying(true);
     try {
-      const success = await addItem(product.id, selectedVariant?.id, quantity, {
-        title: product.title,
-        variantName: selectedVariant?.name || null,
-        colorHex: selectedVariant?.colorHex || null,
-        unitPriceMinor: effectivePriceMinor,
-        image: selectedImage || (product.images && product.images[0]?.url) || '',
-      });
+      const success = await addItem(
+        product.id,
+        selectedVariant?.id,
+        quantity,
+        {
+          title: product.title,
+          variantName: selectedVariant?.name || null,
+          colorHex: selectedVariant?.colorHex || null,
+          unitPriceMinor: effectivePriceMinor,
+          image: selectedImage || (product.images && product.images[0]?.url) || '',
+        },
+        false
+      );
       if (success) {
         trackPixelEvent('AddToCart', {
           content_name: product.title,
@@ -911,7 +917,7 @@ export function ProductDetailClient({
         {isF1MagLev ? (
           <F1Showcase />
         ) : isMK5Helmet ? (
-          <MK5Showcase />
+          <MK5Showcase onBuyNow={handleBuyNow} />
         ) : (
           <>
             {/* 4 Accordions Section (WhiteLayer style: Description, Box, Specs, FAQs) */}

@@ -21,7 +21,11 @@ import {
   Award,
 } from 'lucide-react';
 
-export function MK5Showcase() {
+export interface MK5ShowcaseProps {
+  onBuyNow?: () => void;
+}
+
+export function MK5Showcase({ onBuyNow }: MK5ShowcaseProps = {}) {
   const [activeMode, setActiveMode] = useState<'voice' | 'remote' | 'touch'>('voice');
   const [activeEyeColor, setActiveEyeColor] = useState<'white' | 'red'>('white');
 
@@ -48,8 +52,12 @@ export function MK5Showcase() {
     return () => clearInterval(timer);
   }, []);
 
-  const scrollToCheckout = () => {
-    const addBtn = document.getElementById('AddToCartBtn');
+  const handleClaim = () => {
+    if (onBuyNow) {
+      onBuyNow();
+      return;
+    }
+    const addBtn = document.getElementById('MainAddToCartBtn');
     if (addBtn) {
       addBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
       addBtn.classList.add('animate-bounce');
@@ -139,7 +147,7 @@ export function MK5Showcase() {
 
             <button
               type="button"
-              onClick={scrollToCheckout}
+              onClick={handleClaim}
               className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#E61E2A] to-[#C81420] hover:brightness-110 active:scale-98 transition-all text-white font-bold text-sm shadow-lg shadow-red-600/30 cursor-pointer flex items-center justify-center gap-2"
             >
               <span>CLAIM AT 90% OFF (₹2,499)</span>
