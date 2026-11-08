@@ -193,6 +193,45 @@ export const MK5_HELMET_FAQS: readonly FaqItem[] = [
   },
 ] as const;
 
+export const CORE_REACTOR_FAQS: readonly FaqItem[] = [
+  {
+    id: 'reactor-1',
+    question: 'Does the Core Reactor arrive fully assembled in the display dome?',
+    answer:
+      'Yes! The unit comes 100% fully assembled inside its crystal-clear optical acrylic display dome with the weighted obsidian pedestal attached. Simply plug the included 1.5m braided Type-C cable into any 5V USB port or phone charger.',
+  },
+  {
+    id: 'reactor-2',
+    question: 'How do you switch between Steady Core and Breathing Pulse modes?',
+    answer:
+      'The rear of the weighted stand features a discreet touch-capacitive sensor. Tap once to turn on Steady Core Cyan Luminescence, tap again to activate the Cinematic Breathing Pulse cycle, and tap a third time for standby power.',
+  },
+  {
+    id: 'reactor-3',
+    question: 'Does the unit heat up after running continuously for days?',
+    answer:
+      'No. The reactor is powered by cold-emitting, high-efficiency low-voltage SMD LEDs running at safe 5V 1A power. It stays completely cool to the touch even after 72+ hours of non-stop continuous operation on your desk.',
+  },
+  {
+    id: 'reactor-4',
+    question: 'What are the dimensions and how stable is the base?',
+    answer:
+      'Dimensions are 120mm in diameter by 140mm in height. The obsidian alloy pedestal features an internal 380g counterweight and non-slip silicone pads, ensuring it stays firmly planted on any workstation desk without sliding.',
+  },
+  {
+    id: 'reactor-5',
+    question: 'How does Partial COD with ₹149 advance work?',
+    answer:
+      'To confirm your handcrafted studio reservation (₹1,499), pay ₹149 advance via any UPI app (GPay, PhonePe, Paytm). The balance ₹1,350 is payable at your doorstep upon courier handover in cash or UPI.',
+  },
+  {
+    id: 'reactor-6',
+    question: 'What is the transit packaging and damage guarantee?',
+    answer:
+      'Shipped inside custom double-layer high-density laser-cut EVA foam via BlueDart Air Express. Backed by our 100% zero-cost 7-day replacement guarantee if any transit damage occurs.',
+  },
+] as const;
+
 /**
  * Resolves product-specific FAQs based on category or slug
  */
@@ -200,6 +239,9 @@ export function getProductFaqs(product: any): readonly FaqItem[] {
   const slug = (product.slug || '').toLowerCase();
   const categorySlug = (product.category?.slug || '').toLowerCase();
 
+  if (slug.includes('reactor')) {
+    return CORE_REACTOR_FAQS;
+  }
   if (slug.includes('mk5') || slug.includes('helmet')) {
     return MK5_HELMET_FAQS;
   }
