@@ -68,8 +68,8 @@ function CheckoutContent() {
   const [couponError, setCouponError] = useState<string | null>(null);
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
 
-  // Order & Payment state
-  const [paymentMethod, setPaymentMethod] = useState<'PARTIAL_COD' | 'UPI'>('PARTIAL_COD');
+  // Order & Payment state (Defaults to UPI for instant prepaid discount: ₹1,949)
+  const [paymentMethod, setPaymentMethod] = useState<'PARTIAL_COD' | 'UPI'>('UPI');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [activeUpiOrder, setActiveUpiOrder] = useState<{
@@ -143,14 +143,17 @@ function CheckoutContent() {
   // Special Flagship Offers:
   // Instant ₹300 OFF per F1 car if paying Prepaid UPI (₹2,199 -> ₹1,899)
   // Instant ₹550 OFF per MK5 helmet if paying Prepaid UPI (₹2,499 -> ₹1,949)
-  const f1PrepaidDiscountMinor = paymentMethod === 'UPI' && f1Quantity > 0 ? 30000 * f1Quantity : 0;
-  const mk5PrepaidDiscountMinor = paymentMethod === 'UPI' && mk5Quantity > 0 ? 55000 * mk5Quantity : 0;
-  const prepaidDiscountMinor = f1PrepaidDiscountMinor + mk5PrepaidDiscountMinor;
+  const fullPrepaidDiscountMinor =
+    (f1Quantity > 0 ? 30000 * f1Quantity : 0) +
+    (mk5Quantity > 0 ? 55000 * mk5Quantity : 0);
+  const prepaidDiscountMinor = paymentMethod === 'UPI' ? fullPrepaidDiscountMinor : 0;
 
   const discountMinor = appliedCoupon ? appliedCoupon.discountMinor : 0;
   // Free Express Delivery for all orders (Prepaid ₹999 total, Partial COD ₹149 advance + ₹850 doorstep balance)
   const shippingMinor = 0;
-  const finalTotalMinor = Math.max(0, subtotalMinor - discountMinor - prepaidDiscountMinor + shippingMinor);
+  const codTotalMinor = Math.max(0, subtotalMinor - discountMinor + shippingMinor);
+  const upiTotalMinor = Math.max(0, subtotalMinor - discountMinor - fullPrepaidDiscountMinor + shippingMinor);
+  const finalTotalMinor = paymentMethod === 'UPI' ? upiTotalMinor : codTotalMinor;
 
   // Fire InitiateCheckout Meta Pixel Event strictly once per checkout session
   const hasTrackedCheckoutRef = useRef(false);
@@ -586,11 +589,11 @@ function CheckoutContent() {
                             </span>
                           </div>
                           <span className="text-xs sm:text-sm font-extrabold text-[#E61E2A] shrink-0">
-                            ₹149 Now + {formatCurrency(Math.max(0, finalTotalMinor - 14900))} Doorstep
+                            ₹149 Now + {formatCurrency(Math.max(0, codTotalMinor - 14900))} Doorstep
                           </span>
                         </div>
                         <p className="text-[11.5px] text-gray-600 leading-relaxed">
-                          Pay ₹149 advance now via UPI QR to reserve your piece. Pay remaining balance of {formatCurrency(Math.max(0, finalTotalMinor - 14900))} in cash or UPI when courier delivers to your hands (Total {formatCurrency(finalTotalMinor)} with zero extra fees).
+                          Pay ₹149 advance now via UPI QR to reserve your piece. Pay remaining balance of {formatCurrency(Math.max(0, codTotalMinor - 14900))} in cash or UPI when courier delivers to your hands (Total {formatCurrency(codTotalMinor)} with zero extra fees).
                         </p>
 
                         {/* Clean 2-Row Breakdown Box */}
@@ -605,7 +608,7 @@ function CheckoutContent() {
                             <span className="font-medium flex items-center gap-1">
                               <Truck className="w-3 h-3 text-amber-700" /> Balance on Doorstep:
                             </span>
-                            <strong className="font-bold text-gray-900">{formatCurrency(Math.max(0, finalTotalMinor - 14900))}</strong>
+                            <strong className="font-bold text-gray-900">{formatCurrency(Math.max(0, codTotalMinor - 14900))}</strong>
                           </div>
                         </div>
                       </div>
@@ -642,12 +645,19 @@ function CheckoutContent() {
                               {mk5Quantity > 0 ? 'Save ₹550 (₹1,949)' : f1Quantity > 0 ? 'Save ₹300 (₹1,899)' : 'Save Extra'}
                             </span>
                           </div>
-                          <span className="text-xs sm:text-sm font-extrabold text-[#E61E2A] shrink-0">
-                            {formatCurrency(finalTotalMinor)}
-                          </span>
+                          <div className="text-right shrink-0">
+                            <span className="text-xs sm:text-sm font-extrabold text-emerald-700 block">
+                              {formatCurrency(upiTotalMinor)}
+                            </span>
+                            {fullPrepaidDiscountMinor > 0 && (
+                              <span className="text-[10px] text-gray-400 line-through block">
+                                {formatCurrency(codTotalMinor)}
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <p className="text-[11.5px] text-gray-600 leading-relaxed">
-                          Pay flat <strong>{formatCurrency(finalTotalMinor)}</strong> via dynamic UPI QR code. {f1Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹300 instant prepaid discount on F1 MagLev (₹1,899)! </strong>}{mk5Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹550 instant prepaid discount on MK5 Helmet (₹1,949)! </strong>}<strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
+                          Pay flat <strong className="text-emerald-700 font-bold">{formatCurrency(upiTotalMinor)}</strong> via dynamic UPI QR code. {f1Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹300 instant prepaid discount on F1 MagLev (₹1,899)! </strong>}{mk5Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹550 instant prepaid discount on MK5 Helmet (₹1,949)! </strong>}<strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
                         </p>
                         <div className="mt-2 text-[10.5px] text-emerald-700 font-semibold flex items-center gap-1.5 flex-wrap">
                           <Smartphone className="w-3 h-3 text-emerald-600 shrink-0" />
@@ -684,7 +694,7 @@ function CheckoutContent() {
                       <span>Pay ₹149 Advance via UPI</span>
                     </div>
                     <span className="text-[11px] text-white/85 font-medium">
-                      Balance {formatCurrency(Math.max(0, finalTotalMinor - 14900))} on Doorstep Delivery
+                      Balance {formatCurrency(Math.max(0, codTotalMinor - 14900))} on Doorstep Delivery
                     </span>
                   </>
                 ) : (
