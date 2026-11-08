@@ -65,6 +65,7 @@ export interface CachedProduct {
 }
 
 export const ACTIVE_PRODUCT_SLUGS = [
+  'iron-hero-mk5-black-edition-wearable-helmet',
   'magnetic-levitation-f1-racing-car',
   'core-reactor-desk-light',
   'levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light',

@@ -80,31 +80,23 @@ export function Navbar() {
       {/* Top Running Marquee Strip matching WhiteLayer - scrolls away with natural document flow */}
       <div className="bg-[#111827] text-white text-[11px] font-bold tracking-wider py-2 overflow-hidden border-b border-white/10 uppercase select-none">
         <div className="animate-marquee whitespace-nowrap flex items-center gap-6">
-          <span className="text-[#E61E2A]">🏎️ FLAGSHIP: F1 MAGLEV CAR ₹2,199 (PREPAID ₹1,899)</span>
+          <span className="text-amber-400">🪔 24H DIWALI FLASH SALE: MK 5 WEARABLE HELMET ₹2,499 (90% OFF)</span>
           <span className="text-white/40">•</span>
-          <span>CASH ON DELIVERY AVAILABLE</span>
+          <span className="text-[#E61E2A]">🏎️ F1 MAGLEV CAR ₹2,199 (PREPAID ₹1,899)</span>
           <span className="text-white/40">•</span>
-          <span>MADE IN INDIA</span>
+          <span>PARTIAL COD AVAILABLE (₹149 ADVANCE)</span>
           <span className="text-white/40">•</span>
-          <span>FREE PAN-INDIA AIR DELIVERY</span>
+          <span>FREE PAN-INDIA EXPRESS AIR DELIVERY</span>
           <span className="text-white/40">•</span>
-          <span>7-DAY REPLACEMENT IF DAMAGED</span>
+          <span>7-DAY REPLACEMENT GUARANTEE</span>
           <span className="text-white/40">•</span>
-          <span className="text-[#E61E2A]">🏎️ FLAGSHIP: F1 MAGLEV CAR ₹2,199 (PREPAID ₹1,899)</span>
+          <span className="text-amber-400">🪔 24H DIWALI FLASH SALE: MK 5 WEARABLE HELMET ₹2,499 (90% OFF)</span>
           <span className="text-white/40">•</span>
-          <span>CASH ON DELIVERY AVAILABLE</span>
+          <span className="text-[#E61E2A]">🏎️ F1 MAGLEV CAR ₹2,199 (PREPAID ₹1,899)</span>
           <span className="text-white/40">•</span>
-          <span>MADE IN INDIA</span>
+          <span>PARTIAL COD AVAILABLE (₹149 ADVANCE)</span>
           <span className="text-white/40">•</span>
-          <span>FREE PAN-INDIA AIR DELIVERY</span>
-          <span className="text-white/40">•</span>
-          <span>7-DAY REPLACEMENT IF DAMAGED</span>
-          <span className="text-white/40">•</span>
-          <span>MADE IN INDIA</span>
-          <span className="text-white/40">•</span>
-          <span>FREE PAN-INDIA AIR DELIVERY</span>
-          <span className="text-white/40">•</span>
-          <span>7-DAY REPLACEMENT IF DAMAGED</span>
+          <span>FREE PAN-INDIA EXPRESS AIR DELIVERY</span>
         </div>
       </div>
 

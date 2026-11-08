@@ -52,10 +52,11 @@ export default async function HomePage() {
     console.warn('HomePage: Failed to fetch verified reviews from DB:', error);
   }
 
-  // Find the 3 signature studio pieces in user priority order:
-  // 1st: Magnetic Levitation F1 Racing Car
-  // 2nd: Core Reactor Desk Light (₹1,499)
-  // 3rd: Levitating Money Stack Lamp
+  // Products
+  const mk5Helmet =
+    products.find((p) => p.slug === 'iron-hero-mk5-black-edition-wearable-helmet') ||
+    products.find((p) => p.slug?.includes('mk5') || p.slug?.includes('helmet'));
+
   const maglevF1 =
     products.find((p) => p.slug === 'magnetic-levitation-f1-racing-car') || products[0];
 
@@ -67,8 +68,18 @@ export default async function HomePage() {
       (p) => p.slug === 'levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light'
     ) || products[2];
 
-  // The 3 signature disciplines
+  // The signature disciplines
   const categoryHighlights = [
+    {
+      title: 'Mechanized Armor Systems',
+      subtitle: 'Voice, remote & bilateral touch controls • Segmented motorized faceplate',
+      href: '/product/iron-hero-mk5-black-edition-wearable-helmet',
+      image:
+        mk5Helmet?.images?.[0]?.url ||
+        '/images/mk5-helmet/helmet-1.webp',
+      price: 'Rs. 2,499.00 (90% OFF)',
+      badge: '24H Diwali Flash Sale',
+    },
     {
       title: 'Zero-Gravity Levitation',
       subtitle: '360° frictionless perpetual spin • 12–15mm electromagnetic air gap',
@@ -89,20 +100,29 @@ export default async function HomePage() {
       price: 'Rs. 1,499.00',
       badge: 'Studio Edition',
     },
-    {
-      title: 'Levitating Money Stack',
-      subtitle: 'Zero-gravity cash stack suspension • Atmospheric RGB mood aura',
-      href: '/product/levitating-money-stack-lamp-magnetic-floating-rgb-ambient-led-light',
-      image:
-        levitatingLamp?.images?.[0]?.url ||
-        'https://cdn.shopify.com/s/files/1/0992/7816/0178/files/il_1588xN.8339847604_sfk4.webp?v=1789717192',
-      price: 'Rs. 999.00',
-      badge: 'Floating Aura',
-    },
   ];
 
   return (
     <div className="flex flex-col bg-[#FAFAFA] text-[#111827] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px]">
+      {/* 24-HOUR DIWALI MEGA SALE BANNER */}
+      <div className="bg-gradient-to-r from-red-600 via-amber-600 to-red-600 text-white py-2.5 px-4 text-center text-xs sm:text-sm font-bold shadow-inner">
+        <div className="max-w-6xl mx-auto flex items-center justify-center gap-2 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/30 text-amber-200 text-[11px] font-black uppercase tracking-wider">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+            24H DIWALI FLASH SALE
+          </span>
+          <span>
+            Iron Hero MK 5 Mechanized Wearable Helmet is <strong>FLAT 90% OFF (₹2,499 vs ₹24,999)</strong> — Only 4 Units Left!
+          </span>
+          <Link
+            href="/product/iron-hero-mk5-black-edition-wearable-helmet"
+            className="underline underline-offset-2 hover:text-amber-200 font-extrabold inline-flex items-center gap-0.5 ml-1"
+          >
+            <span>Claim Yours Now</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      </div>
       {/* 1. WHITELAYER 2-COLUMN HERO SECTION */}
       <section className="relative overflow-hidden pt-8 pb-14 md:pt-14 md:pb-20 border-b border-black/[0.06]">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
@@ -452,7 +472,7 @@ export default async function HomePage() {
                 Studio Signature Catalog
               </span>
               <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#111827]">
-                The 3 Core Flagship Drops
+                Featured Collector Drops
               </h2>
             </div>
 
@@ -460,13 +480,13 @@ export default async function HomePage() {
               href="/shop"
               className="text-xs font-bold text-[#E61E2A] hover:underline flex items-center gap-1 self-start sm:self-end"
             >
-              <span>Explore All 3 Creations</span>
+              <span>Explore All Creations</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.slice(0, 3).map((product) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

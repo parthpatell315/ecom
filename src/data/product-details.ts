@@ -154,6 +154,45 @@ export const CLOCKS_FAQS: readonly FaqItem[] = [
   },
 ] as const;
 
+export const MK5_HELMET_FAQS: readonly FaqItem[] = [
+  {
+    id: 'mk5-1',
+    question: 'Will this helmet fit adult head sizes comfortably?',
+    answer:
+      'Yes! It is engineered at a true 1:1 life-size scale accommodating head circumferences up to 62cm (24.4 inches). The interior is lined with plush ergonomic memory foam cushions for breathable comfort and secure fit.',
+  },
+  {
+    id: 'mk5-2',
+    question: 'What batteries does it require and how are they installed?',
+    answer:
+      'The helmet requires 4x AA standard batteries (installed in the rear battery bay under the padded magnetic neck flap), and the wireless remote uses 1x AAA battery. Batteries can be easily replaced without any tools.',
+  },
+  {
+    id: 'mk5-3',
+    question: 'How do the voice recognition commands operate?',
+    answer:
+      'Say the wake command "Jarvis" or "Hello Boss", followed by voice prompts such as "Open the mask", "Close the mask", or "Combat mode". The built-in AI voice module responds verbally in clear English while the dual servos articulate the faceplates.',
+  },
+  {
+    id: 'mk5-4',
+    question: 'Can you see through the eyes when the helmet is closed?',
+    answer:
+      'Yes! The visor utilizes optical-grade slotted lenses with perimeter LED illumination. You maintain forward visibility both in cool white standby and combat red overdrive modes.',
+  },
+  {
+    id: 'mk5-5',
+    question: 'How does Partial COD with ₹149 advance work?',
+    answer:
+      'To secure your 90% Diwali Flash Sale reservation (₹2,499), pay ₹149 advance via any UPI app (GPay, PhonePe, Paytm). The balance ₹2,350 is payable in cash or UPI directly to the courier upon doorstep delivery.',
+  },
+  {
+    id: 'mk5-6',
+    question: 'What is the shipping time and transit warranty?',
+    answer:
+      'All orders are dispatched within 24 hours via BlueDart or Delhivery Air Express (2-4 business days Pan-India). Packed inside heavy-duty custom-molded shockproof foam. Backed by our 7-day hassle-free replacement guarantee.',
+  },
+] as const;
+
 /**
  * Resolves product-specific FAQs based on category or slug
  */
@@ -161,6 +200,9 @@ export function getProductFaqs(product: any): readonly FaqItem[] {
   const slug = (product.slug || '').toLowerCase();
   const categorySlug = (product.category?.slug || '').toLowerCase();
 
+  if (slug.includes('mk5') || slug.includes('helmet')) {
+    return MK5_HELMET_FAQS;
+  }
   if (slug.includes('levitat')) {
     return LEVITATING_LAMP_FAQS;
   }
@@ -190,7 +232,19 @@ export function getProductBoxContents(product: any): BoxItem[] {
     ? `BIS registered: ${LEGAL_CONFIG.BIS_REG_NO}`
     : '12V 2A power adapter';
 
-  // 1. Magnetic Levitating Pieces
+  // 1. MK 5 Black Edition Wearable Helmet
+  if (slug.includes('mk5') || slug.includes('helmet')) {
+    return [
+      { item: 'MK 5 Black Edition 1:1 Wearable Helmet', desc: 'Motorized multi-segment faceplate with dual-mode LED eyes' },
+      { item: '2.4GHz Wireless Remote Controller', desc: 'Ergonomic pocket remote with one-touch opening & mode switch' },
+      { item: 'Velvet Protective Storage Dust Bag', desc: 'Plush velvet drawstring cover for dust protection' },
+      { item: 'Microfiber Anti-Scratch Cleaning Cloth', desc: 'Studio cloth for buffing electroplated metallic finish' },
+      { item: 'Illustrated User Guide & Voice Commands', desc: 'Complete command cheat sheet and battery setup instructions' },
+      { item: 'Heavy-Duty Shockproof Custom Foam Box', desc: 'Laser-cut high-density transit packaging for damage-free shipping' },
+    ];
+  }
+
+  // 2. Magnetic Levitating Pieces
   if (slug.includes('levitat')) {
     return [
       { item: 'Electromagnetic Levitation Base', desc: 'Active sensor coils with ambient RGB halo illumination' },
@@ -640,6 +694,28 @@ export function getProductStoryMeta(product: any): ProductStoryMeta {
     };
   }
 
+  // MK 5 Wearable Helmet
+  if (slug.includes('mk5') || slug.includes('helmet')) {
+    return {
+      badge: '1:1 Wearable Mechanized Cosplay',
+      heading: 'Precision Servo Engineering & Dual-Mode Combat Optics',
+      highlights: [
+        {
+          title: 'Segmented Motorized Transform',
+          desc: 'High-torque dual micro-servos articulate 6 independent facial armor plates smoothly',
+        },
+        {
+          title: '3-Way Activation Matrix',
+          desc: 'Operate effortlessly using bilingual voice commands, pocket wireless remote, or bilateral ear touch',
+        },
+        {
+          title: 'Dual Combat Eye Modes',
+          desc: 'High-intensity optical lenses toggle seamlessly between cool white standby and battle red overdrive',
+        },
+      ],
+    };
+  }
+
   // Fallback
   return {
     badge: 'Design Architecture',
@@ -666,6 +742,9 @@ export function getProductStoryMeta(product: any): ProductStoryMeta {
  */
 export function getProductTopBadges(product: any): string[] {
   const slug = (product.slug || '').toLowerCase();
+  if (slug.includes('mk5') || slug.includes('helmet')) {
+    return ['🔥 24H DIWALI FLASH SALE', '1:1 WEARABLE COLLECTIBLE', 'VOICE + REMOTE + TOUCH'];
+  }
   if (slug.includes('f1') || slug.includes('racing') || slug.includes('car')) {
     return ['🏎️ F1 SPEED EDITION', 'REAL ELECTROMAGNETIC LEVITATION', '⚡ VIRAL DESK PIECE'];
   }
@@ -704,6 +783,13 @@ export function getProductTopBadges(product: any): string[] {
  */
 export function getProductBuyPerks(product: any): BuyPerk[] {
   const slug = (product.slug || '').toLowerCase();
+  if (slug.includes('mk5') || slug.includes('helmet')) {
+    return [
+      { text: 'Motorized Multi-Segment Faceplate Opening with Authentic Mechanical Sound FX', color: '#059669' },
+      { text: '3 Control Modes: English Voice Command, 2.4G Wireless Remote & Ear Touch Sensors', color: '#0284C7' },
+      { text: 'Dual-Color Glowing LED Eyes (Cool White Standby & Combat Red Battle Mode)', color: '#D97706' },
+    ];
+  }
   if (slug.includes('f1') || slug.includes('racing') || slug.includes('car')) {
     return [
       { text: 'Genuine 12–15mm Electromagnetic Air Gap (Zero Strings / Zero Props)', color: '#059669' },

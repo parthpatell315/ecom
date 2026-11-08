@@ -42,6 +42,7 @@ import {
 import { useWishlist } from '@/context/WishlistContext';
 import { PincodeChecker } from '@/components/product/PincodeChecker';
 import { F1Showcase } from '@/components/product/F1Showcase';
+import { MK5Showcase } from '@/components/product/MK5Showcase';
 import { trackPixelEvent } from '@/components/analytics/MetaPixel';
 import { LEGAL_CONFIG } from '@/config/legal';
 import { SALE_CONFIG, isSaleActive } from '@/config/sale';
@@ -78,6 +79,13 @@ export function ProductDetailClient({
     product.slug === 'magnetic-levitation-f1-racing-car' ||
     product.title.toLowerCase().includes('magnetic levitation f1') ||
     product.title.toLowerCase().includes('formula 1');
+
+  const isMK5Helmet =
+    product.slug === 'iron-hero-mk5-black-edition-wearable-helmet' ||
+    product.slug?.includes('mk5') ||
+    product.slug?.includes('helmet') ||
+    product.title.toLowerCase().includes('mk 5') ||
+    product.title.toLowerCase().includes('mk5');
 
   // Find the iconic Side View photo (photo_5379765186618664388) as requested
   const f1SidePhoto = product.images?.find((img: any) =>
@@ -635,10 +643,22 @@ export function ProductDetailClient({
                 <span className="text-[#6E6E73] text-[11px] font-normal block">(Incl. of all taxes)</span>
 
                 {/* Urgency Alert matching WhiteLayer */}
-                <div className="p-2.5 rounded-xl bg-[#FEF2F2] border border-[#FECACA] flex items-center gap-2 text-xs text-[#991B1B] font-medium">
-                  <span>🔥</span>
-                  <span><strong>Special Launch Price:</strong> Price will be higher after 2 days!</span>
-                </div>
+                {isMK5Helmet ? (
+                  <div className="p-3 rounded-2xl bg-gradient-to-r from-red-600/10 via-amber-500/15 to-red-600/10 border-2 border-red-500/40 flex items-center justify-between gap-2 text-xs text-red-950 font-medium shadow-sm">
+                    <span className="flex items-center gap-1.5 font-bold">
+                      <Flame className="w-4 h-4 fill-red-600 text-red-600 animate-pulse shrink-0" />
+                      <span>🪔 24H DIWALI FLASH SALE: Flat 90% OFF (Only 4 Units Left)</span>
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-red-600 text-white font-mono font-bold text-[11px] shrink-0">
+                      SAVE ₹22,500
+                    </span>
+                  </div>
+                ) : (
+                  <div className="p-2.5 rounded-xl bg-[#FEF2F2] border border-[#FECACA] flex items-center gap-2 text-xs text-[#991B1B] font-medium">
+                    <span>🔥</span>
+                    <span><strong>Special Launch Price:</strong> Price will be higher after 2 days!</span>
+                  </div>
+                )}
               </div>
 
               {/* 5. Fast Dispatch Urgency Card matching WhiteLayer */}
@@ -887,9 +907,11 @@ export function ProductDetailClient({
           </div>
         </div>
 
-        {/* If Magnetic Levitation F1 Racing Car, render the complete WhiteLayer 10-Section Flagship Showcase */}
+        {/* If Magnetic Levitation F1 Racing Car or MK5 Wearable Helmet, render dedicated flagship showcase */}
         {isF1MagLev ? (
           <F1Showcase />
+        ) : isMK5Helmet ? (
+          <MK5Showcase />
         ) : (
           <>
             {/* 4 Accordions Section (WhiteLayer style: Description, Box, Specs, FAQs) */}
@@ -1272,6 +1294,11 @@ export function ProductDetailClient({
               {isF1MagLev && (
                 <span className="text-[11px] font-extrabold text-emerald-600">
                   (₹1,899 Prepaid)
+                </span>
+              )}
+              {isMK5Helmet && (
+                <span className="text-[11px] font-extrabold text-red-600">
+                  (90% Diwali OFF)
                 </span>
               )}
             </div>
