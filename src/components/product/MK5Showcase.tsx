@@ -99,6 +99,9 @@ export function MK5Showcase({ onBuyNow }: MK5ShowcaseProps = {}) {
               <span className="px-2.5 py-1 rounded-lg bg-red-600 text-white !text-white text-xs font-black tracking-wider uppercase">
                 90% OFF
               </span>
+              <span className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white !text-white text-xs font-black tracking-wider">
+                ⚡ ₹1,949 PREPAID (EXTRA ₹550 OFF)
+              </span>
             </div>
           </div>
 
@@ -150,11 +153,11 @@ export function MK5Showcase({ onBuyNow }: MK5ShowcaseProps = {}) {
               onClick={handleClaim}
               className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#E61E2A] to-[#C81420] hover:brightness-110 active:scale-98 transition-all text-white font-bold text-sm shadow-lg shadow-red-600/30 cursor-pointer flex items-center justify-center gap-2"
             >
-              <span>CLAIM AT 90% OFF (₹2,499)</span>
+              <span>CLAIM NOW (₹1,949 PREPAID / ₹2,499 COD)</span>
               <Zap className="w-4 h-4 fill-current" />
             </button>
             <span className="text-[10.5px] text-gray-400">
-              ⚡ Free Express Air Delivery • Partial COD Available
+              ⚡ Extra ₹550 OFF on Prepaid UPI • ₹149 Partial COD Option
             </span>
           </div>
         </div>

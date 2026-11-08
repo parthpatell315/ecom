@@ -195,8 +195,10 @@ export function ProductDetailClient({
   const totalPriceMinor = effectivePriceMinor * quantity;
   const doorstepBalanceMinor = Math.max(0, totalPriceMinor - PARTIAL_COD_ADVANCE_MINOR);
 
-  // Special Flagship Pricing: Magnetic Levitation F1 Racing Car ₹2,199 COD / ₹1,899 Prepaid
-  const prepaidDiscountPerUnitMinor = isF1MagLev ? 30000 : 0; // ₹300 off per piece on Prepaid
+  // Special Flagship Pricing:
+  // Magnetic Levitation F1 Racing Car: ₹2,199 COD / ₹1,899 Prepaid (₹300 off)
+  // Iron Hero MK5 Wearable Helmet: ₹2,499 COD / ₹1,949 Prepaid (₹550 off)
+  const prepaidDiscountPerUnitMinor = isF1MagLev ? 30000 : isMK5Helmet ? 55000 : 0;
   const prepaidPricePerUnitMinor = effectivePriceMinor - prepaidDiscountPerUnitMinor;
   const prepaidTotalPriceMinor = prepaidPricePerUnitMinor * quantity;
 
@@ -659,6 +661,24 @@ export function ProductDetailClient({
                   )}
                 </div>
 
+                {isMK5Helmet ? (
+                  <div className="flex items-center gap-2 flex-wrap text-xs font-bold pt-1">
+                    <span className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white flex items-center gap-1 shadow-sm">
+                      <Zap className="w-3.5 h-3.5 fill-white" />
+                      <span>Prepaid UPI: ₹1,949.00 (Save Extra ₹550)</span>
+                    </span>
+                    <span className="text-[#6E6E73] font-medium">or ₹2,499 Partial COD (₹149 advance)</span>
+                  </div>
+                ) : isF1MagLev ? (
+                  <div className="flex items-center gap-2 flex-wrap text-xs font-bold pt-1">
+                    <span className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white flex items-center gap-1 shadow-sm">
+                      <Zap className="w-3.5 h-3.5 fill-white" />
+                      <span>Prepaid UPI: ₹1,899.00 (Save Extra ₹300)</span>
+                    </span>
+                    <span className="text-[#6E6E73] font-medium">or ₹2,199 Partial COD (₹149 advance)</span>
+                  </div>
+                ) : null}
+
                 <span className="text-[#6E6E73] text-[11px] font-normal block">(Incl. of all taxes)</span>
 
                 {/* Urgency Alert matching WhiteLayer */}
@@ -666,10 +686,10 @@ export function ProductDetailClient({
                   <div className="p-3 rounded-2xl bg-gradient-to-r from-red-600/10 via-amber-500/15 to-red-600/10 border-2 border-red-500/40 flex items-center justify-between gap-2 text-xs text-red-950 font-medium shadow-sm">
                     <span className="flex items-center gap-1.5 font-bold">
                       <Flame className="w-4 h-4 fill-red-600 text-red-600 animate-pulse shrink-0" />
-                      <span>🪔 24H DIWALI FLASH SALE: Flat 90% OFF (Only 4 Units Left)</span>
+                      <span>🪔 24H DIWALI FLASH SALE: Flat 90% OFF (₹1,949 Prepaid / ₹2,499 COD)</span>
                     </span>
-                    <span className="px-2 py-0.5 rounded-full bg-red-600 text-white font-mono font-bold text-[11px] shrink-0">
-                      SAVE ₹22,500
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-700 text-white font-mono font-bold text-[11px] shrink-0">
+                      ₹1,949 PREPAID
                     </span>
                   </div>
                 ) : isCoreReactorWireless ? (
@@ -932,8 +952,8 @@ export function ProductDetailClient({
                   </div>
                   <div className="text-[#6E6E73] text-[11.5px] leading-relaxed pt-1 space-y-1.5">
                     <p className="flex items-center justify-between">
-                      <span><strong className="text-[#111827]">Prepaid UPI:</strong> Full online payment {isF1MagLev ? '(Includes ₹300 instant discount)' : ''}</span>
-                      <strong className="text-emerald-700 font-bold">{formatCurrency(isF1MagLev ? prepaidTotalPriceMinor : totalPriceMinor)}</strong>
+                      <span><strong className="text-[#111827]">Prepaid UPI:</strong> Full online payment {isF1MagLev ? '(Includes ₹300 instant discount)' : isMK5Helmet ? '(Includes ₹550 instant discount: ₹1,949)' : ''}</span>
+                      <strong className="text-emerald-700 font-bold">{formatCurrency((isF1MagLev || isMK5Helmet) ? prepaidTotalPriceMinor : totalPriceMinor)}</strong>
                     </p>
                     <p className="pt-1.5 border-t border-black/[0.04] flex items-center justify-between">
                       <span><strong className="text-[#111827]">Partial COD:</strong> Pay <strong>₹{PARTIAL_COD_ADVANCE_RUPEES} advance</strong> now via UPI, pay balance at doorstep.</span>
@@ -1340,8 +1360,8 @@ export function ProductDetailClient({
                 </span>
               )}
               {isMK5Helmet && (
-                <span className="text-[11px] font-extrabold text-red-600">
-                  (90% Diwali OFF)
+                <span className="text-[11px] font-extrabold text-emerald-600">
+                  (₹1,949 Prepaid)
                 </span>
               )}
               {isCoreReactorWireless && (

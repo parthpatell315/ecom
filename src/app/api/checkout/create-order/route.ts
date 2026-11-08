@@ -135,7 +135,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Special Prepaid Offer: Flat ₹300 (30000 paise) off per Magnetic Levitation F1 Racing Car on Prepaid UPI
+    // Special Prepaid Offer:
+    // Flat ₹300 (30000 paise) off per Magnetic Levitation F1 Racing Car on Prepaid UPI (₹2,199 -> ₹1,899)
+    // Flat ₹550 (55000 paise) off per Iron Hero MK5 Helmet on Prepaid UPI (₹2,499 -> ₹1,949)
     let prepaidDiscountMinor = 0;
     if (paymentGateway === 'UPI') {
       for (const item of orderItemsData) {
@@ -145,6 +147,14 @@ export async function POST(req: NextRequest) {
           item.product?.title?.toLowerCase().includes('formula 1')
         ) {
           prepaidDiscountMinor += 30000 * item.quantity;
+        } else if (
+          item.product?.slug === 'iron-hero-mk5-black-edition-wearable-helmet' ||
+          item.product?.slug?.includes('mk5') ||
+          item.product?.slug?.includes('helmet') ||
+          item.product?.title?.toLowerCase().includes('mk 5') ||
+          item.product?.title?.toLowerCase().includes('mk5')
+        ) {
+          prepaidDiscountMinor += 55000 * item.quantity;
         }
       }
     }

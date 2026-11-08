@@ -127,8 +127,25 @@ function CheckoutContent() {
     return acc;
   }, 0);
 
-  // Special Flagship Offer: Instant ₹300 OFF per F1 car if paying Prepaid UPI (₹2,199 -> ₹1,899)
-  const prepaidDiscountMinor = paymentMethod === 'UPI' && f1Quantity > 0 ? 30000 * f1Quantity : 0;
+  // Check if cart contains Iron Hero MK5 Wearable Helmet
+  const mk5Quantity = items.reduce((acc, it) => {
+    if (
+      it.productId === 'cmw7hkiht0001rtqw4zxioz9a' ||
+      it.title.toLowerCase().includes('mk 5') ||
+      it.title.toLowerCase().includes('mk5') ||
+      it.title.toLowerCase().includes('helmet')
+    ) {
+      return acc + it.quantity;
+    }
+    return acc;
+  }, 0);
+
+  // Special Flagship Offers:
+  // Instant ₹300 OFF per F1 car if paying Prepaid UPI (₹2,199 -> ₹1,899)
+  // Instant ₹550 OFF per MK5 helmet if paying Prepaid UPI (₹2,499 -> ₹1,949)
+  const f1PrepaidDiscountMinor = paymentMethod === 'UPI' && f1Quantity > 0 ? 30000 * f1Quantity : 0;
+  const mk5PrepaidDiscountMinor = paymentMethod === 'UPI' && mk5Quantity > 0 ? 55000 * mk5Quantity : 0;
+  const prepaidDiscountMinor = f1PrepaidDiscountMinor + mk5PrepaidDiscountMinor;
 
   const discountMinor = appliedCoupon ? appliedCoupon.discountMinor : 0;
   // Free Express Delivery for all orders (Prepaid ₹999 total, Partial COD ₹149 advance + ₹850 doorstep balance)
@@ -622,7 +639,7 @@ function CheckoutContent() {
                               ⚡ Prepaid UPI (Recommended)
                             </span>
                             <span className="text-[9.5px] uppercase font-bold tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">
-                              Save ₹300
+                              {mk5Quantity > 0 ? 'Save ₹550 (₹1,949)' : f1Quantity > 0 ? 'Save ₹300 (₹1,899)' : 'Save Extra'}
                             </span>
                           </div>
                           <span className="text-xs sm:text-sm font-extrabold text-[#E61E2A] shrink-0">
@@ -630,7 +647,7 @@ function CheckoutContent() {
                           </span>
                         </div>
                         <p className="text-[11.5px] text-gray-600 leading-relaxed">
-                          Pay flat <strong>{formatCurrency(finalTotalMinor)}</strong> via dynamic UPI QR code. {f1Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹300 instant prepaid discount on F1 MagLev! </strong>}<strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
+                          Pay flat <strong>{formatCurrency(finalTotalMinor)}</strong> via dynamic UPI QR code. {f1Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹300 instant prepaid discount on F1 MagLev (₹1,899)! </strong>}{mk5Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹550 instant prepaid discount on MK5 Helmet (₹1,949)! </strong>}<strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
                         </p>
                         <div className="mt-2 text-[10.5px] text-emerald-700 font-semibold flex items-center gap-1.5 flex-wrap">
                           <Smartphone className="w-3 h-3 text-emerald-600 shrink-0" />
@@ -766,7 +783,11 @@ function CheckoutContent() {
                     <div className="flex justify-between text-emerald-700 font-bold bg-emerald-50/80 p-1.5 rounded-lg border border-emerald-200">
                       <span className="flex items-center gap-1">
                         <Zap className="w-3.5 h-3.5 fill-current text-emerald-600" />
-                        F1 MagLev Prepaid Instant Discount
+                        {mk5Quantity > 0 && f1Quantity > 0
+                          ? 'Prepaid Instant Discount (F1 + MK5)'
+                          : mk5Quantity > 0
+                          ? 'MK5 Helmet Prepaid Instant Discount (₹1,949)'
+                          : 'F1 MagLev Prepaid Instant Discount (₹1,899)'}
                       </span>
                       <span>-{formatCurrency(prepaidDiscountMinor)}</span>
                     </div>
