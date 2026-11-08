@@ -73,22 +73,22 @@ export function MK5Showcase() {
               <span>Diwali Festive Flash Sale • Flat 90% OFF</span>
             </div>
 
-            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white !text-white leading-tight">
               MK 5 Black Edition 1:1 Life-Size Wearable Helmet
             </h2>
 
-            <p className="text-sm text-gray-300 leading-relaxed">
-              Subsidized festive batch strictly limited to <strong>24 Hours</strong>. Movie-grade mechanized multi-segment opening, dual combat LED eyes, and 3-way control matrix (Voice + Wireless Remote + Touch).
+            <p className="text-sm text-gray-200 !text-gray-200 leading-relaxed">
+              Subsidized festive batch strictly limited to <strong className="text-white !text-white font-bold">24 Hours</strong>. Movie-grade mechanized multi-segment opening, dual combat LED eyes, and 3-way control matrix (Voice + Wireless Remote + Touch).
             </p>
 
             <div className="flex items-center gap-3 flex-wrap pt-2">
-              <span className="text-3xl sm:text-4xl font-black text-amber-400 tracking-tight">
+              <span className="text-3xl sm:text-4xl font-black text-amber-400 !text-amber-400 tracking-tight">
                 Rs. 2,499.00
               </span>
-              <span className="text-base sm:text-lg text-gray-400 line-through">
+              <span className="text-base sm:text-lg text-gray-400 !text-gray-400 line-through">
                 Rs. 24,999.00
               </span>
-              <span className="px-2.5 py-1 rounded-lg bg-red-600 text-white text-xs font-black tracking-wider uppercase">
+              <span className="px-2.5 py-1 rounded-lg bg-red-600 text-white !text-white text-xs font-black tracking-wider uppercase">
                 90% OFF
               </span>
             </div>
@@ -317,10 +317,10 @@ export function MK5Showcase() {
             <span className="text-xs uppercase tracking-widest text-blue-400 font-bold">
               Combat Optical Lenses
             </span>
-            <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white !text-white">
               Dual-Mode Glowing LED Eyes
             </h3>
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-gray-200 !text-gray-200">
               High-lumen optical LED diffusers deliver eye-safe interior glow with exceptional exterior brightness. Toggle between calm standby and combat battle modes.
             </p>
           </div>
@@ -616,3 +616,4 @@ export function MK5Showcase() {
     </div>
   );
 }
+
