@@ -193,6 +193,51 @@ export const MK5_HELMET_FAQS: readonly FaqItem[] = [
   },
 ] as const;
 
+export const CORE_REACTOR_WIRELESS_FAQS: readonly FaqItem[] = [
+  {
+    id: 'cr-wir-1',
+    question: 'Which devices and phones are compatible with this 15W wireless charger?',
+    answer:
+      'The Core Reactor Wireless Edition supports all standard Qi and MagSafe wireless charging devices. This includes Apple iPhone 12, 13, 14, 15, and 16 series (with full magnetic alignment), iPhone 8 through 11, Samsung Galaxy S-series (S20 through S24 Ultra), Galaxy Z Fold/Flip, Google Pixel, and Qi-certified wireless earbuds (AirPods Pro, Galaxy Buds).',
+  },
+  {
+    id: 'cr-wir-2',
+    question: 'Can it charge through phone cases without taking them off?',
+    answer:
+      'Yes! The 15W pure copper multi-strand induction coil supports wireless transmission across distances up to 6mm. It charges seamlessly through standard silicon, TPU, leather, and hard plastic cases. (For best results, avoid phone cases with rear metal kickstands, thick credit card slots, or metal rings directly over the coil center).',
+  },
+  {
+    id: 'cr-wir-3',
+    question: 'Does the charger cause my phone or the unit to heat up?',
+    answer:
+      'No. The device features an onboard smart microprocessor with active Foreign Object Detection (FOD), over-voltage protection, and continuous temperature regulation. It maintains safe operating temperatures (consistently below 32°C) ensuring optimal phone battery health.',
+  },
+  {
+    id: 'cr-wir-4',
+    question: 'How does the cyber cyan ambient illumination work?',
+    answer:
+      'When plugged in, the laser-etched reactor core radiates a soft, non-glare ambient cyan glow. When you place your smartphone down to charge, the lighting switches to an intelligent breathing pulse cycle, confirming active 15W power transfer.',
+  },
+  {
+    id: 'cr-wir-5',
+    question: 'What wall charger/adapter should I plug the Type-C cable into?',
+    answer:
+      'We provide a premium 1.5m braided nylon USB Type-C cable in the box. To achieve the fastest 15W wireless charging speeds, connect it to any 18W, 20W, or higher USB-C Power Delivery (PD) or Quick Charge (QC 3.0) wall adapter (such as your existing phone fast charger).',
+  },
+  {
+    id: 'cr-wir-6',
+    question: 'How does Partial COD with ₹149 advance work?',
+    answer:
+      'To confirm your handcrafted studio reservation (₹1,999), pay ₹149 advance via any UPI app (GPay, PhonePe, Paytm). The balance ₹1,850 is payable at your doorstep upon courier handover in cash or UPI.',
+  },
+  {
+    id: 'cr-wir-7',
+    question: 'What is the transit packaging and damage guarantee?',
+    answer:
+      'Every order is packaged inside custom laser-cut shockproof EVA acoustic foam and dispatched via BlueDart Air Express. Backed by our 100% zero-cost 7-day transit replacement guarantee in the rare event of transit damage.',
+  },
+] as const;
+
 export const CORE_REACTOR_FAQS: readonly FaqItem[] = [
   {
     id: 'reactor-1',
@@ -239,6 +284,9 @@ export function getProductFaqs(product: any): readonly FaqItem[] {
   const slug = (product.slug || '').toLowerCase();
   const categorySlug = (product.category?.slug || '').toLowerCase();
 
+  if (slug.includes('wireless') && slug.includes('reactor')) {
+    return CORE_REACTOR_WIRELESS_FAQS;
+  }
   if (slug.includes('reactor')) {
     return CORE_REACTOR_FAQS;
   }
@@ -295,6 +343,18 @@ export function getProductBoxContents(product: any): BoxItem[] {
       { item: adapterText, desc: 'Indian standard 2-pin wall plug with power cord' },
       { item: 'Operating & Setup Guide', desc: 'Full step-by-step instructions and safety specifications' },
       { item: 'Shockproof Acoustic EVA Box', desc: 'Custom laser-cut protective packaging for safe transit' },
+    ];
+  }
+
+  // Core Reactor Wireless Fast Charger
+  if (slug.includes('wireless') && slug.includes('reactor')) {
+    return [
+      { item: 'Core Reactor Wireless 15W Fast Charger', desc: 'Qi-certified magnetic fast induction dock with tempered crystal surface' },
+      { item: 'Weighted Obsidian Anti-Skid Desktop Pedestal', desc: 'High-stability weighted base with acoustic non-slip silicone feet' },
+      { item: 'Braided Type-C Power Cable (1.5m)', desc: 'High-durability reinforced nylon braided power cord' },
+      { item: 'Cyber Cyan Ambient Halo Diffuser', desc: 'Integrated dual-mode ambient desk illumination with breathing pulse' },
+      { item: 'Studio Authenticity & Calibration Card', desc: 'Individually serialized WhiteLayer New Delhi studio batch certificate' },
+      { item: 'Shockproof Acoustic EVA Box', desc: 'Custom laser-cut dual-density transit packaging for damage-free delivery' },
     ];
   }
 
@@ -423,6 +483,28 @@ export function getProductStoryMeta(product: any): ProductStoryMeta {
         {
           title: 'Failsafe Auto-Catch Base',
           desc: 'Low-voltage 12V 2A power supply with failsafe auto-catch magnetic safety',
+        },
+      ],
+    };
+  }
+
+  // Core Reactor Wireless Fast Charger
+  if (slug.includes('wireless') && slug.includes('reactor')) {
+    return {
+      badge: 'Inductive Energy Architecture',
+      heading: '15W Fast Wireless Charging & Ambient Core Sanctuary',
+      highlights: [
+        {
+          title: '15W Qi Magnetic Fast Charging',
+          desc: 'High-speed inductive charging for Apple MagSafe (iPhone 12–16) and Android Qi devices with 93% conversion efficiency',
+        },
+        {
+          title: 'Smart FOD & Thermal Microchip',
+          desc: 'Continuous real-time temperature regulation keeping devices cool under 32°C with Foreign Object Detection safety',
+        },
+        {
+          title: 'Hypnotic Cyan Breathing Pulse',
+          desc: '10 hand-wound copper-core micro inductors and laser-etched stator ring casting a soft, non-glare desktop ambient glow',
         },
       ],
     };
@@ -793,8 +875,11 @@ export function getProductTopBadges(product: any): string[] {
   if (slug.includes('levitat')) {
     return ['🧲 ZERO-GRAVITY SUSPENSION', 'AMBIENT RGB HALO BASE', '⚡ VIRAL DESK PIECE'];
   }
+  if (slug.includes('wireless') && slug.includes('reactor')) {
+    return ['⚡ 15W QI FAST CHARGE', 'BREATHING PULSE GLOW', 'MAGSAFE COMPATIBLE'];
+  }
   if (slug.includes('reactor')) {
-    return ['💡 ARC LIGHTING', 'BREATHING PULSE CORE', '⚡ 5V USB-C'];
+    return ['💡 AMBIENT LIGHTING', 'BREATHING PULSE CORE', '⚡ 5V USB-C'];
   }
   if (slug.includes('lumi')) {
     return ['ORGANIC BIOMIMICRY', 'GOLDEN-RATIO LIGHT', '38H STUDIO PRINT'];
@@ -844,6 +929,13 @@ export function getProductBuyPerks(product: any): BuyPerk[] {
       { text: 'Genuine 15–20mm Electromagnetic Air Gap Suspension', color: '#059669' },
       { text: 'Active Sensor Coils with Ambient Multi-Color Halo Glow', color: '#0284C7' },
       { text: 'Standard Indian 2-Pin 12V 2A Power Adapter Included', color: '#D97706' },
+    ];
+  }
+  if (slug.includes('wireless') && slug.includes('reactor')) {
+    return [
+      { text: '15W Adaptive Qi Fast Charging for iPhone 12–16 & Android Flagships', color: '#059669' },
+      { text: 'Smart FOD Microprocessor Keeps Devices Cool Below 32°C', color: '#0284C7' },
+      { text: 'Weighted Obsidian Anti-Skid Stand with Cyber Cyan Ambient Halo', color: '#D97706' },
     ];
   }
   if (slug.includes('reactor')) {

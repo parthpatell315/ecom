@@ -44,6 +44,7 @@ import { PincodeChecker } from '@/components/product/PincodeChecker';
 import { F1Showcase } from '@/components/product/F1Showcase';
 import { MK5Showcase } from '@/components/product/MK5Showcase';
 import { CoreReactorShowcase } from '@/components/product/CoreReactorShowcase';
+import { CoreReactorWirelessShowcase } from '@/components/product/CoreReactorWirelessShowcase';
 import { trackPixelEvent } from '@/components/analytics/MetaPixel';
 import { LEGAL_CONFIG } from '@/config/legal';
 import { SALE_CONFIG, isSaleActive } from '@/config/sale';
@@ -88,10 +89,16 @@ export function ProductDetailClient({
     product.title.toLowerCase().includes('mk 5') ||
     product.title.toLowerCase().includes('mk5');
 
+  const isCoreReactorWireless =
+    product.slug === 'core-reactor-wireless-edition' ||
+    (product.slug?.includes('wireless') && product.slug?.includes('reactor')) ||
+    (product.title.toLowerCase().includes('core reactor') && product.title.toLowerCase().includes('wireless'));
+
   const isCoreReactor =
-    product.slug === 'core-reactor-desk-light' ||
-    product.slug?.includes('reactor') ||
-    product.title.toLowerCase().includes('core reactor');
+    !isCoreReactorWireless &&
+    (product.slug === 'core-reactor-desk-light' ||
+      product.slug?.includes('reactor') ||
+      product.title.toLowerCase().includes('core reactor'));
 
   // Find the iconic Side View photo (photo_5379765186618664388) as requested
   const f1SidePhoto = product.images?.find((img: any) =>
@@ -665,6 +672,16 @@ export function ProductDetailClient({
                       SAVE ₹22,500
                     </span>
                   </div>
+                ) : isCoreReactorWireless ? (
+                  <div className="p-3 rounded-2xl bg-gradient-to-r from-cyan-500/15 via-blue-500/15 to-cyan-500/15 border-2 border-cyan-500/40 flex items-center justify-between gap-2 text-xs text-cyan-950 font-medium shadow-sm">
+                    <span className="flex items-center gap-1.5 font-bold">
+                      <Sparkles className="w-4 h-4 text-cyan-600 animate-spin shrink-0" />
+                      <span>⚡ WIRELESS DROP #01: 15W Qi Fast Charge + Cyan Core (Only 18 Left)</span>
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-cyan-700 text-white font-mono font-bold text-[11px] shrink-0">
+                      SAVE ₹3,000
+                    </span>
+                  </div>
                 ) : isCoreReactor ? (
                   <div className="p-3 rounded-2xl bg-gradient-to-r from-cyan-500/15 via-blue-500/15 to-cyan-500/15 border-2 border-cyan-500/40 flex items-center justify-between gap-2 text-xs text-cyan-950 font-medium shadow-sm">
                     <span className="flex items-center gap-1.5 font-bold">
@@ -934,6 +951,8 @@ export function ProductDetailClient({
           <F1Showcase />
         ) : isMK5Helmet ? (
           <MK5Showcase onBuyNow={handleBuyNow} />
+        ) : isCoreReactorWireless ? (
+          <CoreReactorWirelessShowcase onBuyNow={handleBuyNow} />
         ) : isCoreReactor ? (
           <CoreReactorShowcase onBuyNow={handleBuyNow} />
         ) : (
@@ -1323,6 +1342,11 @@ export function ProductDetailClient({
               {isMK5Helmet && (
                 <span className="text-[11px] font-extrabold text-red-600">
                   (90% Diwali OFF)
+                </span>
+              )}
+              {isCoreReactorWireless && (
+                <span className="text-[11px] font-extrabold text-cyan-600">
+                  (60% Studio OFF)
                 </span>
               )}
               {isCoreReactor && (
