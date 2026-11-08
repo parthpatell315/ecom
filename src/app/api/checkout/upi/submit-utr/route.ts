@@ -17,17 +17,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Order number is required' }, { status: 400 });
     }
 
-    if (!utrNumber || !isValidUtrNumber(utrNumber)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Please enter a valid 12-digit UPI Reference / UTR Number (found on your GPay/PhonePe/Paytm payment receipt).',
-        },
-        { status: 400 }
-      );
-    }
-
-    const cleanUtr = utrNumber.trim().replace(/\s+/g, '');
+    const rawUtr = (utrNumber || '').trim().replace(/\s+/g, '');
+    const cleanUtr = rawUtr && isValidUtrNumber(rawUtr)
+      ? rawUtr
+      : `UPI${orderNumber.replace(/[^a-zA-Z0-9]/g, '')}`;
 
     // 1. Fetch Order and items
     const order = await prisma.order.findUnique({

@@ -65,14 +65,12 @@ export function UpiPaymentModal({
 }: UpiPaymentModalProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'1tap' | 'qr'>('1tap');
-  const [utrNumber, setUtrNumber] = useState('');
   const [payerVpa, setPayerVpa] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [hasInitiatedPayment, setHasInitiatedPayment] = useState(false);
   const [userReturnedFromApp, setUserReturnedFromApp] = useState(false);
-  const [selectedQrType, setSelectedQrType] = useState<'dynamic' | 'paytm'>('dynamic');
   const [isIOS, setIsIOS] = useState(false);
 
   // Auto-select QR on Desktop & auto-detect customer returning from UPI app
@@ -187,47 +185,7 @@ export function UpiPaymentModal({
     }
   };
 
-  const handleSubmitUtr = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage(null);
-
-    const cleanUtr = utrNumber.trim().replace(/\s+/g, '');
-    if (!cleanUtr || cleanUtr.length < 10) {
-      setErrorMessage('Please enter a valid 12-digit UPI Reference / UTR Number from your payment receipt.');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const res = await fetch('/api/checkout/upi/submit-utr', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderNumber,
-          utrNumber: cleanUtr,
-          payerVpa: payerVpa.trim() || undefined,
-        }),
-      });
-
-      const data = await res.json();
-      if (!data.success) {
-        setErrorMessage(data.error || 'Failed to submit payment reference. Please try again.');
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Route to success page with customer email for full receipt & Meta Pixel tracking
-      const gatewayParam = isPartialCod ? 'PARTIAL_COD' : 'UPI';
-      const emailQuery = customerEmail ? `&email=${encodeURIComponent(customerEmail)}` : '';
-      router.push(`/order-success?orderNumber=${encodeURIComponent(orderNumber)}&gateway=${gatewayParam}&utr=${encodeURIComponent(cleanUtr)}${emailQuery}`);
-    } catch (err) {
-      console.error('Submit UTR error:', err);
-      setErrorMessage('Network error while submitting payment verification.');
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleConfirmWithoutUtr = async () => {
+  const handleConfirmPayment = async () => {
     setErrorMessage(null);
     setIsSubmitting(true);
     // Unique deterministic fallback reference (14 alphanumeric chars, valid according to NPCI / Indian regex)
@@ -246,7 +204,7 @@ export function UpiPaymentModal({
 
       const data = await res.json();
       if (!data.success) {
-        setErrorMessage(data.error || 'Failed to submit payment reference. Please enter your UTR above.');
+        setErrorMessage(data.error || 'Failed to submit payment confirmation. Please try again.');
         setIsSubmitting(false);
         return;
       }
@@ -255,7 +213,7 @@ export function UpiPaymentModal({
       const emailQuery = customerEmail ? `&email=${encodeURIComponent(customerEmail)}` : '';
       router.push(`/order-success?orderNumber=${encodeURIComponent(orderNumber)}&gateway=${gatewayParam}&utr=${encodeURIComponent(fallbackRef)}${emailQuery}`);
     } catch (err) {
-      console.error('Submit fallback UTR error:', err);
+      console.error('Submit payment confirmation error:', err);
       setErrorMessage('Network error while confirming order.');
       setIsSubmitting(false);
     }
@@ -338,7 +296,7 @@ export function UpiPaymentModal({
               </div>
               <button
                 type="button"
-                onClick={handleConfirmWithoutUtr}
+                onClick={handleConfirmPayment}
                 disabled={isSubmitting}
                 className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
               >
@@ -529,32 +487,21 @@ export function UpiPaymentModal({
             </div>
           )}
 
-          {/* TAB 2: VECTOR QR CODE */}
+          {/* TAB 2: SINGLE VECTOR QR CODE */}
           {activeTab === 'qr' && (
             <div className="flex flex-col items-center justify-center p-5 rounded-2xl bg-gray-50 border border-gray-200 text-center space-y-3 animate-fade-in">
               <div className="relative w-48 h-48 sm:w-52 sm:h-52 p-2.5 bg-white rounded-2xl shadow-sm border border-gray-200 flex items-center justify-center overflow-hidden">
-                {selectedQrType === 'dynamic' ? (
-                  upiPayload.qrCodeDataUrl ? (
-                    <Image
-                      src={upiPayload.qrCodeDataUrl}
-                      alt={`UPI QR Code for ${orderNumber}`}
-                      width={200}
-                      height={200}
-                      className="rounded-xl object-contain"
-                      priority
-                    />
-                  ) : (
-                    <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-                  )
-                ) : (
+                {upiPayload.qrCodeDataUrl ? (
                   <Image
-                    src="/images/paytm-qr.jpg"
-                    alt={`Official Paytm Merchant QR for ${orderNumber}`}
+                    src={upiPayload.qrCodeDataUrl}
+                    alt={`UPI QR Code for ${orderNumber}`}
                     width={200}
                     height={200}
                     className="rounded-xl object-contain"
                     priority
                   />
+                ) : (
+                  <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
                 )}
               </div>
               <div className="space-y-1">
@@ -565,96 +512,39 @@ export function UpiPaymentModal({
                   Scan using GPay, PhonePe, Paytm, or any banking app
                 </p>
               </div>
-
-              {/* QR Mode Switcher */}
-              <div className="pt-1 flex items-center justify-center gap-2 text-[11px]">
-                <button
-                  type="button"
-                  onClick={() => setSelectedQrType('dynamic')}
-                  className={`px-3 py-1 rounded-full font-medium transition-colors cursor-pointer ${
-                    selectedQrType === 'dynamic'
-                      ? 'bg-gray-900 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  Auto-Amount QR
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedQrType('paytm')}
-                  className={`px-3 py-1 rounded-full font-medium transition-colors cursor-pointer ${
-                    selectedQrType === 'paytm'
-                      ? 'bg-gray-900 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  Paytm Official QR
-                </button>
-              </div>
             </div>
           )}
 
-          {/* Step 2: Form to submit 12-digit UTR */}
-          <form onSubmit={handleSubmitUtr} className="pt-4 border-t border-gray-100 space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-gray-900 flex items-center gap-1">
-                  <span>Step 2: Enter 12-Digit UPI UTR / Ref No.</span>
-                  <span className="text-[#E61E2A]">*</span>
-                </label>
-                <span className="text-[10px] text-gray-400">On payment receipt</span>
-              </div>
-              <input
-                type="text"
-                required
-                inputMode="numeric"
-                pattern="[a-zA-Z0-9]{10,22}"
-                maxLength={22}
-                value={utrNumber}
-                onChange={(e) => setUtrNumber(e.target.value.replace(/[^a-zA-Z0-9]/g, ''))}
-                placeholder="e.g. 423819284712"
-                className="w-full px-4 py-3 text-base font-mono tracking-widest rounded-xl bg-gray-50 border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E61E2A]"
-              />
-              <p className="text-[11px] text-gray-500 mt-1">
-                Found as UPI Ref No., RRN, or Transaction ID in your payment receipt.
-              </p>
-            </div>
-
+          {/* 1-Click Order Confirmation */}
+          <div className="pt-3 border-t border-gray-100 space-y-3">
             <button
-              type="submit"
-              disabled={isSubmitting || !utrNumber.trim()}
-              className="w-full py-4 px-6 rounded-2xl bg-gray-900 text-white text-xs sm:text-sm font-bold hover:bg-black transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer active:scale-[0.98]"
+              type="button"
+              onClick={handleConfirmPayment}
+              disabled={isSubmitting}
+              className="w-full py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-sm sm:text-base font-extrabold transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 cursor-pointer disabled:opacity-50 select-none"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Verifying Reference...</span>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Confirming Order...</span>
                 </>
               ) : (
                 <>
-                  <Check className="w-4 h-4" />
+                  <CheckCircle2 className="w-5 h-5" />
                   <span>
                     {isPartialCod
-                      ? 'I Have Paid ₹149 — Confirm Order'
-                      : 'I Have Paid — Confirm Order'}
+                      ? 'I Have Paid ₹149 Advance — Confirm Order'
+                      : `I Have Paid ₹${upiPayload.amountRupees} — Confirm Order`}
                   </span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
 
-            {/* Seamless 1-tap fallback if customer paid but cannot find 12-digit UTR */}
-            <div className="text-center pt-0.5">
-              <button
-                type="button"
-                onClick={handleConfirmWithoutUtr}
-                disabled={isSubmitting}
-                className="text-[11.5px] text-gray-500 hover:text-gray-800 underline font-medium cursor-pointer transition-colors"
-              >
-                Can’t find 12-digit UTR? Click here to confirm payment
-              </button>
-            </div>
-          </form>
+            <p className="text-[11.5px] text-gray-500 text-center font-medium">
+              After paying in your UPI app or scanning the QR, tap the button above to confirm.
+            </p>
+          </div>
         </div>
 
         {/* Footer info */}
