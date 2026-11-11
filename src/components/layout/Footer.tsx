@@ -13,7 +13,7 @@ export function Footer() {
         {/* Footnote Disclaimers (Apple Style) */}
         <div className="pb-8 border-b border-black/[0.08] text-[11px] leading-relaxed space-y-2 text-[#86868B]">
           <p>
-            * Free Pan-India Air Delivery is provided on all orders. Cash on Delivery is supported via Partial COD (₹149 Advance via secure UPI, balance payable in cash or UPI at doorstep).
+            * Free Pan-India Air Delivery is provided on all orders. Cash on Delivery is supported directly via WhatsApp (+91 7600409399).
           </p>
           <p>
             Every electromagnetic levitation base and illumination piece undergoes 24-hour continuous bench-testing prior to dispatch. 7-Day transit replacement guarantee applies to all orders in accordance with our return guidelines.

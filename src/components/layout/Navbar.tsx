@@ -73,18 +73,18 @@ export function Navbar() {
   const saleActive = isSaleActive(SALE_CONFIG.SALE_END_DATE) && timeLeft !== null;
   const announcementText = saleActive
     ? `Sale ends in ${String(timeLeft.hours).padStart(2, '0')}:${String(timeLeft.minutes).padStart(2, '0')}:${String(timeLeft.seconds).padStart(2, '0')}`
-    : 'Free Pan-India Air Delivery • Partial COD Available (₹149 Advance Deposit)';
+    : 'Free Pan-India Air Delivery • Prepaid UPI Discount • For COD Order on WhatsApp';
 
   return (
     <>
       {/* Top Running Marquee Strip matching WhiteLayer - scrolls away with natural document flow */}
       <div className="bg-[#111827] text-white text-[11px] font-bold tracking-wider py-2 overflow-hidden border-b border-white/10 uppercase select-none">
         <div className="animate-marquee whitespace-nowrap flex items-center gap-6">
-          <span className="text-amber-400">🪔 24H DIWALI FLASH SALE: MK 5 WEARABLE HELMET ₹2,499 (90% OFF)</span>
+          <span className="text-amber-400">🪔 24H DIWALI FLASH SALE: MK 5 WEARABLE HELMET ₹1,949 (PREPAID UPI)</span>
           <span className="text-white/40">•</span>
-          <span className="text-[#E61E2A]">🏎️ F1 MAGLEV CAR ₹2,199 (PREPAID ₹1,899)</span>
+          <span className="text-[#E61E2A]">🏎️ F1 MAGLEV CAR ₹1,899 (PREPAID UPI)</span>
           <span className="text-white/40">•</span>
-          <span>PARTIAL COD AVAILABLE (₹149 ADVANCE)</span>
+          <span>FOR CASH ON DELIVERY: ORDER ON WHATSAPP</span>
           <span className="text-white/40">•</span>
           <span>FREE PAN-INDIA EXPRESS AIR DELIVERY</span>
           <span className="text-white/40">•</span>

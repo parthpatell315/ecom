@@ -16,19 +16,39 @@ export async function PATCH(
 
     const existingOrder = await prisma.order.findUnique({
       where: { id },
-      include: { payments: true },
+      include: { payments: true, items: true },
     });
 
     if (!existingOrder) {
       return NextResponse.json({ success: false, error: 'Order not found' }, { status: 404 });
     }
 
-    if (paymentStatus) {
+    // Auto-restock inventory if order is being cancelled
+    if (status === 'CANCELLED' && existingOrder.status !== 'CANCELLED') {
+      for (const item of existingOrder.items) {
+        if (item.variantId) {
+          await prisma.productVariant.update({
+            where: { id: item.variantId },
+            data: { stockCount: { increment: item.quantity } },
+          });
+        } else if (item.productId) {
+          await prisma.product.update({
+            where: { id: item.productId },
+            data: { stockCount: { increment: item.quantity } },
+          });
+        }
+      }
+    }
+
+    const effectivePaymentStatus =
+      paymentStatus || (status === 'CONFIRMED' ? 'SUCCESS' : status === 'CANCELLED' ? 'FAILED' : undefined);
+
+    if (effectivePaymentStatus) {
       await prisma.payment.updateMany({
         where: { orderId: id },
         data: {
-          status: paymentStatus,
-          verifiedAt: paymentStatus === 'SUCCESS' ? new Date() : null,
+          status: effectivePaymentStatus,
+          verifiedAt: effectivePaymentStatus === 'SUCCESS' ? new Date() : null,
         },
       });
     }

@@ -175,9 +175,9 @@ export function ProductCard({ product }: { product: ProductCardProps['product'] 
             </button>
           )}
 
-          {/* Partial COD hint */}
+          {/* Payment hint */}
           <p className="text-[11px] text-[#6B7280] text-center mt-2 font-medium">
-            or <strong className="text-[#111827]">₹149 Advance</strong> + {formatCurrency(Math.max(0, product.priceMinor - 14900))} on Delivery
+            Prepaid UPI 0% Fee • For COD Order on WhatsApp
           </p>
         </div>
       </div>

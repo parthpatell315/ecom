@@ -111,6 +111,32 @@ export default function AdminPage() {
     );
   }
 
+  // Quick 1-click status and payment update (with auto-restock on cancel)
+  const handleQuickStatusUpdate = async (orderId: string, status: string, paymentStatus?: string) => {
+    setIsUpdatingOrder(true);
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status,
+          ...(paymentStatus ? { paymentStatus } : {}),
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchAdminData();
+      } else {
+        alert(data.error || 'Failed to update order');
+      }
+    } catch (err) {
+      console.error('Quick status update error:', err);
+      alert('Error updating order');
+    } finally {
+      setIsUpdatingOrder(false);
+    }
+  };
+
   // Update order status & tracking
   const handleSaveOrderUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -309,7 +335,19 @@ export default function AdminPage() {
                           </td>
                           <td className="py-3 text-neutral-500">{ord.items?.length || 0} pieces</td>
                           <td className="py-3">
-                            <span className="px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                            <span
+                              className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
+                                ord.status === 'DELIVERED'
+                                  ? 'bg-blue-500/10 text-blue-500'
+                                  : ord.status === 'SHIPPED'
+                                  ? 'bg-purple-500/10 text-purple-500'
+                                  : ord.status === 'CONFIRMED'
+                                  ? 'bg-emerald-500/10 text-emerald-600'
+                                  : ord.status === 'CANCELLED'
+                                  ? 'bg-red-500/10 text-red-500'
+                                  : 'bg-amber-500/10 text-amber-600'
+                              }`}
+                            >
                               {ord.status}
                             </span>
                           </td>
@@ -355,7 +393,7 @@ export default function AdminPage() {
                 </div>
 
                 <div className="flex gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-                  {['ALL', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'].map((st) => (
+                  {['ALL', 'PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'].map((st) => (
                     <button
                       key={st}
                       onClick={() => setOrderStatusFilter(st)}
@@ -382,6 +420,7 @@ export default function AdminPage() {
                       <th className="py-2.5 font-medium">Destination</th>
                       <th className="py-2.5 font-medium">Items</th>
                       <th className="py-2.5 font-medium">Status</th>
+                      <th className="py-2.5 font-medium">Payment</th>
                       <th className="py-2.5 font-medium">Tracking</th>
                       <th className="py-2.5 font-medium">Total</th>
                       <th className="py-2.5 font-medium text-right">Actions</th>
@@ -415,11 +454,30 @@ export default function AdminPage() {
                                 ? 'bg-blue-500/10 text-blue-500'
                                 : ord.status === 'SHIPPED'
                                 ? 'bg-purple-500/10 text-purple-500'
-                                : 'bg-emerald-500/10 text-emerald-500'
+                                : ord.status === 'CONFIRMED'
+                                ? 'bg-emerald-500/10 text-emerald-600'
+                                : ord.status === 'CANCELLED'
+                                ? 'bg-red-500/10 text-red-500'
+                                : 'bg-amber-500/10 text-amber-600'
                             }`}
                           >
                             {ord.status}
                           </span>
+                        </td>
+                        <td className="py-3">
+                          {ord.payments?.[0]?.status === 'SUCCESS' ? (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-600">
+                              PAID
+                            </span>
+                          ) : ord.payments?.[0]?.status === 'FAILED' ? (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/10 text-red-600">
+                              FAILED
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-600 animate-pulse">
+                              VERIFY
+                            </span>
+                          )}
                         </td>
                         <td className="py-3 font-mono text-neutral-500">
                           {ord.trackingNumber ? (
@@ -439,17 +497,58 @@ export default function AdminPage() {
                           )}
                         </td>
                         <td className="py-3 text-right">
-                          <button
-                            onClick={() => {
-                              setEditingOrder(ord);
-                              setNewStatus(ord.status);
-                              setNewTrackingNumber(ord.trackingNumber || '');
-                              setNewTrackingCarrier(ord.trackingCarrier || 'Blue Dart Air');
-                            }}
-                            className="py-1 px-3 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-[11px] font-medium hover:bg-black dark:hover:bg-neutral-100 transition-colors"
-                          >
-                            Update
-                          </button>
+                          <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                            {ord.status === 'PENDING' && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => handleQuickStatusUpdate(ord.id, 'CONFIRMED', 'SUCCESS')}
+                                  title="Confirm Payment & Approve Order"
+                                  className="py-1 px-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1 shadow-xs transition-colors cursor-pointer"
+                                >
+                                  <CheckCircle2 className="w-3 h-3" />
+                                  <span>Confirm</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (confirm(`Cancel unpaid order #${ord.orderNumber} and restock items?`)) {
+                                      handleQuickStatusUpdate(ord.id, 'CANCELLED', 'FAILED');
+                                    }
+                                  }}
+                                  title="Cancel Unpaid Order & Restock Items"
+                                  className="py-1 px-2 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 dark:bg-red-950/40 dark:text-red-400 text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                                >
+                                  <X className="w-3 h-3" />
+                                  <span>Cancel</span>
+                                </button>
+                              </>
+                            )}
+                            {ord.guestPhone && (
+                              <a
+                                href={`https://wa.me/91${ord.guestPhone.replace(/\D/g, '')}?text=${encodeURIComponent(
+                                  `Hi ${ord.guestName || 'there'}, this is Flirta by WhiteLayer regarding your order #${ord.orderNumber}.`
+                                )}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Chat on WhatsApp"
+                                className="py-1 px-2 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#25D366] text-[11px] font-bold transition-colors inline-flex items-center"
+                              >
+                                WA
+                              </a>
+                            )}
+                            <button
+                              onClick={() => {
+                                setEditingOrder(ord);
+                                setNewStatus(ord.status);
+                                setNewTrackingNumber(ord.trackingNumber || '');
+                                setNewTrackingCarrier(ord.trackingCarrier || 'Blue Dart Air');
+                              }}
+                              className="py-1 px-2.5 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-[11px] font-medium hover:bg-black dark:hover:bg-neutral-100 transition-colors"
+                            >
+                              Update
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

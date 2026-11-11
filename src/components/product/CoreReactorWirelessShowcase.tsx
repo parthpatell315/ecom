@@ -116,7 +116,7 @@ export function CoreReactorWirelessShowcase({ onBuyNow }: CoreReactorWirelessSho
 
             <p className="text-[11px] text-gray-400 flex items-center gap-1.5 justify-center">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>₹149 Partial COD Available • 7-Day Replacement</span>
+              <span>Direct UPI 0% Fee • For COD Order on WhatsApp</span>
             </p>
           </div>
         </div>

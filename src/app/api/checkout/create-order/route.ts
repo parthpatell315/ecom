@@ -171,84 +171,15 @@ export async function POST(req: NextRequest) {
     const orderNumber = `FL-${year}-${randomHex}`;
 
     // 7. Branch by Payment Gateway
-    if (paymentGateway === 'PARTIAL_COD') {
-      const advanceMinor = 14900; // Rs. 149.00 advance via UPI
-      const codBalanceMinor = Math.max(0, totalMinor - advanceMinor);
-
-      const upiPayload = await generateUpiPayload({
-        orderNumber,
-        amountMinor: advanceMinor,
-        note: `Advance ₹149 for ${orderNumber}`,
-      });
-
-      const partialCodNotes = `Partial COD: ₹149 advance via UPI, ₹${(codBalanceMinor / 100).toFixed(2)} due on Cash on Delivery`;
-      const combinedNotes = notes ? `${notes} | ${partialCodNotes}` : partialCodNotes;
-
-      const createdOrder = await prisma.order.create({
-        data: {
-          orderNumber,
-          ...(session?.userId ? { user: { connect: { id: session.userId } } } : {}),
-          guestEmail: email,
-          guestPhone: phone,
-          guestName: name,
-          status: 'PENDING',
-          subtotalMinor,
-          discountMinor: effectiveDiscountMinor,
-          shippingMinor,
-          taxMinor: 0,
-          totalMinor,
-          isPartialCod: true,
-          codBalanceMinor,
-          couponCode: validatedCoupon,
-          shippingAddress,
-          notes: combinedNotes,
-          items: {
-            create: orderItemsData.map((item) => {
-              const unitPrice = item.product.priceMinor + (item.variant?.priceAdjustmentMinor || 0);
-              return {
-                productId: item.productId,
-                variantId: item.variantId,
-                sku: item.variant?.sku || item.product.sku,
-                titleSnapshot: item.product.title,
-                variantNameSnapshot: item.variant?.name || null,
-                unitPriceMinor: unitPrice,
-                quantity: item.quantity,
-                totalMinor: unitPrice * item.quantity,
-                imageSnapshot: item.variant?.image || '',
-              };
-            }),
-          },
-          payments: {
-            create: {
-              gateway: 'PARTIAL_COD',
-              gatewayOrderId: orderNumber,
-              amountMinor: advanceMinor,
-              currency: 'INR',
-              status: 'PENDING',
-              rawPayload: {
-                isPartialCod: true,
-                advanceAmountMinor: advanceMinor,
-                codBalanceMinor,
-                totalOrderMinor: totalMinor,
-              },
-            },
-          },
+    if (paymentGateway === 'PARTIAL_COD' || paymentGateway === 'COD') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Cash on Delivery (COD) orders are processed exclusively through our studio team on WhatsApp (+91 7600409399). Please select "Order COD on WhatsApp".',
+          redirectToWhatsapp: true,
         },
-      });
-
-      return NextResponse.json({
-        success: true,
-        gateway: 'PARTIAL_COD',
-        orderId: createdOrder.id,
-        orderNumber: createdOrder.orderNumber,
-        isPartialCod: true,
-        amountMinor: advanceMinor,
-        advanceAmountMinor: advanceMinor,
-        codBalanceMinor,
-        totalOrderMinor: totalMinor,
-        upi: upiPayload,
-        customerDetails: { name, email, phone },
-      });
+        { status: 400 }
+      );
     }
 
     if (paymentGateway === 'UPI') {
@@ -318,88 +249,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    if (paymentGateway === 'COD') {
-      // Cash on Delivery Order Creation
-      const createdOrder = await prisma.$transaction(async (tx) => {
-        const ord = await tx.order.create({
-          data: {
-            orderNumber,
-            ...(session?.userId ? { user: { connect: { id: session.userId } } } : {}),
-            guestEmail: email,
-            guestPhone: phone,
-            guestName: name,
-            status: 'CONFIRMED', // Confirmed directly for COD
-            subtotalMinor,
-            discountMinor,
-            shippingMinor,
-            taxMinor: 0,
-            totalMinor,
-            isPartialCod: false,
-            codBalanceMinor: totalMinor,
-            couponCode: validatedCoupon,
-            shippingAddress,
-            notes: notes || null,
-            items: {
-              create: orderItemsData.map((item) => {
-                const unitPrice = item.product.priceMinor + (item.variant?.priceAdjustmentMinor || 0);
-                return {
-                  productId: item.productId,
-                  variantId: item.variantId,
-                  sku: item.variant?.sku || item.product.sku,
-                  titleSnapshot: item.product.title,
-                  variantNameSnapshot: item.variant?.name || null,
-                  unitPriceMinor: unitPrice,
-                  quantity: item.quantity,
-                  totalMinor: unitPrice * item.quantity,
-                  imageSnapshot: item.variant?.image || '',
-                };
-              }),
-            },
-            payments: {
-              create: {
-                gateway: 'COD',
-                gatewayOrderId: orderNumber,
-                amountMinor: totalMinor,
-                currency: 'INR',
-                status: 'PENDING', // Will be collected upon courier delivery
-              },
-            },
-          },
-        });
 
-        // Decrement inventory
-        for (const item of orderItemsData) {
-          if (item.variantId) {
-            await tx.productVariant.update({
-              where: { id: item.variantId },
-              data: { stockCount: { decrement: item.quantity } },
-            });
-          } else {
-            await tx.product.update({
-              where: { id: item.productId },
-              data: { stockCount: { decrement: item.quantity } },
-            });
-          }
-        }
-
-        return ord;
-      });
-
-      // Clear cart
-      cookieStore.delete(CART_COOKIE);
-
-      return NextResponse.json({
-        success: true,
-        gateway: 'COD',
-        orderId: createdOrder.id,
-        orderNumber: createdOrder.orderNumber,
-        isPartialCod: false,
-        amountMinor: totalMinor,
-        totalOrderMinor: totalMinor,
-        codBalanceMinor: totalMinor,
-        customerDetails: { name, email, phone },
-      });
-    }
 
     // Default to RAZORPAY if requested
     const gatewayOrder = await createRazorpayOrder({

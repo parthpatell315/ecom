@@ -68,8 +68,8 @@ function CheckoutContent() {
   const [couponError, setCouponError] = useState<string | null>(null);
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
 
-  // Order & Payment state (Defaults to UPI for instant prepaid discount: ₹1,949)
-  const [paymentMethod, setPaymentMethod] = useState<'PARTIAL_COD' | 'UPI'>('UPI');
+  // Order & Payment state (Direct UPI with instant prepaid discounts)
+  const paymentMethod: 'UPI' = 'UPI';
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [activeUpiOrder, setActiveUpiOrder] = useState<{
@@ -141,19 +141,17 @@ function CheckoutContent() {
   }, 0);
 
   // Special Flagship Offers:
-  // Instant ₹300 OFF per F1 car if paying Prepaid UPI (₹2,199 -> ₹1,899)
-  // Instant ₹550 OFF per MK5 helmet if paying Prepaid UPI (₹2,499 -> ₹1,949)
+  // Instant ₹300 OFF per F1 car on Prepaid UPI (₹2,199 -> ₹1,899)
+  // Instant ₹550 OFF per MK5 helmet on Prepaid UPI (₹2,499 -> ₹1,949)
   const fullPrepaidDiscountMinor =
     (f1Quantity > 0 ? 30000 * f1Quantity : 0) +
     (mk5Quantity > 0 ? 55000 * mk5Quantity : 0);
-  const prepaidDiscountMinor = paymentMethod === 'UPI' ? fullPrepaidDiscountMinor : 0;
+  const prepaidDiscountMinor = fullPrepaidDiscountMinor;
 
   const discountMinor = appliedCoupon ? appliedCoupon.discountMinor : 0;
-  // Free Express Delivery for all orders (Prepaid ₹999 total, Partial COD ₹149 advance + ₹850 doorstep balance)
+  // Free Express Delivery for all orders
   const shippingMinor = 0;
-  const codTotalMinor = Math.max(0, subtotalMinor - discountMinor + shippingMinor);
-  const upiTotalMinor = Math.max(0, subtotalMinor - discountMinor - fullPrepaidDiscountMinor + shippingMinor);
-  const finalTotalMinor = paymentMethod === 'UPI' ? upiTotalMinor : codTotalMinor;
+  const finalTotalMinor = Math.max(0, subtotalMinor - discountMinor - fullPrepaidDiscountMinor + shippingMinor);
 
   // Fire InitiateCheckout Meta Pixel Event strictly once per checkout session
   const hasTrackedCheckoutRef = useRef(false);
@@ -273,8 +271,8 @@ function CheckoutContent() {
               subtotalMinor: subtotalMinor,
               shippingMinor: shippingMinor,
               discountMinor: discountMinor,
-              isPartialCod: data.isPartialCod || paymentMethod === 'PARTIAL_COD',
-              codBalanceMinor: data.codBalanceMinor ?? (paymentMethod === 'PARTIAL_COD' ? Math.max(0, finalTotalMinor - 14900) : 0),
+              isPartialCod: false,
+              codBalanceMinor: 0,
               customerEmail: formData.email,
               customerPhone: formData.phone,
               customerName: formData.fullName,
@@ -540,15 +538,15 @@ function CheckoutContent() {
                 </div>
               </div>
 
-              {/* 3. Payment Method: Choose between Full UPI or Partial COD */}
-              <div className="p-4 sm:p-6 rounded-2xl bg-white border border-gray-200 shadow-xs">
-                <div className="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-gray-100">
+              {/* 3. Payment Method: Direct Prepaid UPI + WhatsApp for COD */}
+              <div className="p-4 sm:p-6 rounded-2xl bg-white border border-gray-200 shadow-xs space-y-4">
+                <div className="flex items-center justify-between gap-2 pb-3 border-b border-gray-100">
                   <div>
                     <h3 className="text-sm sm:text-base font-bold text-gray-900">
                       3. Select Payment Option
                     </h3>
                     <p className="text-[11px] text-gray-500 mt-0.5">
-                      Zero convenience fees • Instant confirmation
+                      Direct UPI QR • Zero convenience fees • Instant confirmation
                     </p>
                   </div>
                   <span className="text-[10.5px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1 shrink-0">
@@ -557,114 +555,70 @@ function CheckoutContent() {
                   </span>
                 </div>
 
-                <div className="space-y-3">
-                  {/* Option 1: Partial COD (₹149 Advance via UPI) */}
-                  <div
-                    onClick={() => setPaymentMethod('PARTIAL_COD')}
-                    className={`p-3.5 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
-                      paymentMethod === 'PARTIAL_COD'
-                        ? 'border-[#E61E2A] bg-[#FFF8F8]/60 shadow-xs ring-1 ring-[#E61E2A]/10'
-                        : 'border-gray-200 bg-white hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${
-                          paymentMethod === 'PARTIAL_COD' ? 'border-[#E61E2A]' : 'border-gray-300'
-                        }`}
-                      >
-                        {paymentMethod === 'PARTIAL_COD' && (
-                          <div className="w-2 h-2 rounded-full bg-[#E61E2A]" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs sm:text-sm font-bold text-gray-900 flex items-center gap-1.5">
-                              <Truck className="w-3.5 h-3.5 text-amber-600" />
-                              Partial COD
-                            </span>
-                            <span className="text-[9.5px] uppercase font-bold tracking-wider bg-amber-600 text-white px-2 py-0.5 rounded">
-                              Pay ₹149 Advance
-                            </span>
-                          </div>
-                          <span className="text-xs sm:text-sm font-extrabold text-[#E61E2A] shrink-0">
-                            ₹149 Now + {formatCurrency(Math.max(0, codTotalMinor - 14900))} Doorstep
+                {/* Primary Method: Prepaid UPI (Always Active & Selected) */}
+                <div className="p-4 rounded-xl border-2 border-[#E61E2A] bg-[#FFF8F8]/60 shadow-xs ring-1 ring-[#E61E2A]/10">
+                  <div className="flex items-start gap-3">
+                    <div className="w-4 h-4 rounded-full border-2 border-[#E61E2A] flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-2 h-2 rounded-full bg-[#E61E2A]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs sm:text-sm font-bold text-gray-900 flex items-center gap-1.5">
+                            <Zap className="w-3.5 h-3.5 text-amber-500 fill-current" />
+                            ⚡ Prepaid UPI (Instant Discount Applied)
+                          </span>
+                          <span className="text-[9.5px] uppercase font-bold tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">
+                            {mk5Quantity > 0 ? 'Save ₹550 (₹1,949)' : f1Quantity > 0 ? 'Save ₹300 (₹1,899)' : 'Prepaid Offer'}
                           </span>
                         </div>
-                        <p className="text-[11.5px] text-gray-600 leading-relaxed">
-                          Pay ₹149 advance now via UPI QR to reserve your piece. Pay remaining balance of {formatCurrency(Math.max(0, codTotalMinor - 14900))} in cash or UPI when courier delivers to your hands (Total {formatCurrency(codTotalMinor)} with zero extra fees).
-                        </p>
-
-                        {/* Clean 2-Row Breakdown Box */}
-                        <div className="mt-2.5 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] space-y-1">
-                          <div className="flex items-center justify-between text-amber-900">
-                            <span className="font-medium flex items-center gap-1">
-                              <Zap className="w-3 h-3 text-[#E61E2A]" /> Advance Reservation Fee:
+                        <div className="text-right shrink-0">
+                          <span className="text-xs sm:text-sm font-extrabold text-emerald-700 block">
+                            {formatCurrency(finalTotalMinor)}
+                          </span>
+                          {fullPrepaidDiscountMinor > 0 && (
+                            <span className="text-[10px] text-gray-400 line-through block">
+                              {formatCurrency(subtotalMinor - discountMinor)}
                             </span>
-                            <strong className="font-bold text-[#E61E2A]">₹149.00</strong>
-                          </div>
-                          <div className="flex items-center justify-between text-amber-900 pt-1 border-t border-amber-500/15">
-                            <span className="font-medium flex items-center gap-1">
-                              <Truck className="w-3 h-3 text-amber-700" /> Balance on Doorstep:
-                            </span>
-                            <strong className="font-bold text-gray-900">{formatCurrency(Math.max(0, codTotalMinor - 14900))}</strong>
-                          </div>
+                          )}
                         </div>
+                      </div>
+                      <p className="text-[11.5px] text-gray-600 leading-relaxed">
+                        Pay flat <strong className="text-emerald-700 font-bold">{formatCurrency(finalTotalMinor)}</strong> via dynamic UPI QR code. {f1Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹300 instant prepaid discount on F1 MagLev (₹1,899)! </strong>}{mk5Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹550 instant prepaid discount on MK5 Helmet (₹1,949)! </strong>}<strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
+                      </p>
+                      <div className="mt-2 text-[10.5px] text-emerald-700 font-semibold flex items-center gap-1.5 flex-wrap">
+                        <Smartphone className="w-3 h-3 text-emerald-600 shrink-0" />
+                        <span>Instant auto-verification via GPay, PhonePe, Paytm, CRED &amp; all UPI apps</span>
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  {/* Option 2: Full Payment via UPI */}
-                  <div
-                    onClick={() => setPaymentMethod('UPI')}
-                    className={`p-3.5 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
-                      paymentMethod === 'UPI'
-                        ? 'border-[#E61E2A] bg-[#FFF8F8]/60 shadow-xs ring-1 ring-[#E61E2A]/10'
-                        : 'border-gray-200 bg-white hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${
-                          paymentMethod === 'UPI' ? 'border-[#E61E2A]' : 'border-gray-300'
-                        }`}
-                      >
-                        {paymentMethod === 'UPI' && (
-                          <div className="w-2 h-2 rounded-full bg-[#E61E2A]" />
-                        )}
+                {/* WhatsApp COD Order Redirect Banner */}
+                <div className="p-4 rounded-xl border border-emerald-300 bg-emerald-50/80">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
+                        <span className="text-xs sm:text-sm font-bold text-emerald-950">
+                          Want Cash on Delivery (COD)?
+                        </span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs sm:text-sm font-bold text-gray-900 flex items-center gap-1.5">
-                              <Zap className="w-3.5 h-3.5 text-amber-500 fill-current" />
-                              ⚡ Prepaid UPI (Recommended)
-                            </span>
-                            <span className="text-[9.5px] uppercase font-bold tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">
-                              {mk5Quantity > 0 ? 'Save ₹550 (₹1,949)' : f1Quantity > 0 ? 'Save ₹300 (₹1,899)' : 'Save Extra'}
-                            </span>
-                          </div>
-                          <div className="text-right shrink-0">
-                            <span className="text-xs sm:text-sm font-extrabold text-emerald-700 block">
-                              {formatCurrency(upiTotalMinor)}
-                            </span>
-                            {fullPrepaidDiscountMinor > 0 && (
-                              <span className="text-[10px] text-gray-400 line-through block">
-                                {formatCurrency(codTotalMinor)}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <p className="text-[11.5px] text-gray-600 leading-relaxed">
-                          Pay flat <strong className="text-emerald-700 font-bold">{formatCurrency(upiTotalMinor)}</strong> via dynamic UPI QR code. {f1Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹300 instant prepaid discount on F1 MagLev (₹1,899)! </strong>}{mk5Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹550 instant prepaid discount on MK5 Helmet (₹1,949)! </strong>}<strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
-                        </p>
-                        <div className="mt-2 text-[10.5px] text-emerald-700 font-semibold flex items-center gap-1.5 flex-wrap">
-                          <Smartphone className="w-3 h-3 text-emerald-600 shrink-0" />
-                          <span>Instant auto-verification via GPay, PhonePe, Paytm, CRED &amp; all UPI apps</span>
-                        </div>
-                      </div>
+                      <p className="text-[11.5px] text-emerald-800 leading-relaxed">
+                        To eliminate fake courier dispatches, Cash on Delivery (COD) orders are processed directly through our studio team on WhatsApp.
+                      </p>
                     </div>
+                    <a
+                      href={`https://wa.me/917600409399?text=${encodeURIComponent(
+                        `Hi Flirta team, I want to order via Cash on Delivery (COD).\n\nItems: ${items.map((i) => `${i.title} (x${i.quantity})`).join(', ')}\nDelivery Pincode: ${formData.postalCode || 'Not provided'}\nCity: ${formData.city || ''}\nCustomer Name: ${formData.fullName || ''}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs font-bold shrink-0 flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                    >
+                      <span>Order COD on WhatsApp</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </a>
                   </div>
                 </div>
               </div>
@@ -687,16 +641,6 @@ function CheckoutContent() {
                     <Loader2 className="w-4 h-4 animate-spin text-white" />
                     <span>Generating Exact Amount UPI QR...</span>
                   </div>
-                ) : paymentMethod === 'PARTIAL_COD' ? (
-                  <>
-                    <div className="flex items-center gap-1.5 text-sm sm:text-base font-bold">
-                      <Lock className="w-4 h-4 text-white/90" />
-                      <span>Pay ₹149 Advance via UPI</span>
-                    </div>
-                    <span className="text-[11px] text-white/85 font-medium">
-                      Balance {formatCurrency(Math.max(0, codTotalMinor - 14900))} on Doorstep Delivery
-                    </span>
-                  </>
                 ) : (
                   <div className="flex items-center gap-2 text-sm sm:text-base font-bold">
                     <Lock className="w-4 h-4 text-white/90" />
@@ -817,7 +761,7 @@ function CheckoutContent() {
               <div className="p-4 rounded-2xl bg-[#FFF5F6] border border-[#E61E2A]/15 space-y-2 text-xs text-gray-600">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-[#E61E2A] flex-shrink-0" />
-                  <span>0% Fee Direct UPI &amp; Partial COD (₹149 Advance)</span>
+                  <span>100% Secure Direct UPI • For COD Order on WhatsApp</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Truck className="w-4 h-4 text-[#E61E2A] flex-shrink-0" />

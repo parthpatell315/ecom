@@ -383,8 +383,8 @@ export default async function HomePage() {
               <Zap className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-[#111827]">Partial COD Supported</h4>
-              <p className="text-[11px] text-[#6E6E73] mt-0.5">Pay ₹149 advance, balance at door</p>
+              <h4 className="text-xs font-bold text-[#111827]">Direct UPI &amp; WhatsApp COD</h4>
+              <p className="text-[11px] text-[#6E6E73] mt-0.5">Instant discounts • For COD order on WhatsApp</p>
             </div>
           </div>
         </div>
@@ -648,12 +648,12 @@ export default async function HomePage() {
                 <div className="w-10 h-10 rounded-2xl bg-white text-[#111827] flex items-center justify-center shadow-apple mb-4">
                   <Zap className="w-5 h-5 text-amber-500 fill-amber-400" />
                 </div>
-                <h3 className="text-base font-semibold text-[#111827] mb-1.5">Partial COD Option</h3>
+                <h3 className="text-base font-semibold text-[#111827] mb-1.5">Direct UPI &amp; WhatsApp COD</h3>
                 <p className="text-xs text-[#6E6E73] leading-relaxed">
-                  Pay only ₹149 advance via UPI to reserve your piece. Pay the remaining balance upon doorstep delivery.
+                  Enjoy instant discounts on prepaid UPI QR checkout. For Cash on Delivery, order directly via WhatsApp.
                 </p>
               </div>
-              <span className="text-[11px] font-semibold text-[#111827] mt-4 block">Zero Convenience Fees</span>
+              <span className="text-[11px] font-semibold text-[#111827] mt-4 block">100% Verified Delivery</span>
             </div>
 
             {/* Pillar 3: 7-Day Replacement Guarantee */}

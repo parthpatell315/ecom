@@ -270,9 +270,21 @@ export function CartDrawer() {
               </div>
             </div>
 
-            {/* Partial COD Notice (WhiteLayer Highlight) */}
-            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-xs text-amber-900 leading-snug">
-              <strong className="font-bold text-amber-950">Partial COD Available:</strong> Pay ₹149 advance via UPI now to reserve courier; balance {formatCurrency(Math.max(0, finalTotalMinor - 14900))} payable at delivery.
+            {/* COD WhatsApp Notice */}
+            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between gap-2">
+              <span className="text-[11px] leading-snug">
+                <strong className="font-bold text-emerald-950">Want Cash on Delivery (COD)?</strong> Order directly on WhatsApp.
+              </span>
+              <a
+                href={`https://wa.me/917600409399?text=${encodeURIComponent(
+                  `Hi Flirta team, I want to order via Cash on Delivery (COD). Cart items: ${items.map((it) => `${it.title} (x${it.quantity})`).join(', ')}.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 rounded-lg bg-[#25D366] hover:bg-[#20BD5A] text-white text-[10.5px] font-bold shrink-0 transition-colors"
+              >
+                Order COD →
+              </a>
             </div>
 
             {/* Checkout Action Button (WhiteLayer Red CTA) */}

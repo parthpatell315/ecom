@@ -121,7 +121,7 @@ export function PincodeChecker({ className = '' }: PincodeCheckerProps) {
             </span>
           </div>
           <p className="text-[10.5px] text-[#6E6E73] leading-relaxed">
-            ✓ Free air shipping across India • ✓ Partial COD available with ₹149 advance
+            ✓ Free air shipping across India • ✓ 0% fee Prepaid UPI • ✓ For COD order on WhatsApp
           </p>
         </div>
       )}

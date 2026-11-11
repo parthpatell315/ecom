@@ -109,7 +109,7 @@ export function CoreReactorShowcase({ onBuyNow }: CoreReactorShowcaseProps = {})
             </button>
 
             <span className="text-[10.5px] text-gray-400">
-              ⚡ Free BlueDart Air Express • Partial COD (₹149 Advance)
+              ⚡ Free BlueDart Air Express • Direct UPI • For COD Order on WhatsApp
             </span>
           </div>
         </div>
@@ -398,8 +398,8 @@ export function CoreReactorShowcase({ onBuyNow }: CoreReactorShowcaseProps = {})
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <strong className="block text-sm text-gray-900">Partial COD Available</strong>
-              <span>Pay ₹149 advance via UPI, pay ₹1,350 at doorstep</span>
+              <strong className="block text-sm text-gray-900">Prepaid UPI &amp; COD on WhatsApp</strong>
+              <span>Fast 0% fee UPI checkout • For Cash on Delivery order directly on WhatsApp</span>
             </div>
           </div>
 

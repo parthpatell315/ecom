@@ -261,7 +261,7 @@ function ShopContent() {
         {/* Product Count Row */}
         <div className="flex items-center justify-between mb-8 text-xs text-[#86868B] font-medium px-1">
           <span>{products.length} {products.length === 1 ? 'Piece' : 'Pieces'} Found</span>
-          <span>Free Express Air Delivery • Partial COD Supported</span>
+          <span>Free Express Air Delivery • Instant UPI Discount</span>
         </div>
 
         {/* Product Grid State */}

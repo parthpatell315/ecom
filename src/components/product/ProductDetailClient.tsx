@@ -667,7 +667,7 @@ export function ProductDetailClient({
                       <Zap className="w-3.5 h-3.5 fill-white" />
                       <span>Prepaid UPI: ₹1,949.00 (Save Extra ₹550)</span>
                     </span>
-                    <span className="text-[#6E6E73] font-medium">or ₹2,499 Partial COD (₹149 advance)</span>
+                    <span className="text-[#6E6E73] font-medium">• For COD: Order on WhatsApp</span>
                   </div>
                 ) : isF1MagLev ? (
                   <div className="flex items-center gap-2 flex-wrap text-xs font-bold pt-1">
@@ -675,7 +675,7 @@ export function ProductDetailClient({
                       <Zap className="w-3.5 h-3.5 fill-white" />
                       <span>Prepaid UPI: ₹1,899.00 (Save Extra ₹300)</span>
                     </span>
-                    <span className="text-[#6E6E73] font-medium">or ₹2,199 Partial COD (₹149 advance)</span>
+                    <span className="text-[#6E6E73] font-medium">• For COD: Order on WhatsApp</span>
                   </div>
                 ) : null}
 
@@ -952,12 +952,21 @@ export function ProductDetailClient({
                   </div>
                   <div className="text-[#6E6E73] text-[11.5px] leading-relaxed pt-1 space-y-1.5">
                     <p className="flex items-center justify-between">
-                      <span><strong className="text-[#111827]">Prepaid UPI:</strong> Full online payment {isF1MagLev ? '(Includes ₹300 instant discount)' : isMK5Helmet ? '(Includes ₹550 instant discount: ₹1,949)' : ''}</span>
+                      <span><strong className="text-[#111827]">Prepaid UPI:</strong> Full online payment {isF1MagLev ? '(Includes ₹300 instant discount: ₹1,899)' : isMK5Helmet ? '(Includes ₹550 instant discount: ₹1,949)' : ''}</span>
                       <strong className="text-emerald-700 font-bold">{formatCurrency((isF1MagLev || isMK5Helmet) ? prepaidTotalPriceMinor : totalPriceMinor)}</strong>
                     </p>
                     <p className="pt-1.5 border-t border-black/[0.04] flex items-center justify-between">
-                      <span><strong className="text-[#111827]">Partial COD:</strong> Pay <strong>₹{PARTIAL_COD_ADVANCE_RUPEES} advance</strong> now via UPI, pay balance at doorstep.</span>
-                      <strong className="text-[#111827] font-semibold">{formatCurrency(doorstepBalanceMinor)}</strong>
+                      <span><strong className="text-[#111827]">Cash on Delivery:</strong> For COD bookings, chat directly with us on WhatsApp.</span>
+                      <a
+                        href={`https://wa.me/917600409399?text=${encodeURIComponent(
+                          `Hi Flirta team, I want to order ${product.title} via Cash on Delivery (COD).`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-700 font-bold hover:underline shrink-0"
+                      >
+                        Order COD →
+                      </a>
                     </p>
                   </div>
                 </div>

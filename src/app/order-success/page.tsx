@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import confetti from 'canvas-confetti';
 import { formatCurrency } from '@/lib/currency';
-import { CheckCircle2, Package, Truck, ArrowRight, ShieldCheck, Printer } from 'lucide-react';
+import { CheckCircle2, Package, Truck, ArrowRight, ShieldCheck, Printer, Clock, Smartphone } from 'lucide-react';
 import Image from 'next/image';
 import { trackPurchaseEvent, isPurchaseAlreadyTracked } from '@/components/analytics/MetaPixel';
 import { PARTIAL_COD_ADVANCE_RUPEES } from '@/config/shipping';
@@ -109,19 +109,38 @@ function OrderSuccessContent() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
       {/* Success Badge */}
-      <div className="text-center mb-10">
-        <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
-          <CheckCircle2 className="w-8 h-8" />
-        </div>
-        <span className="text-xs uppercase tracking-widest text-[#E61E2A] font-medium">
-          {order?.status === 'CONFIRMED' ? 'Order Confirmed & Verified' : 'Order Placed • Payment Submitted'}
-        </span>
-        <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white mt-1">
-          Thank you for your order.
-        </h1>
-        <p className="text-xs sm:text-sm text-neutral-500 mt-2">
-          Your commission is queued for studio print calibration and transit packaging.
-        </p>
+      <div className="text-center mb-8">
+        {order?.status === 'CONFIRMED' ? (
+          <>
+            <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
+              <CheckCircle2 className="w-8 h-8" />
+            </div>
+            <span className="text-xs uppercase tracking-widest text-emerald-600 font-bold">
+              Order Confirmed &amp; Verified
+            </span>
+            <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white mt-1">
+              Thank you for your order.
+            </h1>
+            <p className="text-xs sm:text-sm text-neutral-500 mt-2">
+              Your payment has been verified! Your commission is queued for studio calibration and transit packaging.
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="w-16 h-16 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto mb-4 border border-amber-500/20">
+              <Clock className="w-8 h-8 animate-pulse" />
+            </div>
+            <span className="text-xs uppercase tracking-widest text-amber-600 font-bold">
+              ⏳ Order Received • Awaiting Payment Verification
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white mt-1">
+              Order Received • Verification Pending
+            </h1>
+            <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 mt-2 max-w-lg mx-auto">
+              Your order has been reserved! Orders are confirmed and dispatched once UPI payment is verified in our bank account.
+            </p>
+          </>
+        )}
 
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
           {orderNumber && (
@@ -139,6 +158,33 @@ function OrderSuccessContent() {
         </div>
       </div>
 
+      {/* WhatsApp Verification CTA for Pending Orders */}
+      {order?.status !== 'CONFIRMED' && (
+        <div className="mb-8 p-5 sm:p-6 rounded-2xl bg-emerald-50 border border-emerald-300 text-center space-y-3 shadow-xs">
+          <div className="w-12 h-12 rounded-full bg-[#25D366] text-white flex items-center justify-center mx-auto shadow-sm">
+            <Smartphone className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="font-extrabold text-emerald-950 text-base sm:text-lg">
+              Send Payment Screenshot on WhatsApp for Instant Confirmation
+            </h2>
+            <p className="text-xs text-emerald-800 mt-1 max-w-md mx-auto leading-relaxed">
+              Speed up your dispatch! WhatsApp your UPI payment screenshot to <span className="font-bold">+91 7600409399</span>. Our studio team will instantly verify your transaction and confirm your shipment.
+            </p>
+          </div>
+          <a
+            href={`https://wa.me/917600409399?text=${encodeURIComponent(
+              `Hi Flirta team, I placed order #${orderNumber || ''}.\n\nName: ${order?.guestName || order?.shippingAddress?.fullName || 'Customer'}\nAmount: ${order?.totalMinor ? formatCurrency(order.totalMinor) : ''}\n\nHere is my UPI payment receipt for instant verification.`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white text-xs sm:text-sm font-extrabold transition-all shadow-md shadow-[#25D366]/20 active:scale-[0.98]"
+          >
+            <span>📲 Send Payment Screenshot on WhatsApp →</span>
+          </a>
+        </div>
+      )}
+
       {order && (
         <div className="space-y-6">
           {/* Order Details Card */}
@@ -155,8 +201,14 @@ function OrderSuccessContent() {
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                  {order.status}
+                <span
+                  className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
+                    order.status === 'CONFIRMED'
+                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                      : 'bg-amber-500/10 text-amber-700 dark:text-amber-400'
+                  }`}
+                >
+                  {order.status === 'CONFIRMED' ? 'CONFIRMED & VERIFIED' : 'AWAITING PAYMENT VERIFICATION'}
                 </span>
               </div>
             </div>
