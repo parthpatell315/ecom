@@ -29,7 +29,7 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const initialCoupon = searchParams.get('coupon') || '';
 
-  const { items, subtotalMinor, refreshCart, isLoaded, closeCart } = useCart();
+  const { items, subtotalMinor, isLoaded, closeCart, updateQuantity, removeItem, clearCart } = useCart();
   const { user } = useAuth();
 
   // Always close any open cart drawer when arriving at checkout
@@ -295,6 +295,7 @@ function CheckoutContent() {
 
       // Open Direct UPI QR & Payment Modal
       if (data.upi) {
+        clearCart();
         setActiveUpiOrder({
           orderNumber: data.orderNumber,
           amountMinor: data.amountMinor,
@@ -677,12 +678,45 @@ function CheckoutContent() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-xs font-semibold text-gray-900 truncate">{item.title}</h4>
-                        <p className="text-[11px] text-gray-500">
-                          {item.variantName ? `${item.variantName} • ` : ''}Qty: <strong className="text-gray-900 font-bold">{item.quantity}</strong>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="flex items-center border border-gray-200 rounded-lg bg-gray-50 overflow-hidden">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (item.quantity > 1) {
+                                  updateQuantity(item.id, item.quantity - 1);
+                                } else {
+                                  removeItem(item.id);
+                                }
+                              }}
+                              className="px-2 py-0.5 text-xs font-bold text-gray-600 hover:bg-gray-200 transition-colors"
+                              aria-label="Decrease quantity"
+                            >
+                              -
+                            </button>
+                            <span className="px-2 text-xs font-bold text-gray-900">{item.quantity}</span>
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              className="px-2 py-0.5 text-xs font-bold text-gray-600 hover:bg-gray-200 transition-colors"
+                              aria-label="Increase quantity"
+                            >
+                              +
+                            </button>
+                          </div>
                           {item.quantity > 1 && (
-                            <span className="text-[10px] text-gray-400 ml-1">({formatCurrency(item.unitPriceMinor)} each)</span>
+                            <span className="text-[10px] text-gray-400">
+                              ({formatCurrency(item.unitPriceMinor)} ea)
+                            </span>
                           )}
-                        </p>
+                          <button
+                            type="button"
+                            onClick={() => removeItem(item.id)}
+                            className="text-[10.5px] text-gray-400 hover:text-red-500 font-medium ml-auto transition-colors"
+                          >
+                            Remove
+                          </button>
+                        </div>
                       </div>
                       <span className="text-xs font-bold text-gray-900">
                         {formatCurrency(item.totalMinor)}

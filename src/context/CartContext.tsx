@@ -31,10 +31,12 @@ interface CartContextType {
     variantId?: string,
     quantity?: number,
     optimisticItem?: Partial<CartItemType>,
-    openDrawer?: boolean
+    openDrawer?: boolean,
+    setQuantity?: boolean
   ) => Promise<boolean>;
   updateQuantity: (cartItemId: string, quantity: number) => Promise<void>;
   removeItem: (cartItemId: string) => Promise<void>;
+  clearCart: () => Promise<void>;
   refreshCart: () => Promise<void>;
 }
 
@@ -89,41 +91,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // 2. Fetch server cart
+  // 2. Fetch server cart (read-only authoritative sync)
   const refreshCart = useCallback(async () => {
     try {
       const res = await fetch('/api/cart');
       const data = await res.json();
       if (data.success && Array.isArray(data.items)) {
-        if (data.items.length > 0) {
-          updateLocalCart(data.items);
-        } else {
-          // If server returns empty, check if we have any pending items in localStorage
-          const stored = typeof window !== 'undefined' ? localStorage.getItem(CART_STORAGE_KEY) : null;
-          const localParsed: CartItemType[] = stored ? JSON.parse(stored) : [];
-          if (!localParsed || localParsed.length === 0) {
-            updateLocalCart([]);
-          } else {
-            // Local storage has items that server didn't have yet - sync them to server
-            for (const it of localParsed) {
-              await fetch('/api/cart', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  productId: it.productId,
-                  variantId: it.variantId || undefined,
-                  quantity: it.quantity || 1,
-                }),
-              }).catch(() => {});
-            }
-          }
-        }
+        updateLocalCart(data.items);
       }
     } catch (err) {
       console.error('Failed to refresh cart:', err);
     } finally {
       setIsLoaded(true);
     }
+  }, []);
+
+  const clearCart = useCallback(async () => {
+    updateLocalCart([]);
+    try {
+      localStorage.removeItem(CART_STORAGE_KEY);
+    } catch {}
+    try {
+      await fetch('/api/cart?id=all', { method: 'DELETE' });
+    } catch {}
   }, []);
 
   useEffect(() => {
@@ -138,7 +128,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     variantId?: string,
     quantity = 1,
     optimisticItem?: Partial<CartItemType>,
-    openDrawer = true
+    openDrawer = true,
+    setQuantity = false
   ): Promise<boolean> => {
     // 1. Instant 0ms Optimistic Update
     const existingIdx = items.findIndex(
@@ -147,7 +138,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     let updated: CartItemType[];
     if (existingIdx > -1) {
       updated = [...items];
-      updated[existingIdx].quantity += quantity;
+      updated[existingIdx].quantity = setQuantity ? quantity : updated[existingIdx].quantity + quantity;
       updated[existingIdx].totalMinor = updated[existingIdx].quantity * updated[existingIdx].unitPriceMinor;
     } else {
       const newItem: CartItemType = {
@@ -178,7 +169,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const res = await fetch('/api/cart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, variantId, quantity }),
+        body: JSON.stringify({ productId, variantId, quantity, setQuantity }),
       });
       const data = await res.json();
       if (data.success && Array.isArray(data.items)) {
@@ -243,6 +234,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         addItem,
         updateQuantity,
         removeItem,
+        clearCart,
         refreshCart,
       }}
     >

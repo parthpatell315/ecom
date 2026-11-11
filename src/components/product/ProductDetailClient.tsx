@@ -276,7 +276,8 @@ export function ProductDetailClient({
           unitPriceMinor: effectivePriceMinor,
           image: selectedImage || (product.images && product.images[0]?.url) || '',
         },
-        false
+        false,
+        true // setQuantity: true (Overwrites quantity to 1 for Buy Now instead of incrementing)
       );
       if (success) {
         trackPixelEvent('AddToCart', {

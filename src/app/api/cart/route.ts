@@ -122,7 +122,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { productId, variantId, quantity = 1 } = body;
+    const { productId, variantId, quantity = 1, setQuantity = false } = body;
 
     if (!productId || quantity < 1) {
       return NextResponse.json({ success: false, error: 'Invalid product or quantity' }, { status: 400 });
@@ -154,7 +154,7 @@ export async function POST(req: NextRequest) {
     if (existingItem) {
       await prisma.cartItem.update({
         where: { id: existingItem.id },
-        data: { quantity: existingItem.quantity + quantity },
+        data: { quantity: setQuantity ? quantity : existingItem.quantity + quantity },
       });
     } else {
       await prisma.cartItem.create({
@@ -206,20 +206,22 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-// DELETE: Remove item
+// DELETE: Remove item or clear all
 export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const cartItemId = searchParams.get('id');
 
-    if (!cartItemId) {
-      return NextResponse.json({ success: false, error: 'Item ID required' }, { status: 400 });
-    }
-
     const cartId = await getOrCreateCartId();
-    await prisma.cartItem.deleteMany({
-      where: { id: cartItemId, cartId },
-    });
+    if (!cartItemId || cartItemId === 'all') {
+      await prisma.cartItem.deleteMany({
+        where: { cartId },
+      });
+    } else {
+      await prisma.cartItem.deleteMany({
+        where: { id: cartItemId, cartId },
+      });
+    }
 
     const cartData = await fetchFormattedCart(cartId);
     return NextResponse.json({ success: true, ...cartData });
