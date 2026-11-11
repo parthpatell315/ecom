@@ -569,7 +569,11 @@ function CheckoutContent() {
                             ⚡ Prepaid UPI (Instant Discount Applied)
                           </span>
                           <span className="text-[9.5px] uppercase font-bold tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">
-                            {mk5Quantity > 0 ? 'Save ₹550 (₹1,949)' : f1Quantity > 0 ? 'Save ₹300 (₹1,899)' : 'Prepaid Offer'}
+                            {mk5Quantity > 0
+                              ? `Save ₹${(550 * mk5Quantity).toLocaleString('en-IN')} (${mk5Quantity > 1 ? '₹1,949 each' : '₹1,949'})`
+                              : f1Quantity > 0
+                              ? `Save ₹${(300 * f1Quantity).toLocaleString('en-IN')} (${f1Quantity > 1 ? '₹1,899 each' : '₹1,899'})`
+                              : 'Prepaid Offer'}
                           </span>
                         </div>
                         <div className="text-right shrink-0">
@@ -584,7 +588,7 @@ function CheckoutContent() {
                         </div>
                       </div>
                       <p className="text-[11.5px] text-gray-600 leading-relaxed">
-                        Pay flat <strong className="text-emerald-700 font-bold">{formatCurrency(finalTotalMinor)}</strong> via dynamic UPI QR code. {f1Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹300 instant prepaid discount on F1 MagLev (₹1,899)! </strong>}{mk5Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹550 instant prepaid discount on MK5 Helmet (₹1,949)! </strong>}<strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
+                        Pay flat <strong className="text-emerald-700 font-bold">{formatCurrency(finalTotalMinor)}</strong> via dynamic UPI QR code. {f1Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹300 instant prepaid discount on F1 MagLev ({f1Quantity > 1 ? `₹1,899 each × ${f1Quantity}` : '₹1,899'})! </strong>}{mk5Quantity > 0 && <strong className="text-emerald-700 font-bold">Includes flat ₹550 instant prepaid discount on MK5 Helmet ({mk5Quantity > 1 ? `₹1,949 each × ${mk5Quantity}` : '₹1,949'})! </strong>}<strong>Free 3–5 Day Express Air Delivery</strong>, priority 24h studio packaging, zero platform fees.
                       </p>
                       <div className="mt-2 text-[10.5px] text-emerald-700 font-semibold flex items-center gap-1.5 flex-wrap">
                         <Smartphone className="w-3 h-3 text-emerald-600 shrink-0" />
@@ -655,8 +659,11 @@ function CheckoutContent() {
           <div className="lg:col-span-5">
             <div className="sticky top-24 space-y-6">
               <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-xs">
-                <h3 className="text-sm font-bold text-gray-900 mb-4">
-                  Order Summary ({items.length} {items.length === 1 ? 'item' : 'items'})
+                <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center justify-between">
+                  <span>
+                    Order Summary ({items.reduce((acc, it) => acc + (it.quantity || 1), 0)}{' '}
+                    {items.reduce((acc, it) => acc + (it.quantity || 1), 0) === 1 ? 'item' : 'items'})
+                  </span>
                 </h3>
 
                 {/* Items List */}
@@ -670,9 +677,12 @@ function CheckoutContent() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-xs font-semibold text-gray-900 truncate">{item.title}</h4>
-                        {item.variantName && (
-                          <p className="text-[11px] text-gray-500">{item.variantName} × {item.quantity}</p>
-                        )}
+                        <p className="text-[11px] text-gray-500">
+                          {item.variantName ? `${item.variantName} • ` : ''}Qty: <strong className="text-gray-900 font-bold">{item.quantity}</strong>
+                          {item.quantity > 1 && (
+                            <span className="text-[10px] text-gray-400 ml-1">({formatCurrency(item.unitPriceMinor)} each)</span>
+                          )}
+                        </p>
                       </div>
                       <span className="text-xs font-bold text-gray-900">
                         {formatCurrency(item.totalMinor)}
@@ -740,8 +750,8 @@ function CheckoutContent() {
                         {mk5Quantity > 0 && f1Quantity > 0
                           ? 'Prepaid Instant Discount (F1 + MK5)'
                           : mk5Quantity > 0
-                          ? 'MK5 Helmet Prepaid Instant Discount (₹1,949)'
-                          : 'F1 MagLev Prepaid Instant Discount (₹1,899)'}
+                          ? `MK5 Helmet Instant Discount (${mk5Quantity > 1 ? `Save ₹550 × ${mk5Quantity}` : '₹1,949'})`
+                          : `F1 MagLev Instant Discount (${f1Quantity > 1 ? `Save ₹300 × ${f1Quantity}` : '₹1,899'})`}
                       </span>
                       <span>-{formatCurrency(prepaidDiscountMinor)}</span>
                     </div>
