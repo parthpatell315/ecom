@@ -9,6 +9,7 @@ import { CheckCircle2, Package, Truck, ArrowRight, ShieldCheck, Printer, Clock, 
 import Image from 'next/image';
 import { trackPurchaseEvent, isPurchaseAlreadyTracked } from '@/components/analytics/MetaPixel';
 import { PARTIAL_COD_ADVANCE_RUPEES } from '@/config/shipping';
+import { useCart } from '@/context/CartContext';
 
 function OrderSuccessContent() {
   const searchParams = useSearchParams();
@@ -20,8 +21,12 @@ function OrderSuccessContent() {
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const purchaseTrackedRef = React.useRef(false);
+  const { clearCart } = useCart();
 
   useEffect(() => {
+    // Clear cart upon arriving at success receipt
+    clearCart();
+
     // Fire celebratory confetti on mount
     try {
       confetti({

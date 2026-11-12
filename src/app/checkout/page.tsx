@@ -33,10 +33,10 @@ function CheckoutContent() {
   const { items, subtotalMinor, isLoaded, closeCart, updateQuantity, removeItem, clearCart } = useCart();
   const { user } = useAuth();
 
-  // Always close any open cart drawer when arriving at checkout
+  // Close any open cart drawer once on initial mount
   useEffect(() => {
     closeCart();
-  }, [closeCart]);
+  }, []);
 
   // Contact & Shipping Form State
   const [formData, setFormData] = useState({
@@ -319,12 +319,11 @@ function CheckoutContent() {
 
       // Open Direct UPI QR & Payment Modal
       if (data.upi) {
-        clearCart();
         setActiveUpiOrder({
           orderNumber: data.orderNumber,
           amountMinor: data.amountMinor,
           totalOrderMinor: data.totalOrderMinor,
-          isPartialCod: data.isPartialCod,
+          isPartialCod: Boolean(data.isPartialCod),
           codBalanceMinor: data.codBalanceMinor,
           customerEmail: formData.email,
           customerPhone: formData.phone,
@@ -361,7 +360,7 @@ function CheckoutContent() {
     );
   }
 
-  if (items.length === 0) {
+  if (items.length === 0 && !activeUpiOrder) {
     return (
       <div className="max-w-md mx-auto py-24 text-center px-4">
         <h2 className="text-xl font-bold text-gray-900 mb-2">Your Bag is Empty</h2>

@@ -59,10 +59,6 @@ export function CartDrawer() {
       {/* Backdrop */}
       <div
         onClick={closeCart}
-        onTouchEnd={(e) => {
-          e.preventDefault();
-          closeCart();
-        }}
         className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300"
       />
 

@@ -19,6 +19,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
+import { useCart } from '@/context/CartContext';
 
 interface UpiPaymentModalProps {
   orderNumber: string;
@@ -64,6 +65,7 @@ export function UpiPaymentModal({
   onClose,
 }: UpiPaymentModalProps) {
   const router = useRouter();
+  const { clearCart } = useCart();
   const [activeTab, setActiveTab] = useState<'1tap' | 'qr'>('1tap');
   const [payerVpa, setPayerVpa] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -211,6 +213,7 @@ export function UpiPaymentModal({
 
       const gatewayParam = isPartialCod ? 'PARTIAL_COD' : 'UPI';
       const emailQuery = customerEmail ? `&email=${encodeURIComponent(customerEmail)}` : '';
+      clearCart();
       router.push(`/order-success?orderNumber=${encodeURIComponent(orderNumber)}&gateway=${gatewayParam}&utr=${encodeURIComponent(fallbackRef)}${emailQuery}`);
     } catch (err) {
       console.error('Submit payment confirmation error:', err);
