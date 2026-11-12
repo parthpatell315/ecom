@@ -83,7 +83,7 @@ export default function RootLayout({
         {/* Official Meta Pixel (Primary: 2214305502449277 ft-11 + Dual Sync 1429779105956526) */}
         <Script
           id="meta-pixel-init"
-          strategy="afterInteractive"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)
@@ -96,6 +96,7 @@ export default function RootLayout({
               'https://connect.facebook.net/en_US/fbevents.js');
               fbq('init', '${META_PIXEL_ID}');
               fbq('init', '1429779105956526');
+              fbq('track', 'PageView');
             `,
           }}
         />

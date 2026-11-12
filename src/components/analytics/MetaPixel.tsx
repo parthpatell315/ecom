@@ -99,7 +99,7 @@ export function trackAddPaymentInfo(data: {
 
 export function trackPixelEvent(
   eventName: string,
-  params: Record<string, any> = {},
+  params?: Record<string, any>,
   options?: { eventID?: string }
 ) {
   if (typeof window === 'undefined') return;
@@ -107,12 +107,15 @@ export function trackPixelEvent(
   const tryTrack = (): boolean => {
     if (typeof window.fbq === 'function') {
       try {
+        const hasParams = params && Object.keys(params).length > 0;
         if (options?.eventID) {
-          window.fbq('track', eventName, params, { eventID: options.eventID });
-        } else {
+          window.fbq('track', eventName, hasParams ? params : {}, { eventID: options.eventID });
+        } else if (hasParams) {
           window.fbq('track', eventName, params);
+        } else {
+          window.fbq('track', eventName);
         }
-        console.log(`[Meta Pixel] Successfully tracked ${eventName}:`, params);
+        console.log(`[Meta Pixel] Successfully tracked ${eventName}:`, params || {});
         return true;
       } catch (err) {
         console.warn(`[Meta Pixel] Error tracking ${eventName}:`, err);
