@@ -91,3 +91,4 @@ export interface MetaCapiResult {
   error?: string;
   response?: any;
 }
+

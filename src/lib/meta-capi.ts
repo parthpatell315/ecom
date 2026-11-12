@@ -456,3 +456,4 @@ export async function sendCapiPurchase(params: {
     sourceUrl: `${DEFAULT_SITE_URL}/order-success?orderNumber=${order.orderNumber}`,
   });
 }
+
