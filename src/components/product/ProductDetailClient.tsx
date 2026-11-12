@@ -82,12 +82,16 @@ export function ProductDetailClient({
     product.title.toLowerCase().includes('magnetic levitation f1') ||
     product.title.toLowerCase().includes('formula 1');
 
+  const isMK50 =
+    product.slug === 'cyber-mk50-nano-armor-wearable-helmet' ||
+    Boolean(product.slug?.includes('mk50'));
+
   const isMK5Helmet =
-    product.slug === 'iron-hero-mk5-black-edition-wearable-helmet' ||
-    product.slug?.includes('mk5') ||
-    product.slug?.includes('helmet') ||
-    product.title.toLowerCase().includes('mk 5') ||
-    product.title.toLowerCase().includes('mk5');
+    !isMK50 &&
+    (product.slug === 'iron-hero-mk5-black-edition-wearable-helmet' ||
+      Boolean(product.slug?.includes('mk5')) ||
+      product.title.toLowerCase().includes('mk 5') ||
+      product.title.toLowerCase().includes('mk5'));
 
   const isCoreReactorWireless =
     product.slug === 'core-reactor-wireless-edition' ||
@@ -957,17 +961,8 @@ export function ProductDetailClient({
                       <strong className="text-emerald-700 font-bold">{formatCurrency((isF1MagLev || isMK5Helmet) ? prepaidTotalPriceMinor : totalPriceMinor)}</strong>
                     </p>
                     <p className="pt-1.5 border-t border-black/[0.04] flex items-center justify-between">
-                      <span><strong className="text-[#111827]">Cash on Delivery:</strong> For COD bookings, chat directly with us on WhatsApp.</span>
-                      <a
-                        href={`https://wa.me/917600409399?text=${encodeURIComponent(
-                          `Hi Flirta team, I want to order ${product.title} via Cash on Delivery (COD).`
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-emerald-700 font-bold hover:underline shrink-0"
-                      >
-                        Order COD →
-                      </a>
+                      <span><strong className="text-[#111827]">Partial COD:</strong> Pay ₹100 advance via UPI to reserve, pay balance {formatCurrency(doorstepBalanceMinor)} at your doorstep.</span>
+                      <span className="text-amber-700 font-bold text-[11px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">₹100 Adv</span>
                     </p>
                   </div>
                 </div>
@@ -976,10 +971,10 @@ export function ProductDetailClient({
           </div>
         </div>
 
-        {/* If Magnetic Levitation F1 Racing Car, MK5 Wearable Helmet, or Core Reactor, render dedicated flagship showcase */}
+        {/* If Magnetic Levitation F1 Racing Car, MK5/MK50 Wearable Helmet, or Core Reactor, render dedicated flagship showcase */}
         {isF1MagLev ? (
           <F1Showcase />
-        ) : isMK5Helmet ? (
+        ) : (isMK5Helmet || isMK50) ? (
           <MK5Showcase onBuyNow={handleBuyNow} />
         ) : isCoreReactorWireless ? (
           <CoreReactorWirelessShowcase onBuyNow={handleBuyNow} />
@@ -1372,6 +1367,11 @@ export function ProductDetailClient({
               {isMK5Helmet && (
                 <span className="text-[11px] font-extrabold text-emerald-600">
                   (₹1,949 Prepaid)
+                </span>
+              )}
+              {isMK50 && (
+                <span className="text-[11px] font-extrabold text-amber-600">
+                  (₹1,699 Offer)
                 </span>
               )}
               {isCoreReactorWireless && (

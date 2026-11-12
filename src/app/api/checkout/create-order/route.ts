@@ -5,6 +5,7 @@ import { createRazorpayOrder } from '@/lib/razorpay';
 import { generateUpiPayload } from '@/lib/upi';
 import { cookies } from 'next/headers';
 import { DiscountType, PaymentGateway } from '@prisma/client';
+import { PARTIAL_COD_ADVANCE_MINOR } from '@/config/shipping';
 
 const CART_COOKIE = 'flirta_cart_session';
 
@@ -194,11 +195,92 @@ export async function POST(req: NextRequest) {
     const orderNumber = `FL-${year}-${randomHex}`;
 
     // 7. Branch by Payment Gateway
-    if (paymentGateway === 'PARTIAL_COD' || paymentGateway === 'COD') {
+    if (paymentGateway === 'PARTIAL_COD') {
+      const advanceMinor = PARTIAL_COD_ADVANCE_MINOR; // ₹100 advance (10,000 paise)
+      const codBalanceMinor = Math.max(0, totalMinor - advanceMinor);
+
+      const upiPayload = await generateUpiPayload({
+        orderNumber,
+        amountMinor: advanceMinor,
+        note: `Advance ₹${advanceMinor / 100} for ${orderNumber}`,
+      });
+
+      const partialCodNotes = `Partial COD: ₹${advanceMinor / 100} advance via UPI, ₹${(codBalanceMinor / 100).toFixed(2)} due on Cash on Delivery`;
+      const combinedNotes = notes ? `${notes} | ${partialCodNotes}` : partialCodNotes;
+
+      const createdOrder = await prisma.order.create({
+        data: {
+          orderNumber,
+          ...(session?.userId ? { user: { connect: { id: session.userId } } } : {}),
+          guestEmail: email,
+          guestPhone: phone,
+          guestName: name,
+          status: 'PENDING',
+          subtotalMinor,
+          discountMinor: effectiveDiscountMinor,
+          shippingMinor,
+          taxMinor: 0,
+          totalMinor,
+          isPartialCod: true,
+          codBalanceMinor,
+          couponCode: validatedCoupon,
+          shippingAddress,
+          notes: combinedNotes,
+          items: {
+            create: orderItemsData.map((item) => {
+              const unitPrice = item.product.priceMinor + (item.variant?.priceAdjustmentMinor || 0);
+              return {
+                productId: item.productId,
+                variantId: item.variantId,
+                sku: item.variant?.sku || item.product.sku,
+                titleSnapshot: item.product.title,
+                variantNameSnapshot: item.variant?.name || null,
+                unitPriceMinor: unitPrice,
+                quantity: item.quantity,
+                totalMinor: unitPrice * item.quantity,
+                imageSnapshot: item.variant?.image || '',
+              };
+            }),
+          },
+          payments: {
+            create: {
+              gateway: 'PARTIAL_COD',
+              gatewayOrderId: orderNumber,
+              amountMinor: advanceMinor,
+              currency: 'INR',
+              status: 'PENDING',
+              rawPayload: {
+                ...initialTrackingPayload,
+                isPartialCod: true,
+                advanceAmountMinor: advanceMinor,
+                codBalanceMinor,
+                totalOrderMinor: totalMinor,
+              },
+            },
+          },
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        gateway: 'PARTIAL_COD',
+        orderId: createdOrder.id,
+        orderNumber: createdOrder.orderNumber,
+        isPartialCod: true,
+        amountMinor: advanceMinor,
+        advanceAmountMinor: advanceMinor,
+        codBalanceMinor,
+        totalOrderMinor: totalMinor,
+        upi: upiPayload,
+        customerDetails: { name, email, phone },
+      });
+    }
+
+    if (paymentGateway === 'COD') {
       return NextResponse.json(
         {
           success: false,
-          error: 'Cash on Delivery (COD) orders are processed exclusively through our studio team on WhatsApp (+91 7600409399). Please select "Order COD on WhatsApp".',
+          error: '100% Cash on Delivery orders are confirmed via WhatsApp (+91 7600409399). Alternatively, select "Partial COD" with ₹100 advance for instant online reservation.',
           redirectToWhatsapp: true,
         },
         { status: 400 }

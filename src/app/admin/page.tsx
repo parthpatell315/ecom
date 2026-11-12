@@ -561,7 +561,7 @@ export default function AdminPage() {
                           <div>{formatCurrency(ord.totalMinor)}</div>
                           {ord.isPartialCod && (
                             <span className="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-400">
-                              Partial COD ({ord.payments?.[0]?.amountMinor ? formatCurrency(ord.payments[0].amountMinor) : '₹149'} Adv + {formatCurrency(ord.codBalanceMinor)} Due)
+                              Partial COD ({ord.payments?.[0]?.amountMinor ? formatCurrency(ord.payments[0].amountMinor) : '₹100'} Adv + {formatCurrency(ord.codBalanceMinor)} Due)
                             </span>
                           )}
                           {/* Meta CAPI Telemetry Badges */}

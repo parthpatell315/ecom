@@ -230,7 +230,7 @@ export function UpiPaymentModal({
               <span>{isPartialCod ? 'Partial COD • Pay Advance Now' : 'Instant 0% Fee UPI Checkout'}</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
-              {isPartialCod ? 'Pay ₹149 Advance' : `Pay ₹${upiPayload.amountRupees}`}
+              {isPartialCod ? `Pay ₹${upiPayload.amountRupees} Advance` : `Pay ₹${upiPayload.amountRupees}`}
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
               Order <span className="font-mono font-bold text-gray-800">{orderNumber}</span>
@@ -266,7 +266,7 @@ export function UpiPaymentModal({
                   <IndianRupee className="w-4 h-4 text-[#E61E2A]" />
                   <span>Advance UPI Payable Now:</span>
                 </span>
-                <span className="font-mono text-base font-black text-[#E61E2A]">₹149.00</span>
+                <span className="font-mono text-base font-black text-[#E61E2A]">₹{upiPayload.amountRupees}.00</span>
               </div>
               <div className="flex items-center justify-between text-xs text-amber-900 pt-2 border-t border-amber-200/60">
                 <span className="flex items-center gap-1.5">
@@ -533,7 +533,7 @@ export function UpiPaymentModal({
                   <CheckCircle2 className="w-5 h-5" />
                   <span>
                     {isPartialCod
-                      ? 'I Have Paid ₹149 Advance — Confirm Order'
+                      ? `I Have Paid ₹${upiPayload.amountRupees} Advance — Confirm Order`
                       : `I Have Paid ₹${upiPayload.amountRupees} — Confirm Order`}
                   </span>
                   <ArrowRight className="w-4 h-4" />

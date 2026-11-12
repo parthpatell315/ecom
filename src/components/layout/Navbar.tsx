@@ -94,7 +94,7 @@ export function Navbar() {
           <span className="text-white/40">•</span>
           <span className="text-[#E61E2A]">🏎️ F1 MAGLEV CAR ₹2,199 (PREPAID ₹1,899)</span>
           <span className="text-white/40">•</span>
-          <span>PARTIAL COD AVAILABLE (₹149 ADVANCE)</span>
+          <span>PARTIAL COD AVAILABLE (₹100 ADVANCE)</span>
           <span className="text-white/40">•</span>
           <span>FREE PAN-INDIA EXPRESS AIR DELIVERY</span>
         </div>
