@@ -19,8 +19,10 @@ export async function GET(
         items: true,
         payments: {
           select: {
+            id: true,
             gateway: true,
             status: true,
+            amountMinor: true,
             verifiedAt: true,
           },
         },

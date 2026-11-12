@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { sendCapiPurchase } from '@/lib/meta-capi';
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,6 +68,17 @@ export async function POST(req: NextRequest) {
           }
         }
       });
+
+      // Dispatch Meta Conversions API Purchase event strictly if full order
+      if (!order.isPartialCod) {
+        sendCapiPurchase({
+          order,
+          clientContext: {
+            clientIp: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null,
+            userAgent: req.headers.get('user-agent') || null,
+          },
+        }).catch((capiErr) => console.warn('[YouPI Webhook] CAPI dispatch warning:', capiErr));
+      }
 
       return NextResponse.json({ success: true, message: 'Order confirmed via YouPI webhook' });
     }

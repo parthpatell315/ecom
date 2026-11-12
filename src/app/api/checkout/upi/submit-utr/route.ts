@@ -54,6 +54,8 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Atomically record payment submission and reserve inventory
+    const existingPaymentPayload = (order.payments?.[0]?.rawPayload as any) || {};
+
     await prisma.$transaction(async (tx) => {
       // Update Payment record with UTR
       await tx.payment.updateMany({
@@ -62,6 +64,7 @@ export async function POST(req: NextRequest) {
           gatewayPaymentId: cleanUtr,
           status: 'PENDING',
           rawPayload: {
+            ...existingPaymentPayload,
             utrNumber: cleanUtr,
             payerVpa: payerVpa?.trim() || null,
             submittedAt: new Date().toISOString(),

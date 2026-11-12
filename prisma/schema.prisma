@@ -240,6 +240,7 @@ model Order {
   items               OrderItem[]
   payments            Payment[]
   refunds             Refund[]
+  metaEvents          MetaEventLog[]
 
   @@index([orderNumber])
   @@index([userId])
@@ -368,4 +369,22 @@ model StoreSetting {
   updatedAt DateTime @updatedAt
 
   @@index([key])
+}
+
+model MetaEventLog {
+  id           String   @id @default(cuid())
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  paymentId    String?
+  eventName    String   // "PartialPayment" | "Purchase" | "InitiateCheckout" | etc.
+  eventId      String   @unique // deduplication key (e.g. "capi_partial_xxx" or "capi_purchase_xxx")
+  value        Float
+  currency     String   @default("INR")
+  status       String   // "SENT" | "DUPLICATE_SKIPPED" | "FAILED"
+  metaResponse Json?
+  createdAt    DateTime @default(now())
+
+  @@index([orderId])
+  @@index([eventName])
+  @@index([eventId])
 }

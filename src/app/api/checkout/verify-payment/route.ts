@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { verifyPaymentSignature } from '@/lib/razorpay';
 import { cookies } from 'next/headers';
 import { getSession } from '@/lib/auth';
+import { sendCapiPurchase } from '@/lib/meta-capi';
 
 const CART_COOKIE = 'flirta_cart_session';
 
@@ -122,6 +123,17 @@ export async function POST(req: NextRequest) {
       await prisma.cartItem.deleteMany({
         where: { cart: { sessionId: guestSessionId } },
       });
+    }
+
+    // 5. Dispatch Meta Conversions API Purchase Event
+    if (!order.isPartialCod) {
+      sendCapiPurchase({
+        order,
+        clientContext: {
+          clientIp: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null,
+          userAgent: req.headers.get('user-agent') || null,
+        },
+      }).catch((capiErr) => console.warn('[Razorpay Verify] CAPI dispatch warning:', capiErr));
     }
 
     return NextResponse.json({

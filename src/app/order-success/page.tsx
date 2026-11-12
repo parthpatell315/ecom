@@ -62,36 +62,43 @@ function OrderSuccessContent() {
             setOrder(verifiedOrder);
 
             // Verification criteria:
-            // - Confirmed COD: gateway is COD and backend confirms placement (order.status === 'CONFIRMED')
-            // - Verified Prepaid: payment is SUCCESS or verifiedAt exists, or backend confirms order.status === 'CONFIRMED'
-            // - Pending, unverified, or failed UPI: NEVER fires Purchase
+            // 1. Confirmed COD: gateway is COD and backend confirms placement (order.status === 'CONFIRMED')
+            // 2. Verified Prepaid: payment is SUCCESS or verifiedAt exists, or backend confirms order.status === 'CONFIRMED'
+            // 3. Pending, unverified, or failed UPI: NEVER fires Purchase
+            // 4. Partial COD / Partial Payment: NEVER fires Purchase on client (PartialPayment custom event is managed exclusively by backend CAPI)
+            const isPartialOrder = Boolean(verifiedOrder.isPartialCod || gatewayParam === 'PARTIAL_COD');
+            const verifiedPaymentsSumMinor = (verifiedOrder.payments || [])
+              .filter((p: any) => p.status === 'SUCCESS')
+              .reduce((sum: number, p: any) => sum + (Number(p.amountMinor) || 0), 0);
+
+            const isFullyPaid =
+              !isPartialOrder &&
+              verifiedOrder.totalMinor > 0 &&
+              verifiedPaymentsSumMinor >= verifiedOrder.totalMinor;
+
             const isCodOrder = gatewayParam === 'COD' || verifiedOrder.payments?.some((p: any) => p.gateway === 'COD');
             const isConfirmedStatus = ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'].includes(verifiedOrder.status);
-            const isPaymentVerified = verifiedOrder.payments?.some(
-              (p: any) => p.status === 'SUCCESS' || Boolean(p.verifiedAt)
-            );
 
             const isOrderVerified = isCodOrder
-              ? isConfirmedStatus
-              : (isConfirmedStatus && isPaymentVerified);
+              ? (isConfirmedStatus && !isPartialOrder)
+              : (isConfirmedStatus && isFullyPaid);
 
+            // Purchase standard event MUST ONLY fire when full order is 100% verified & fully paid
             if (isOrderVerified && !purchaseTrackedRef.current && !isPurchaseAlreadyTracked(verifiedOrder.orderNumber)) {
               purchaseTrackedRef.current = true;
-              const isPartialCod = Boolean(verifiedOrder.isPartialCod || gatewayParam === 'PARTIAL_COD');
-              const paymentAmount = verifiedOrder.payments?.[0]?.amountMinor
-                ? verifiedOrder.payments[0].amountMinor / 100
-                : PARTIAL_COD_ADVANCE_RUPEES;
-              const purchaseValue = isPartialCod ? paymentAmount : (verifiedOrder.totalMinor || 0) / 100;
+              const fullPurchaseValue = (verifiedOrder.totalMinor || 0) / 100;
+              const capiDeduplicationEventId = `capi_purchase_${verifiedOrder.id}`;
 
               trackPurchaseEvent({
                 orderNumber: verifiedOrder.orderNumber,
-                value: purchaseValue,
+                eventId: capiDeduplicationEventId,
+                value: fullPurchaseValue,
                 currency: 'INR',
                 items: (verifiedOrder.items || []).map((it: any) => ({
                   productId: it.productId,
                   title: it.titleSnapshot,
                   quantity: it.quantity || 1,
-                  price: isPartialCod ? purchaseValue : (it.unitPriceMinor || 0) / 100,
+                  price: (it.unitPriceMinor || 0) / 100,
                 })),
                 customerEmail: verifiedOrder.guestEmail || emailParam || undefined,
                 customerPhone: verifiedOrder.guestPhone || undefined,

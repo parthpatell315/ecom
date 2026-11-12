@@ -58,6 +58,8 @@ export const metadata: Metadata = {
   },
 };
 
+const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '1429779105956526';
+
 export default function RootLayout({
   children,
 }: {
@@ -66,19 +68,19 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} h-full antialiased`}>
       <head>
-        {/* Meta Pixel NoScript Fallback */}
+        {/* Meta Pixel NoScript Fallback (Dataset ID: 1429779105956526) */}
         <noscript>
           <img
             height="1"
             width="1"
             style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=1140827711731446&ev=PageView&noscript=1"
+            src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
             alt=""
           />
         </noscript>
       </head>
       <body className="min-h-full flex flex-col bg-[#FAF8F5] text-[#222225] font-sans antialiased selection:bg-[#E61E2A]/15 selection:text-[#E61E2A]">
-        {/* Official Meta Pixel (ID: 1140827711731446 - Flirta Pixel) */}
+        {/* Official Meta Pixel (ID: 1429779105956526 - Flirta Dataset) */}
         <Script
           id="meta-pixel-init"
           strategy="afterInteractive"
@@ -92,7 +94,7 @@ export default function RootLayout({
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('init', '1140827711731446');
+              fbq('init', '${META_PIXEL_ID}');
             `,
           }}
         />

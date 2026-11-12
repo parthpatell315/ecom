@@ -38,10 +38,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Email and phone number are required' }, { status: 400 });
     }
 
-    // 2. Fetch current cart from server session/cookie
+    // 2. Fetch current cart from server session/cookie & capture client attribution
     const session = await getSession();
     const cookieStore = await cookies();
     const guestSessionId = cookieStore.get(CART_COOKIE)?.value;
+
+    const clientIp =
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      req.headers.get('x-real-ip') ||
+      null;
+    const userAgent = req.headers.get('user-agent') || null;
+    const cookieFbp = cookieStore.get('_fbp')?.value;
+    const cookieFbc = cookieStore.get('_fbc')?.value;
+
+    const metaTracking = body.metaTracking || {};
+    const fbp = metaTracking.fbp || cookieFbp || null;
+    const fbc = metaTracking.fbc || cookieFbc || null;
+    const fbclid = metaTracking.fbclid || null;
+
+    const initialTrackingPayload = {
+      clientIp,
+      userAgent,
+      fbp,
+      fbc,
+      fbclid,
+      sourceUrl: req.headers.get('referer') || 'https://www.flirta.network/checkout',
+      createdAt: new Date().toISOString(),
+    };
 
     let cart = null;
     if (session?.userId) {
@@ -230,6 +253,7 @@ export async function POST(req: NextRequest) {
               amountMinor: totalMinor,
               currency: 'INR',
               status: 'PENDING',
+              rawPayload: initialTrackingPayload,
             },
           },
         },
@@ -298,6 +322,7 @@ export async function POST(req: NextRequest) {
             amountMinor: totalMinor,
             currency: 'INR',
             status: 'PENDING',
+            rawPayload: initialTrackingPayload,
           },
         },
       },

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyWebhookSignature } from '@/lib/razorpay';
+import { sendCapiPurchase } from '@/lib/meta-capi';
 
 export async function POST(req: NextRequest) {
   try {
@@ -63,6 +64,18 @@ export async function POST(req: NextRequest) {
         });
 
         console.log(`Order ${payment.order.orderNumber} confirmed via verified webhook.`);
+
+        // Dispatch Meta Conversions API Purchase event strictly if full order
+        if (!payment.order.isPartialCod) {
+          sendCapiPurchase({
+            order: payment.order,
+            clientContext: {
+              clientIp: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null,
+              userAgent: req.headers.get('user-agent') || null,
+            },
+            lastPaymentId: payment.id,
+          }).catch((capiErr) => console.warn('[Razorpay Webhook] CAPI dispatch warning:', capiErr));
+        }
       }
     }
 

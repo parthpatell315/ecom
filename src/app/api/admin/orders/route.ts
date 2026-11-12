@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
       include: {
         items: true,
         payments: true,
+        metaEvents: true,
       },
     });
 

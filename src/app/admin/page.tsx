@@ -19,6 +19,7 @@ import {
   ExternalLink,
   Loader2,
   Lock,
+  Zap,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -42,6 +43,8 @@ export default function AdminPage() {
   const [newTrackingNumber, setNewTrackingNumber] = useState('');
   const [newTrackingCarrier, setNewTrackingCarrier] = useState('Blue Dart Air');
   const [isUpdatingOrder, setIsUpdatingOrder] = useState(false);
+  const [settlementAmountRupees, setSettlementAmountRupees] = useState<number>(0);
+  const [settlementNote, setSettlementNote] = useState<string>('Doorstep delivery / balance payment');
 
   // Edit Product Stock Modal state
   const [editingProduct, setEditingProduct] = useState<any>(null);
@@ -132,6 +135,72 @@ export default function AdminPage() {
     } catch (err) {
       console.error('Quick status update error:', err);
       alert('Error updating order');
+    } finally {
+      setIsUpdatingOrder(false);
+    }
+  };
+
+  // Verify single payment transaction (fires PartialPayment or Purchase based on cumulative total)
+  const handleVerifySinglePayment = async (orderId: string, paymentId: string) => {
+    setIsUpdatingOrder(true);
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paymentId,
+          paymentStatus: 'SUCCESS',
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchAdminData();
+        if (editingOrder && editingOrder.id === orderId) {
+          setEditingOrder(data.order);
+        }
+      } else {
+        alert(data.error || 'Failed to verify payment');
+      }
+    } catch (err) {
+      console.error('Verify payment error:', err);
+      alert('Error verifying payment');
+    } finally {
+      setIsUpdatingOrder(false);
+    }
+  };
+
+  // Record an additional payment installment / balance settlement
+  const handleRecordInstallment = async (orderId: string, amountRupees: number, note?: string) => {
+    if (amountRupees <= 0) {
+      alert('Installment amount must be greater than zero');
+      return;
+    }
+    setIsUpdatingOrder(true);
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          newInstallment: {
+            amountMinor: Math.round(amountRupees * 100),
+            gateway: 'UPI',
+            note: note || 'Settlement installment payment',
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchAdminData();
+        if (editingOrder && editingOrder.id === orderId) {
+          setEditingOrder(data.order);
+          setSettlementAmountRupees(0);
+        }
+      } else {
+        alert(data.error || 'Failed to record installment');
+      }
+    } catch (err) {
+      console.error('Installment error:', err);
+      alert('Error recording installment');
     } finally {
       setIsUpdatingOrder(false);
     }
@@ -495,6 +564,24 @@ export default function AdminPage() {
                               Partial COD ({ord.payments?.[0]?.amountMinor ? formatCurrency(ord.payments[0].amountMinor) : '₹149'} Adv + {formatCurrency(ord.codBalanceMinor)} Due)
                             </span>
                           )}
+                          {/* Meta CAPI Telemetry Badges */}
+                          {ord.metaEvents && ord.metaEvents.length > 0 && (
+                            <div className="flex items-center gap-1 mt-1 flex-wrap">
+                              {ord.metaEvents.map((evt: any) => (
+                                <span
+                                  key={evt.id}
+                                  className={`px-1.5 py-0.5 rounded text-[8px] font-bold tracking-tight uppercase ${
+                                    evt.eventName === 'Purchase'
+                                      ? 'bg-purple-500/15 text-purple-700 dark:text-purple-300'
+                                      : 'bg-blue-500/15 text-blue-700 dark:text-blue-300'
+                                  }`}
+                                  title={`Meta CAPI Event: ${evt.eventName} | Value: ₹${evt.value} | Status: ${evt.status} | ID: ${evt.eventId}`}
+                                >
+                                  ⚡ {evt.eventName} ({evt.status})
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </td>
                         <td className="py-3 text-right">
                           <div className="flex items-center justify-end gap-1.5 flex-wrap">
@@ -503,11 +590,15 @@ export default function AdminPage() {
                                 <button
                                   type="button"
                                   onClick={() => handleQuickStatusUpdate(ord.id, 'CONFIRMED', 'SUCCESS')}
-                                  title="Confirm Payment & Approve Order"
+                                  title={
+                                    ord.isPartialCod
+                                      ? 'Verify Advance Payment & Fire Meta PartialPayment Event'
+                                      : 'Confirm Full Payment & Fire Meta Purchase Event'
+                                  }
                                   className="py-1 px-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center gap-1 shadow-xs transition-colors cursor-pointer"
                                 >
                                   <CheckCircle2 className="w-3 h-3" />
-                                  <span>Confirm</span>
+                                  <span>{ord.isPartialCod ? 'Verify Adv' : 'Confirm'}</span>
                                 </button>
                                 <button
                                   type="button"
@@ -543,6 +634,11 @@ export default function AdminPage() {
                                 setNewStatus(ord.status);
                                 setNewTrackingNumber(ord.trackingNumber || '');
                                 setNewTrackingCarrier(ord.trackingCarrier || 'Blue Dart Air');
+                                const verifiedSum = (ord.payments || [])
+                                  .filter((p: any) => p.status === 'SUCCESS')
+                                  .reduce((s: number, p: any) => s + (p.amountMinor || 0), 0);
+                                const rem = Math.max(0, (ord.totalMinor || 0) - verifiedSum);
+                                setSettlementAmountRupees(rem / 100);
                               }}
                               className="py-1 px-2.5 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-[11px] font-medium hover:bg-black dark:hover:bg-neutral-100 transition-colors"
                             >
@@ -644,67 +740,137 @@ export default function AdminPage() {
             </div>
 
             <form onSubmit={handleSaveOrderUpdate} className="space-y-4">
-              {/* Payment Details & Quick Approve */}
-              {editingOrder.payments?.length > 0 && (
-                <div className="p-3.5 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-neutral-800 dark:text-neutral-200">
-                      Gateway: {editingOrder.payments[0].gateway}
-                    </span>
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                        editingOrder.payments[0].status === 'SUCCESS'
-                          ? 'bg-emerald-500/10 text-emerald-600'
-                          : 'bg-amber-500/10 text-amber-600'
-                      }`}
-                    >
-                      {editingOrder.payments[0].status}
-                    </span>
+              {/* Payment Details & Verification Section */}
+              {(() => {
+                const verifiedSum = (editingOrder.payments || [])
+                  .filter((p: any) => p.status === 'SUCCESS')
+                  .reduce((s: number, p: any) => s + (p.amountMinor || 0), 0);
+                const remainingMinor = Math.max(0, (editingOrder.totalMinor || 0) - verifiedSum);
+
+                return (
+                  <div className="p-3.5 rounded-xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 space-y-3">
+                    <div className="flex items-center justify-between pb-2 border-b border-black/5 dark:border-white/5">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Total Due</span>
+                        <div className="font-bold text-neutral-900 dark:text-white text-sm">{formatCurrency(editingOrder.totalMinor)}</div>
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Verified Paid</span>
+                        <div className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">{formatCurrency(verifiedSum)}</div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">Balance</span>
+                        <div className="font-bold text-amber-600 dark:text-amber-400 text-sm">{formatCurrency(remainingMinor)}</div>
+                      </div>
+                    </div>
+
+                    {/* Payments List */}
+                    <div className="space-y-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Payment Transactions</span>
+                      {(editingOrder.payments || []).map((p: any, idx: number) => (
+                        <div
+                          key={p.id}
+                          className="p-2.5 rounded-lg bg-white dark:bg-black/30 border border-neutral-200 dark:border-neutral-800 flex items-center justify-between gap-2"
+                        >
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-neutral-900 dark:text-white">
+                                #{idx + 1} {formatCurrency(p.amountMinor)}
+                              </span>
+                              <span className="text-[10px] font-mono text-neutral-400">({p.gateway})</span>
+                              <span
+                                className={`px-1.5 py-0.2 rounded text-[9px] font-bold uppercase ${
+                                  p.status === 'SUCCESS'
+                                    ? 'bg-emerald-500/10 text-emerald-600'
+                                    : 'bg-amber-500/10 text-amber-600'
+                                }`}
+                              >
+                                {p.status}
+                              </span>
+                            </div>
+                            {p.gatewayPaymentId && (
+                              <div className="text-[10px] font-mono text-neutral-500 mt-0.5">
+                                Ref/UTR: <span className="select-all font-semibold text-neutral-700 dark:text-neutral-300">{p.gatewayPaymentId}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {p.status === 'PENDING' && (
+                            <button
+                              type="button"
+                              disabled={isUpdatingOrder}
+                              onClick={() => handleVerifySinglePayment(editingOrder.id, p.id)}
+                              title={
+                                p.amountMinor < editingOrder.totalMinor
+                                  ? 'Verify Partial Payment (Fires Meta PartialPayment)'
+                                  : 'Verify Full Payment (Fires Meta Purchase)'
+                              }
+                              className="py-1 px-2.5 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold flex items-center gap-1 shadow-xs transition-colors cursor-pointer"
+                            >
+                              <CheckCircle2 className="w-3 h-3" />
+                              <span>Verify</span>
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Settle Balance Section */}
+                    {remainingMinor > 0 && (
+                      <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">
+                          Record Balance / Doorstep Settlement
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="number"
+                            min="1"
+                            value={settlementAmountRupees}
+                            onChange={(e) => setSettlementAmountRupees(Number(e.target.value))}
+                            placeholder="Amount in ₹"
+                            className="w-28 px-2.5 py-1.5 rounded-lg bg-white dark:bg-black/30 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white font-mono text-xs"
+                          />
+                          <button
+                            type="button"
+                            disabled={isUpdatingOrder || settlementAmountRupees <= 0}
+                            onClick={() => handleRecordInstallment(editingOrder.id, settlementAmountRupees, settlementNote)}
+                            className="flex-1 py-1.5 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                          >
+                            <Zap className="w-3.5 h-3.5" />
+                            <span>
+                              Settle ₹{settlementAmountRupees} {settlementAmountRupees * 100 >= remainingMinor ? '(Fires Purchase)' : '(Fires PartialPayment)'}
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Meta CAPI Events Dispatched */}
+                    {editingOrder.metaEvents && editingOrder.metaEvents.length > 0 && (
+                      <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                          Meta Conversions API (CAPI) Audit
+                        </span>
+                        <div className="space-y-1 max-h-24 overflow-y-auto">
+                          {editingOrder.metaEvents.map((evt: any) => (
+                            <div
+                              key={evt.id}
+                              className="px-2 py-1 rounded bg-black/5 dark:bg-white/5 text-[10px] flex items-center justify-between"
+                            >
+                              <span className="font-bold text-neutral-800 dark:text-neutral-200">
+                                ⚡ {evt.eventName}: ₹{evt.value}
+                              </span>
+                              <span className="font-mono text-[9px] text-neutral-400">
+                                {evt.status} • {new Date(evt.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  {editingOrder.payments[0].gatewayPaymentId && (
-                    <div className="text-[11px] font-mono text-neutral-600 dark:text-neutral-400">
-                      <span>UTR / Reference: </span>
-                      <strong className="text-neutral-900 dark:text-white select-all">
-                        {editingOrder.payments[0].gatewayPaymentId}
-                      </strong>
-                    </div>
-                  )}
-                  {editingOrder.isPartialCod && (
-                    <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-900 dark:text-amber-200">
-                      <span className="font-bold">Partial COD Order:</span> {editingOrder.payments?.[0]?.amountMinor ? formatCurrency(editingOrder.payments[0].amountMinor) : '₹149.00'} advance via UPI • Collect <strong className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">{formatCurrency(editingOrder.codBalanceMinor)}</strong> in Cash on Delivery from customer.
-                    </div>
-                  )}
-                  {editingOrder.payments[0].status === 'PENDING' && (
-                    <button
-                      type="button"
-                      disabled={isUpdatingOrder}
-                      onClick={async () => {
-                        setIsUpdatingOrder(true);
-                        try {
-                          await fetch(`/api/admin/orders/${editingOrder.id}`, {
-                            method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                              status: 'CONFIRMED',
-                              paymentStatus: 'SUCCESS',
-                            }),
-                          });
-                          setEditingOrder(null);
-                          await fetchAdminData();
-                        } catch (err) {
-                          console.error(err);
-                        } finally {
-                          setIsUpdatingOrder(false);
-                        }
-                      }}
-                      className="w-full mt-1 py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Verify & Approve UPI Payment</span>
-                    </button>
-                  )}
-                </div>
-              )}
+                );
+              })()}
 
               <div>
                 <label className="block text-[11px] font-medium text-neutral-700 dark:text-neutral-300 mb-1">

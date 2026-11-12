@@ -22,7 +22,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { UpiPaymentModal } from '@/components/checkout/UpiPaymentModal';
-import { trackPixelEvent } from '@/components/analytics/MetaPixel';
+import { trackPixelEvent, trackAddPaymentInfo, getMetaBrowserCookies } from '@/components/analytics/MetaPixel';
 
 function CheckoutContent() {
   const router = useRouter();
@@ -224,6 +224,22 @@ function CheckoutContent() {
         attributionParts.length > 0 ? `[Attribution: ${attributionParts.join(', ')}]` : '',
       ].filter(Boolean).join(' | ');
 
+      // Capture client Meta cookies for Conversions API matching
+      const { fbp, fbc } = getMetaBrowserCookies();
+
+      // Track Meta AddPaymentInfo event
+      trackAddPaymentInfo({
+        value: finalTotalMinor / 100,
+        currency: 'INR',
+        content_ids: items.map((it) => it.productId),
+        contents: items.map((it) => ({
+          id: it.productId,
+          quantity: it.quantity || 1,
+          item_price: (it.unitPriceMinor || 0) / 100,
+        })),
+        payment_type: paymentMethod,
+      });
+
       const res = await fetch('/api/checkout/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -250,6 +266,11 @@ function CheckoutContent() {
             variantId: it.variantId,
             quantity: it.quantity,
           })),
+          metaTracking: {
+            fbp,
+            fbc,
+            fbclid,
+          },
         }),
       });
 

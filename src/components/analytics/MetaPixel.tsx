@@ -10,9 +10,27 @@ declare global {
   }
 }
 
-export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '1140827711731446';
+export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '1429779105956526';
 
 const PURCHASE_TRACKED_PREFIX = 'flirta_pixel_purchased_';
+
+/**
+ * Retrieves Meta cookies (_fbp, _fbc) from browser document.cookie for CAPI enrichment
+ */
+export function getMetaBrowserCookies(): { fbp?: string; fbc?: string } {
+  if (typeof document === 'undefined') return {};
+  const cookies = document.cookie.split(';');
+  let fbp: string | undefined;
+  let fbc: string | undefined;
+
+  for (const c of cookies) {
+    const [key, val] = c.trim().split('=');
+    if (key === '_fbp') fbp = decodeURIComponent(val || '');
+    if (key === '_fbc') fbc = decodeURIComponent(val || '');
+  }
+
+  return { fbp, fbc };
+}
 
 /**
  * Checks whether a Purchase event has already been tracked for a given orderNumber.
@@ -53,6 +71,30 @@ export interface PixelPurchaseData {
   items: PixelPurchaseItem[];
   customerEmail?: string;
   customerPhone?: string;
+  eventId?: string;
+}
+
+/**
+ * Standard Meta AddPaymentInfo Event Tracker
+ */
+export function trackAddPaymentInfo(data: {
+  value: number;
+  currency?: string;
+  content_ids?: string[];
+  contents?: Array<{ id: string; quantity: number; item_price: number }>;
+  payment_type?: string;
+}) {
+  const numValue = Math.max(1, Number(data.value) || 0);
+  const currency = data.currency || 'INR';
+
+  trackPixelEvent('AddPaymentInfo', {
+    content_type: 'product',
+    content_ids: data.content_ids || [],
+    contents: data.contents || [],
+    value: numValue,
+    currency,
+    payment_type: data.payment_type || 'UPI',
+  });
 }
 
 export function trackPixelEvent(
@@ -132,7 +174,7 @@ export function trackPurchaseEvent(data: PixelPurchaseData): boolean {
   };
 
   markPurchaseTracked(data.orderNumber);
-  trackPixelEvent('Purchase', payload, { eventID: data.orderNumber });
+  trackPixelEvent('Purchase', payload, { eventID: data.eventId || data.orderNumber });
   return true;
 }
 
