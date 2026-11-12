@@ -9,7 +9,7 @@ import {
 } from '@/types/meta';
 
 export const META_PIXEL_ID =
-  process.env.NEXT_PUBLIC_META_PIXEL_ID || '1429779105956526';
+  process.env.NEXT_PUBLIC_META_PIXEL_ID || '2214305502449277';
 const META_GRAPH_VERSION = 'v22.0';
 const DEFAULT_SITE_URL = 'https://www.flirta.network';
 

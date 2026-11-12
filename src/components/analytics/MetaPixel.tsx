@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '1429779105956526';
+export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '2214305502449277';
 
 const PURCHASE_TRACKED_PREFIX = 'flirta_pixel_purchased_';
 

@@ -58,7 +58,7 @@ export const metadata: Metadata = {
   },
 };
 
-const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '1429779105956526';
+const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || '2214305502449277';
 
 export default function RootLayout({
   children,
@@ -68,7 +68,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} h-full antialiased`}>
       <head>
-        {/* Meta Pixel NoScript Fallback (Dataset ID: 1429779105956526) */}
+        {/* Meta Pixel NoScript Fallback (Primary Dataset: 2214305502449277) */}
         <noscript>
           <img
             height="1"
@@ -80,7 +80,7 @@ export default function RootLayout({
         </noscript>
       </head>
       <body className="min-h-full flex flex-col bg-[#FAF8F5] text-[#222225] font-sans antialiased selection:bg-[#E61E2A]/15 selection:text-[#E61E2A]">
-        {/* Official Meta Pixel (ID: 1429779105956526 - Flirta Dataset) */}
+        {/* Official Meta Pixel (Primary: 2214305502449277 ft-11 + Dual Sync 1429779105956526) */}
         <Script
           id="meta-pixel-init"
           strategy="afterInteractive"
@@ -95,6 +95,7 @@ export default function RootLayout({
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
               fbq('init', '${META_PIXEL_ID}');
+              fbq('init', '1429779105956526');
             `,
           }}
         />
