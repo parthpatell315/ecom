@@ -68,22 +68,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} h-full antialiased`}>
       <head>
-        {/* Meta Pixel NoScript Fallback (Primary Dataset: 2214305502449277) */}
-        <noscript>
-          <img
-            height="1"
-            width="1"
-            style={{ display: 'none' }}
-            src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
-            alt=""
-          />
-        </noscript>
-      </head>
-      <body className="min-h-full flex flex-col bg-[#FAF8F5] text-[#222225] font-sans antialiased selection:bg-[#E61E2A]/15 selection:text-[#E61E2A]">
-        {/* Official Meta Pixel (Primary: 2214305502449277 ft-11 + Dual Sync 1429779105956526) */}
-        <Script
+        {/* Meta Pixel Base Code (Dataset: 2214305502449277 ft-11) */}
+        <script
           id="meta-pixel-init"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)
@@ -95,11 +82,22 @@ export default function RootLayout({
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
               fbq('init', '${META_PIXEL_ID}');
-              fbq('init', '1429779105956526');
               fbq('track', 'PageView');
             `,
           }}
         />
+        {/* Meta Pixel NoScript Fallback */}
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: 'none' }}
+            src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
+            alt=""
+          />
+        </noscript>
+      </head>
+      <body className="min-h-full flex flex-col bg-[#FAF8F5] text-[#222225] font-sans antialiased selection:bg-[#E61E2A]/15 selection:text-[#E61E2A]">
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>

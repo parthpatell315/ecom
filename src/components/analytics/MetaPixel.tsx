@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect, Suspense } from 'react';
+import { useEffect, useRef, Suspense } from 'react';
 
 declare global {
   interface Window {
@@ -184,8 +184,15 @@ export function trackPurchaseEvent(data: PixelPurchaseData): boolean {
 function PixelPageViewTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
+    // Initial PageView is already queued synchronously in <head>
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     if (META_PIXEL_ID && typeof window !== 'undefined') {
       trackPixelEvent('PageView');
     }
