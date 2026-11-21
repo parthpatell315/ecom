@@ -1,16 +1,10 @@
 import type { Metadata } from 'next';
-import Script from 'next/script';
 import { Poppins } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
 import { WishlistProvider } from '@/context/WishlistContext';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
-import { CartDrawer } from '@/components/cart/CartDrawer';
-import { WishlistDrawer } from '@/components/wishlist/WishlistDrawer';
-import { AuthModal } from '@/components/auth/AuthModal';
-import { WhatsAppFloat } from '@/components/layout/WhatsAppFloat';
+import { VisitorGatekeeper } from '@/components/layout/VisitorGatekeeper';
 import { MetaPixel } from '@/components/analytics/MetaPixel';
 
 const poppins = Poppins({
@@ -97,17 +91,11 @@ export default function RootLayout({
           />
         </noscript>
       </head>
-      <body className="min-h-full flex flex-col bg-[#FAF8F5] text-[#222225] font-sans antialiased selection:bg-[#E61E2A]/15 selection:text-[#E61E2A]">
+      <body className="min-h-full flex flex-col bg-[#070709] text-white font-sans antialiased selection:bg-[#E61E2A]/15 selection:text-[#E61E2A]">
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <CartDrawer />
-              <WishlistDrawer />
-              <AuthModal />
-              <WhatsAppFloat />
+              <VisitorGatekeeper>{children}</VisitorGatekeeper>
               <MetaPixel />
             </WishlistProvider>
           </CartProvider>
