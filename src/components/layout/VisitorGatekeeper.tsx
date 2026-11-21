@@ -2,32 +2,27 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
-import { CartDrawer } from '@/components/cart/CartDrawer';
-import { WishlistDrawer } from '@/components/wishlist/WishlistDrawer';
 import { AuthModal } from '@/components/auth/AuthModal';
-import { WhatsAppFloat } from '@/components/layout/WhatsAppFloat';
 
 /**
  * Gatekeeper component:
- * When in Coming Soon mode, hides the storefront navigation, drawers, and footer for visitors.
+ * When in 404 lockdown mode, hides all storefront navigation, drawers, and footer for visitors.
  * Allows the /admin portal to function normally.
  */
 export function VisitorGatekeeper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
 
-  // If visitor: Coming soon mode is active (render clean focused view)
+  // If visitor: render only the 404 page (no navbar, footer, or store chrome)
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-[#070709] text-white flex flex-col">
+      <main className="min-h-screen w-full bg-white dark:bg-black text-black dark:text-white flex flex-col">
         {children}
-      </div>
+      </main>
     );
   }
 
-  // Admin route: render admin portal with full tools
+  // Admin route: render admin portal with auth modal support
   return (
     <>
       <main className="flex-1">{children}</main>

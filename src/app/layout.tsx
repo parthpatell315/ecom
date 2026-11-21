@@ -91,7 +91,7 @@ export default function RootLayout({
           />
         </noscript>
       </head>
-      <body className="min-h-full flex flex-col bg-[#070709] text-white font-sans antialiased selection:bg-[#E61E2A]/15 selection:text-[#E61E2A]">
+      <body className="min-h-full flex flex-col bg-white dark:bg-black text-black dark:text-white font-sans antialiased">
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
